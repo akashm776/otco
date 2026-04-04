@@ -1,0 +1,49 @@
+{
+  "timestamp": "20260114_163025",
+  "config": {
+    "batch_size": 64,
+    "num_epochs": 50,
+    "unfreeze_strategy": "both_last_layer",
+    "projection_lr": 0.001,
+    "encoder_lr": 5e-05,
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1.0,
+    "seed": 42,
+    "model_vision": "microsoft/resnet-50",
+    "model_text": "distilbert-base-uncased",
+    "train_split": 0.9,
+    "num_workers": 4,
+    "drop_last": true,
+    "loss_type": "hard_negative",
+    "alpha": 0.25,
+    "warmup_steps": 1000,
+    "experiment_name": "hard_negative_a025"
+  },
+  "final_metrics": {
+    "all_captions": {
+      "text_to_image": {
+        "R@1": 20.888888835906982,
+        "R@5": 49.20987784862518,
+        "R@10": 62.1975302696228
+      },
+      "image_to_text": {
+        "R@1": 30.37036955356598,
+        "R@5": 59.01234745979309,
+        "R@10": 71.35802507400513
+      }
+    },
+    "canonical": {
+      "text_to_image": {
+        "R@1": 20.000000298023224,
+        "R@5": 48.641976714134216,
+        "R@10": 62.345677614212036
+      },
+      "image_to_text": {
+        "R@1": 23.20987582206726,
+        "R@5": 52.59259343147278,
+        "R@10": 65.06173014640808
+      },
+      "average_recall_at_1": 21.604938060045242
+    }
+  }
+}
