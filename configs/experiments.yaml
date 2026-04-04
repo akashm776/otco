@@ -1,0 +1,162 @@
+experiments:
+  baseline:
+    batch_size: 64
+    num_epochs: 50
+    unfreeze_strategy: both_last_layer
+    projection_lr: 0.001
+    encoder_lr: 0.00005
+    weight_decay: 0.01
+    grad_clip_norm: 1.0
+    seed: 42
+    model_vision: microsoft/resnet-50
+    model_text: distilbert-base-uncased
+    train_split: 0.9
+    num_workers: 4
+    drop_last: true
+    loss_type: baseline
+
+  hard_negative_a025:
+    batch_size: 64
+    num_epochs: 50
+    unfreeze_strategy: both_last_layer
+    projection_lr: 0.001
+    encoder_lr: 0.00005
+    weight_decay: 0.01
+    grad_clip_norm: 1.0
+    seed: 42
+    model_vision: microsoft/resnet-50
+    model_text: distilbert-base-uncased
+    train_split: 0.9
+    num_workers: 4
+    drop_last: true
+    loss_type: hard_negative
+    alpha: 0.25
+    warmup_steps: 1000
+
+  hard_negative_a05:
+    batch_size: 64
+    num_epochs: 50
+    unfreeze_strategy: both_last_layer
+    projection_lr: 0.001
+    encoder_lr: 0.00005
+    weight_decay: 0.01
+    grad_clip_norm: 1.0
+    seed: 42
+    model_vision: microsoft/resnet-50
+    model_text: distilbert-base-uncased
+    train_split: 0.9
+    num_workers: 4
+    drop_last: true
+    loss_type: hard_negative
+    alpha: 0.5
+    warmup_steps: 1000
+
+  softmax_mix_k16:
+    batch_size: 64
+    num_epochs: 50
+    unfreeze_strategy: both_last_layer
+    projection_lr: 0.001
+    encoder_lr: 0.00005
+    weight_decay: 0.01
+    grad_clip_norm: 1.0
+    seed: 42
+    model_vision: microsoft/resnet-50
+    model_text: distilbert-base-uncased
+    train_split: 0.9
+    num_workers: 4
+    drop_last: true
+    loss_type: softmax_mix
+    alpha: 0.5
+    warmup_steps: 1000
+    top_k: 16
+    tau: 0.05
+    update_freq: 10
+    gate_sim: -0.05
+
+  softmax_mix_k32:
+    batch_size: 64
+    num_epochs: 15
+    unfreeze_strategy: both_last_layer
+    projection_lr: 0.001
+    encoder_lr: 0.00005
+    weight_decay: 0.01
+    grad_clip_norm: 1.0
+    seed: 42
+    model_vision: microsoft/resnet-50
+    model_text: distilbert-base-uncased
+    train_split: 0.9
+    num_workers: 4
+    drop_last: true
+    loss_type: softmax_mix
+    alpha: 0.1
+    warmup_steps: 1000
+    top_k: 32
+    tau: 0.05
+    update_freq: 10
+    gate_sim: -0.05
+    ot_eps: 0.05
+    sinkhorn_iters: 30
+
+  softmax_mix_sharp:
+    batch_size: 64
+    num_epochs: 50
+    unfreeze_strategy: both_last_layer
+    projection_lr: 0.001
+    encoder_lr: 0.00005
+    weight_decay: 0.01
+    grad_clip_norm: 1.0
+    seed: 42
+    model_vision: microsoft/resnet-50
+    model_text: distilbert-base-uncased
+    train_split: 0.9
+    num_workers: 4
+    drop_last: true
+    loss_type: softmax_mix
+    alpha: 0.1
+    warmup_steps: 1000
+    top_k: 32
+    tau: 0.02
+    update_freq: 10
+    gate_sim: -0.05
+    ot_eps: 0.05
+    sinkhorn_iters: 30
+
+  ot_select:
+    batch_size: 64
+    num_epochs: 50
+    unfreeze_strategy: both_last_layer
+    projection_lr: 0.001
+    encoder_lr: 0.00005
+    weight_decay: 0.01
+    grad_clip_norm: 1.0
+    seed: 42
+    model_vision: microsoft/resnet-50
+    model_text: distilbert-base-uncased
+    train_split: 0.9
+    num_workers: 4
+    drop_last: true
+    loss_type: ot_select
+    alpha: 0.1
+    warmup_steps: 1000
+    top_k: 32
+    tau: 0.05
+
+  memory_bank:
+    batch_size: 64
+    num_epochs: 50
+    unfreeze_strategy: both_last_layer
+    projection_lr: 0.001
+    encoder_lr: 0.00005
+    weight_decay: 0.01
+    grad_clip_norm: 1.0
+    seed: 42
+    model_vision: microsoft/resnet-50
+    model_text: distilbert-base-uncased
+    train_split: 0.9
+    num_workers: 4
+    drop_last: true
+    loss_type: memory_bank
+    alpha: 0.5
+    warmup_steps: 1000
+    queue_size: 1024
+    top_k: 32

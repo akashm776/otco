@@ -1,0 +1,22 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# OS / editor artifacts
+.DS_Store
+
+# Experiment artifacts and local datasets
+checkpoints/
+outputs/
+results/
+data/datasets/
+*.pt
+*.pth
+*.ckpt

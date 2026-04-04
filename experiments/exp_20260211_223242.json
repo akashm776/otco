@@ -1,0 +1,55 @@
+{
+  "timestamp": "20260211_223242",
+  "config": {
+    "batch_size": 64,
+    "num_epochs": 15,
+    "unfreeze_strategy": "both_last_layer",
+    "projection_lr": 0.001,
+    "encoder_lr": 5e-05,
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1.0,
+    "seed": 42,
+    "model_vision": "microsoft/resnet-50",
+    "model_text": "distilbert-base-uncased",
+    "train_split": 0.9,
+    "num_workers": 4,
+    "drop_last": true,
+    "loss_type": "softmax_mix",
+    "alpha": 0.1,
+    "warmup_steps": 1000,
+    "top_k": 32,
+    "tau": 0.05,
+    "update_freq": 10,
+    "gate_sim": -0.05,
+    "ot_eps": 0.05,
+    "sinkhorn_iters": 30,
+    "experiment_name": "softmax_mix_k32"
+  },
+  "final_metrics": {
+    "all_captions": {
+      "text_to_image": {
+        "R@1": 14.96296226978302,
+        "R@5": 38.7901246547699,
+        "R@10": 53.35802435874939
+      },
+      "image_to_text": {
+        "R@1": 21.23456746339798,
+        "R@5": 45.30864059925079,
+        "R@10": 60.864198207855225
+      }
+    },
+    "canonical": {
+      "text_to_image": {
+        "R@1": 14.074073731899261,
+        "R@5": 37.28395104408264,
+        "R@10": 52.46913433074951
+      },
+      "image_to_text": {
+        "R@1": 17.407406866550446,
+        "R@5": 43.58024597167969,
+        "R@10": 57.283949851989746
+      },
+      "average_recall_at_1": 15.740740299224854
+    }
+  }
+}

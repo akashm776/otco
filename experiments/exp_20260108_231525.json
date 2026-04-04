@@ -1,0 +1,31 @@
+{
+  "timestamp": "20260108_231525",
+  "config": {
+    "batch_size": 64,
+    "num_epochs": 10,
+    "unfreeze_strategy": "both_last_layer",
+    "projection_lr": 0.001,
+    "encoder_lr": 5e-05,
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1.0,
+    "seed": 42,
+    "model_vision": "microsoft/resnet-50",
+    "model_text": "distilbert-base-uncased",
+    "train_split": 0.9
+  },
+  "final_metrics": {
+    "text_to_image": {
+      "R@1": 21.77777737379074,
+      "R@5": 50.69136023521423,
+      "R@10": 64.66666460037231,
+      "mean_rank": 23.602468490600586
+    },
+    "image_to_text": {
+      "R@1": 30.24691343307495,
+      "R@5": 59.876543283462524,
+      "R@10": 73.58024716377258,
+      "mean_rank": 17.14444351196289
+    },
+    "average_recall_at_1": 26.012345403432846
+  }
+}

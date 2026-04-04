@@ -1,0 +1,47 @@
+{
+  "timestamp": "20260115_080408",
+  "config": {
+    "batch_size": 64,
+    "num_epochs": 50,
+    "unfreeze_strategy": "both_last_layer",
+    "projection_lr": 0.001,
+    "encoder_lr": 5e-05,
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1.0,
+    "seed": 42,
+    "model_vision": "microsoft/resnet-50",
+    "model_text": "distilbert-base-uncased",
+    "train_split": 0.9,
+    "num_workers": 4,
+    "drop_last": true,
+    "loss_type": "baseline",
+    "experiment_name": "baseline"
+  },
+  "final_metrics": {
+    "all_captions": {
+      "text_to_image": {
+        "R@1": 21.407407522201538,
+        "R@5": 51.629626750946045,
+        "R@10": 64.4444465637207
+      },
+      "image_to_text": {
+        "R@1": 28.888890147209167,
+        "R@5": 61.23456954956055,
+        "R@10": 72.09876775741577
+      }
+    },
+    "canonical": {
+      "text_to_image": {
+        "R@1": 20.864197611808777,
+        "R@5": 49.87654387950897,
+        "R@10": 63.333332538604736
+      },
+      "image_to_text": {
+        "R@1": 24.320988357067108,
+        "R@5": 53.45678925514221,
+        "R@10": 65.67901372909546
+      },
+      "average_recall_at_1": 22.592592984437943
+    }
+  }
+}

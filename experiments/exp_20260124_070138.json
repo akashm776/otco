@@ -1,0 +1,51 @@
+{
+  "timestamp": "20260124_070138",
+  "config": {
+    "batch_size": 64,
+    "num_epochs": 50,
+    "unfreeze_strategy": "both_last_layer",
+    "projection_lr": 0.001,
+    "encoder_lr": 5e-05,
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1.0,
+    "seed": 42,
+    "model_vision": "microsoft/resnet-50",
+    "model_text": "distilbert-base-uncased",
+    "train_split": 0.9,
+    "num_workers": 4,
+    "drop_last": true,
+    "loss_type": "ot_select",
+    "alpha": 0.1,
+    "warmup_steps": 1000,
+    "top_k": 32,
+    "tau": 0.05,
+    "experiment_name": "ot_select"
+  },
+  "final_metrics": {
+    "all_captions": {
+      "text_to_image": {
+        "R@1": 22.27160483598709,
+        "R@5": 51.03703737258911,
+        "R@10": 63.456791639328
+      },
+      "image_to_text": {
+        "R@1": 30.617284774780273,
+        "R@5": 60.987651348114014,
+        "R@10": 73.58024716377258
+      }
+    },
+    "canonical": {
+      "text_to_image": {
+        "R@1": 20.493827760219574,
+        "R@5": 49.753087759017944,
+        "R@10": 62.22222447395325
+      },
+      "image_to_text": {
+        "R@1": 24.69135820865631,
+        "R@5": 54.56790328025818,
+        "R@10": 64.32098746299744
+      },
+      "average_recall_at_1": 22.592592984437943
+    }
+  }
+}
