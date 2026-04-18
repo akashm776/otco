@@ -106,8 +106,9 @@ def setup_model_and_optimizer(
     optimizer = optim.AdamW(param_groups, weight_decay=weight_decay)
 
     if torch.cuda.device_count() > 1:
-        print(f"Using {torch.cuda.device_count()} GPUs with DataParallel")
-        model = torch.nn.DataParallel(model)
+        print(f"Using {torch.cuda.device_count()} GPUs: parallelizing encoders only")
+        model.vision_model = torch.nn.DataParallel(model.vision_model)
+        model.text_model = torch.nn.DataParallel(model.text_model)
 
     return model, optimizer
 
@@ -237,12 +238,11 @@ def main():
 
             logits, image_features, text_features = model(image_batch, text_batch)
 
-            raw_model = model.module if hasattr(model, 'module') else model
             if config["loss_type"] == "baseline":
                 loss = criterion(logits)
                 loss_dict = {"base_loss": loss.item(), "total_loss": loss.item()}
             else:
-                loss, loss_dict = criterion(logits, text_features, image_features, temp=raw_model.temp)
+                loss, loss_dict = criterion(logits, text_features, image_features, temp=model.temp)
 
             optimizer.zero_grad()
             loss.backward()
@@ -362,8 +362,7 @@ def main():
     print(f"{'=' * 80}")
 
     checkpoint = torch.load(f"{checkpoint_dir}/best_model.pt", map_location=device)
-    raw_model = model.module if hasattr(model, 'module') else model
-    raw_model.load_state_dict(checkpoint["model_state_dict"])
+    model.load_state_dict(checkpoint["model_state_dict"])
 
     final_all_t2i = evaluate_retrieval(model, val_loader_all, device)
     final_all_i2t = evaluate_image_to_text_retrieval(model, val_loader_all, device)

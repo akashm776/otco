@@ -13,10 +13,9 @@ import random
 
 def save_checkpoint(model, optimizer, step, loss, filepath):
     """Save training checkpoint"""
-    raw_model = model.module if hasattr(model, 'module') else model
     checkpoint = {
         'step': step,
-        'model_state_dict': raw_model.state_dict(),
+        'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'loss': loss,
     }
