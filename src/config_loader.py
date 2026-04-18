@@ -68,7 +68,7 @@ def load_run_config(config_path):
     if not isinstance(dataset_section, dict):
         raise ValueError("'dataset' section must be a mapping.")
     dataset_backend = dataset_section.get("backend", "local_flickr8k")
-    if dataset_backend not in {"local_flickr8k", "hf_flickr8k"}:
+    if dataset_backend not in {"local_flickr8k", "hf_flickr8k", "hf_flickr30k"}:
         raise ValueError("dataset.backend must be one of: local_flickr8k, hf_flickr8k")
 
     run_section = run_cfg.get("run", {})
