@@ -1,0 +1,49 @@
+{
+  "timestamp": "20260418_091049",
+  "config": {
+    "batch_size": 64,
+    "num_epochs": 1,
+    "unfreeze_strategy": "both_last_layer",
+    "projection_lr": 0.001,
+    "encoder_lr": 5e-05,
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1.0,
+    "seed": 42,
+    "model_vision": "microsoft/resnet-50",
+    "model_text": "distilbert-base-uncased",
+    "train_split": 0.9,
+    "num_workers": 4,
+    "drop_last": true,
+    "loss_type": "baseline",
+    "experiment_name": "baseline",
+    "config_file": "/Users/akashmittal/Projects/otco/configs/hf_flickr30k.yaml",
+    "experiments_file": "/Users/akashmittal/Projects/otco/configs/experiments.yaml"
+  },
+  "final_metrics": {
+    "all_captions": {
+      "text_to_image": {
+        "R@1": 8.699999749660492,
+        "R@5": 26.260000467300415,
+        "R@10": 37.52000033855438
+      },
+      "image_to_text": {
+        "R@1": 10.100000351667404,
+        "R@5": 29.600000381469727,
+        "R@10": 40.50000011920929
+      }
+    },
+    "canonical": {
+      "text_to_image": {
+        "R@1": 8.100000023841858,
+        "R@5": 27.399998903274536,
+        "R@10": 39.19999897480011
+      },
+      "image_to_text": {
+        "R@1": 9.799999743700027,
+        "R@5": 30.000001192092896,
+        "R@10": 41.80000126361847
+      },
+      "average_recall_at_1": 8.949999883770943
+    }
+  }
+}
