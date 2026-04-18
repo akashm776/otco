@@ -173,7 +173,8 @@ def evaluate_retrieval(model, dataloader, device):
         dict with 'R@1', 'R@5', 'R@10', 'mean_rank', 'median_rank'
     """
     model.eval()
-    
+    model = model.module if hasattr(model, 'module') else model
+
     # Collect ALL caption embeddings
     all_text_features = []
     all_image_ids = []
@@ -258,7 +259,8 @@ def evaluate_image_to_text_retrieval(model, dataloader, device):
     For each unique image, find any of its captions (min-rank protocol).
     """
     model.eval()
-    
+    model = model.module if hasattr(model, 'module') else model
+
     # Build caption bank and image bank
     encoded_images = {}
     caption_embeddings = []
@@ -330,9 +332,9 @@ def sanity_check_eval(model, dataloader, device):
     """
     Sanity check: verify evaluation is working by checking one random caption
     """
-    
     model.eval()
-    
+    model = model.module if hasattr(model, 'module') else model
+
     batch = next(iter(dataloader))
     caption_idx = 0
     
@@ -413,8 +415,8 @@ def detailed_retrieval_analysis(model, dataloader, device, num_samples=100):
     """
     Run detailed analysis on N random captions to understand failure modes.
     """
-    
     model.eval()
+    model = model.module if hasattr(model, 'module') else model
     tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
     
     # Collect all validation data first
@@ -554,7 +556,8 @@ def diagnose_encoder_quality(model, dataloader, device, num_samples=200):
     Check if vision or text encoder is producing better features.
     """
     model.eval()
-    
+    model = model.module if hasattr(model, 'module') else model
+
     print(f"\nCollecting embeddings from {num_samples} samples...")
     
     all_text_embs = []
