@@ -27,6 +27,7 @@ from src.utils import (
 def parse_args():
     parser = argparse.ArgumentParser(description="Train OTCLIP using YAML configuration.")
     parser.add_argument("--config", type=str, default="configs/default.yaml", help="Path to run configuration YAML file")
+    parser.add_argument("--checkpoint-dir", type=str, default=None, help="Override checkpoint directory (takes priority over config)")
     return parser.parse_args()
 
 
@@ -173,7 +174,7 @@ def main():
     print(f"  dataset_backend: {dataset_cfg.get('backend', 'local_flickr8k')}")
     print(f"{'=' * 80}\n")
 
-    checkpoint_dir = run_section.get("checkpoint_dir") or f"checkpoints/{experiment_name}"
+    checkpoint_dir = args.checkpoint_dir or run_section.get("checkpoint_dir") or f"checkpoints/{experiment_name}"
     os.makedirs(checkpoint_dir, exist_ok=True)
 
     root_dir = os.path.abspath(os.curdir)
@@ -218,8 +219,20 @@ def main():
 
     best_avg_recall = 0.0
     global_step = 0
+    start_epoch = 0
 
-    for epoch in range(config["num_epochs"]):
+    latest_path = f"{checkpoint_dir}/latest.pt"
+    if os.path.exists(latest_path):
+        print(f"\nResuming from checkpoint: {latest_path}")
+        ckpt = torch.load(latest_path, map_location=device)
+        model.load_state_dict(ckpt["model_state_dict"])
+        optimizer.load_state_dict(ckpt["optimizer_state_dict"])
+        start_epoch = ckpt["epoch"] + 1
+        global_step = ckpt["global_step"]
+        best_avg_recall = ckpt.get("best_avg_recall", 0.0)
+        print(f"  Resumed at epoch {start_epoch}, step {global_step}, best R@1 {best_avg_recall:.2f}%")
+
+    for epoch in range(start_epoch, config["num_epochs"]):
         print(f"\n{'=' * 80}")
         print(f"EPOCH {epoch + 1}/{config['num_epochs']}")
         print(f"{'=' * 80}")
@@ -343,6 +356,16 @@ def main():
                 avg_train_loss,
                 f"{checkpoint_dir}/checkpoint_epoch_{epoch + 1}.pt",
             )
+
+        torch.save({
+            "epoch": epoch,
+            "global_step": global_step,
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+            "loss": avg_train_loss,
+            "best_avg_recall": best_avg_recall,
+        }, latest_path)
+        print(f"  Latest checkpoint saved (epoch {epoch + 1})")
 
         if avg_recall_canonical > best_avg_recall:
             best_avg_recall = avg_recall_canonical
