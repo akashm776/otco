@@ -75,7 +75,7 @@ experiments:
 
   softmax_mix_k32:
     batch_size: 64
-    num_epochs: 15
+    num_epochs: 50
     unfreeze_strategy: both_last_layer
     projection_lr: 0.001
     encoder_lr: 0.00005
