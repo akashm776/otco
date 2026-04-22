@@ -279,27 +279,29 @@ def main():
                     print(f"  Base Loss: {loss_dict['base_loss']:.4f}")
                 if "hard_loss" in loss_dict and loss_dict.get("hard_loss", 0) > 0:
                     print(f"  Hard Negative Loss: {loss_dict['hard_loss']:.4f}")
-                if "synthetic_loss" in loss_dict and loss_dict.get("synthetic_loss", 0) > 0:
-                    print(f"  Synthetic Negative Loss: {loss_dict['synthetic_loss']:.4f}")
-                    print(f"  Avg Synthetic Sim: {loss_dict.get('avg_synthetic_sim', 0):.4f}")
-                    if "num_gated" in loss_dict:
-                        print(f"  Num gated: {loss_dict.get('num_gated', 0)}")
+                if "synthetic_loss" in loss_dict:
+                    print(f"\n  OT-MIX STATE")
+                    print(f"    OT Step (loss counter): {loss_dict.get('ot_step', '?')}")
+                    print(f"    Alpha:                  {loss_dict['alpha']:.4f}")
+                    ot_active = loss_dict['alpha'] > 0
+                    print(f"    OT Active:              {ot_active}")
+                    if ot_active:
+                        print(f"    Synthetic Loss:         {loss_dict['synthetic_loss']:.6f}")
+                        print(f"    Num Gated (active/B):   {loss_dict.get('num_gated', 0)}/{loss_dict.get('num_gated', 0) if loss_dict.get('num_gated', 0) > 0 else 'B'}")
+                        print(f"    Avg Synthetic Sim:      {loss_dict.get('avg_synthetic_sim', 0):.4f}")
+                        if loss_dict.get('selected_neg_rank_mean', 0) > 0:
+                            print(f"    Selected Neg Rank:      mean={loss_dict['selected_neg_rank_mean']:.2f}  median={loss_dict.get('selected_neg_rank_median', 0):.2f}")
+                            print(f"    Pos - Selected Gap:     {loss_dict.get('pos_selected_gap', 0):.4f}")
+                        if loss_dict.get('coupling_entropy', 0) > 0:
+                            print(f"    Coupling Entropy:       {loss_dict['coupling_entropy']:.4f}")
+                            print(f"    Coupling Peak Mass:     {loss_dict.get('coupling_peak_mass', 0):.4f}")
                 if "select_loss" in loss_dict and loss_dict.get("select_loss", 0) > 0:
                     print(f"  OT-Select Loss: {loss_dict['select_loss']:.4f}")
                     print(f"  Avg Selected Sim: {loss_dict.get('avg_selected_sim', 0):.4f}")
-                if "selected_neg_rank_mean" in loss_dict and loss_dict.get("selected_neg_rank_mean", 0) > 0:
-                    print(f"  Selected Neg Rank (mean): {loss_dict['selected_neg_rank_mean']:.2f}")
-                    print(f"  Selected Neg Rank (median): {loss_dict.get('selected_neg_rank_median', 0):.2f}")
-                    print(f"  Pos - Selected Gap: {loss_dict.get('pos_selected_gap', 0):.4f}")
-                if "coupling_entropy" in loss_dict and loss_dict.get("coupling_entropy", 0) > 0:
-                    print(f"  Coupling Entropy: {loss_dict['coupling_entropy']:.4f}")
-                    print(f"  Coupling Peak Mass: {loss_dict.get('coupling_peak_mass', 0):.4f}")
                 if "memory_loss" in loss_dict and loss_dict.get("memory_loss", 0) > 0:
                     print(f"  Memory Bank Loss: {loss_dict['memory_loss']:.4f}")
                     print(f"  Queue Filled: {loss_dict.get('queue_filled', 0)}/{config.get('queue_size', 0)}")
                     print(f"  Avg Queue Sim: {loss_dict.get('avg_queue_sim', 0):.4f}")
-                if "alpha" in loss_dict:
-                    print(f"  Alpha: {loss_dict['alpha']:.4f}")
 
                 print("\n  LOGIT STATISTICS")
                 print(f"    Diagonal mean: {mean_diag.item():.4f} ± {diag_std.item():.4f}")
