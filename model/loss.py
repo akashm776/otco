@@ -208,6 +208,7 @@ class SoftmaxMixLoss(nn.Module):
             'total_loss': total_loss.item(),
             'avg_synthetic_sim': avg_synth_sim.item(),
             'num_gated': num_gated if alpha > 0 else 0,
+            'ot_step': self.current_step,
             'selected_neg_rank_mean': selected_rank,
             'selected_neg_rank_median': selected_rank_median,
             'selected_neg_sim': selected_sim_mean,
