@@ -89,7 +89,7 @@ experiments:
     drop_last: true
     loss_type: softmax_mix
     alpha: 0.1
-    warmup_steps: 1000
+    warmup_steps: 4500
     top_k: 32
     tau: 0.05
     update_freq: 10
