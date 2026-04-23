@@ -230,7 +230,10 @@ def main():
         start_epoch = ckpt["epoch"] + 1
         global_step = ckpt["global_step"]
         best_avg_recall = ckpt.get("best_avg_recall", 0.0)
+        if hasattr(criterion, "current_step") and "criterion_step" in ckpt:
+            criterion.current_step = ckpt["criterion_step"]
         print(f"  Resumed at epoch {start_epoch}, step {global_step}, best R@1 {best_avg_recall:.2f}%")
+        print(f"  Loss current_step restored to: {getattr(criterion, 'current_step', 'n/a')}")
 
     for epoch in range(start_epoch, config["num_epochs"]):
         print(f"\n{'=' * 80}")
@@ -366,6 +369,7 @@ def main():
             "optimizer_state_dict": optimizer.state_dict(),
             "loss": avg_train_loss,
             "best_avg_recall": best_avg_recall,
+            "criterion_step": getattr(criterion, "current_step", 0),
         }, latest_path)
         print(f"  Latest checkpoint saved (epoch {epoch + 1})")
 
