@@ -306,6 +306,18 @@ def main():
                     print(f"  Queue Filled: {loss_dict.get('queue_filled', 0)}/{config.get('queue_size', 0)}")
                     print(f"  Avg Queue Sim: {loss_dict.get('avg_queue_sim', 0):.4f}")
 
+                with torch.no_grad():
+                    raw_cos = text_features @ image_features.T
+                    diag_mask = torch.eye(batch_size, dtype=torch.bool, device=raw_cos.device)
+                    raw_pos = raw_cos.diagonal()
+                    raw_hardest = raw_cos.masked_fill(diag_mask, float('-inf')).max(dim=1).values
+                    raw_all_neg = raw_cos[~diag_mask]
+                print("\n  RAW COSINE SIMILARITY")
+                print(f"    Positive pairs: {raw_pos.mean().item():.4f} ± {raw_pos.std().item():.4f}")
+                print(f"    All negatives:  {raw_all_neg.mean().item():.4f}")
+                print(f"    Hardest neg:    {raw_hardest.mean().item():.4f}")
+                print(f"    Pos-Hard gap:   {(raw_pos - raw_hardest).mean().item():.4f}")
+
                 print("\n  LOGIT STATISTICS")
                 print(f"    Diagonal mean: {mean_diag.item():.4f} ± {diag_std.item():.4f}")
                 print(f"    Off-diagonal mean: {mean_offdiag.item():.4f}")
