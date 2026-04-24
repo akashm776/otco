@@ -1,0 +1,21 @@
+experiment:
+  name: softmax_mix_k32_logit_a05_adaptive_scratch
+  experiments_file: experiments.yaml
+  overrides: {}
+
+dataset:
+  backend: hf_flickr30k
+  local:
+    root_dir: null
+  hf:
+    dataset_name: clip-benchmark/wds_flickr30k
+    train_split: train
+    val_split: test
+
+model:
+  vision: null
+  text: null
+
+run:
+  checkpoint_dir: null
+  print_experiment_comparison: true
