@@ -46,7 +46,7 @@ def load_hf_cub200_splits(
     if _load_dataset is None:
         raise ImportError("datasets library is required. Install with: pip install datasets")
 
-    ds = _load_dataset(dataset_name)
+    ds = _load_dataset(dataset_name, trust_remote_code=True)
     available = list(ds.keys())
 
     if train_hf_split not in ds:
