@@ -72,7 +72,7 @@ experiments:
     tau: 0.05
     update_freq: 10
     gate_sim: -4.0
-    ot_eps: 0.05
+    ot_eps: 0.7
     sinkhorn_iters: 30
 
   softmax_mix_k32_from_baseline:
