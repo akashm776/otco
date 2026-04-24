@@ -25,6 +25,7 @@ subprocess.run([sys.executable, "-m", "pip", "install", "datasets", "pyyaml", "-
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # ── imports after chdir ───────────────────────────────────────────────────────
+from transformers import AutoModel
 from src.config_loader import load_run_config
 from src.data_setup import build_data_bundle
 from model.model import OTLIP
@@ -48,10 +49,9 @@ val_loader_canonical = data.val_loader_canonical
 print(f"Val loader ready: {len(val_loader_canonical.dataset)} samples")
 
 # ── build model skeleton (weights loaded per checkpoint) ─────────────────────
-model = OTLIP(
-    vision_model_name=config.get("model_vision", "microsoft/resnet-50"),
-    text_model_name=config.get("model_text", "distilbert-base-uncased"),
-).to(device)
+vision_model = AutoModel.from_pretrained(config.get("model_vision", "microsoft/resnet-50"))
+text_model   = AutoModel.from_pretrained(config.get("model_text", "distilbert-base-uncased"))
+model = OTLIP(vision_model=vision_model, text_model=text_model).to(device)
 
 # ── eval loop ─────────────────────────────────────────────────────────────────
 results = []
