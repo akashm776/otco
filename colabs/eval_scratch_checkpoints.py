@@ -41,7 +41,7 @@ with open(RUN_CONFIG, "w") as f:
     yaml.dump(raw, f)
 config = load_run_config(RUN_CONFIG)
 
-data = build_data_bundle(config, seed=config.get("seed", 42))
+data = build_data_bundle(config)
 val_loader_canonical = data["val_loader_canonical"]
 print(f"Val loader ready: {len(val_loader_canonical.dataset)} samples")
 
