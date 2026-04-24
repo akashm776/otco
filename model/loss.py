@@ -146,12 +146,13 @@ class SoftmaxMixLoss(nn.Module):
         alpha = self.get_alpha()
         synthetic_loss = logits.new_tensor(0.0)
         avg_synth_sim = logits.new_tensor(0.0)
+        avg_synth_logit = logits.new_tensor(0.0)
 
         if alpha > 0:
             # Update cached OT plan periodically (no grad through plan)
             if (self.current_step % self.update_freq == 0) or (self.cached_plan is None):
                 with torch.no_grad():
-                    plan, local_mask = self._make_plan(text_emb, image_emb)
+                    plan, local_mask = self._make_plan(text_emb, image_emb, logits_biased)
                 self.cached_plan = plan.detach()
                 self.cached_local_mask = local_mask
 
@@ -173,8 +174,8 @@ class SoftmaxMixLoss(nn.Module):
             synth_sim = (text_emb * synthetic_neg).sum(dim=1)  # [B]
             synth_logits = scale * synth_sim
 
-            # Optional gating to skip already easy synthetic negatives
-            gate = (synth_sim > self.gate_sim).float()
+            # Gate in logit space: skip synthetics easier than gate_sim threshold
+            gate = (synth_logits > self.gate_sim).float()
             num_gated = int(gate.sum().item())
 
             if num_gated > 0:
@@ -183,6 +184,7 @@ class SoftmaxMixLoss(nn.Module):
                 synthetic_loss = synth_logits.mean() * 0.0
 
             avg_synth_sim = synth_sim.mean()
+            avg_synth_logit = synth_logits.mean()
 
             with torch.no_grad():
                 raw_sim = text_emb @ image_emb.T
@@ -207,6 +209,7 @@ class SoftmaxMixLoss(nn.Module):
             'alpha': float(alpha),
             'total_loss': total_loss.item(),
             'avg_synthetic_sim': avg_synth_sim.item(),
+            'avg_synthetic_logit': avg_synth_logit.item(),
             'num_gated': num_gated if alpha > 0 else 0,
             'ot_step': self.current_step,
             'selected_neg_rank_mean': selected_rank,
@@ -220,27 +223,29 @@ class SoftmaxMixLoss(nn.Module):
         self.current_step += 1
         return total_loss, loss_dict
 
-    def _make_plan(self, text_emb, image_emb):
+    def _make_plan(self, text_emb, image_emb, logits_biased):
         B = text_emb.size(0)
         k = min(self.top_k, B - 1) if B > 1 else 1
 
-        raw_sim = text_emb @ image_emb.T  # [B, B]
-        diag_mask = torch.eye(B, device=raw_sim.device, dtype=torch.bool)
-        masked_sim = raw_sim.masked_fill(diag_mask, float('-inf'))
+        diag_mask = torch.eye(B, device=logits_biased.device, dtype=torch.bool)
 
-        # Local neighborhood mask: only top-k non-matching candidates per text.
-        _, topk_indices = torch.topk(masked_sim, k=k, dim=1)
-        local_mask = torch.zeros_like(masked_sim, dtype=torch.bool)
+        # Top-k selection in logit space (ranking identical to cosine since scale > 0)
+        masked_logits = logits_biased.masked_fill(diag_mask, float('-inf'))
+        _, topk_indices = torch.topk(masked_logits, k=k, dim=1)
+        local_mask = torch.zeros(B, B, dtype=torch.bool, device=logits_biased.device)
         local_mask.scatter_(1, topk_indices, True)
         local_mask = local_mask & (~diag_mask)
 
-        # Entropy-regularized OT over masked support.
-        cost = 1.0 - raw_sim
+        # Logit-space cost: hard negatives (high logit) get low cost.
+        # Shift so min cost over off-diagonal = 0.
+        max_logit = masked_logits.max()
+        cost = (max_logit - logits_biased).clamp_min(0.0)
+
         kernel = torch.exp(-cost / self.ot_eps) * local_mask.float()
         kernel = kernel.clamp_min(1e-12)
 
-        a = torch.full((B,), 1.0 / B, device=raw_sim.device)
-        b = torch.full((B,), 1.0 / B, device=raw_sim.device)
+        a = torch.full((B,), 1.0 / B, device=logits_biased.device)
+        b = torch.full((B,), 1.0 / B, device=logits_biased.device)
         u = torch.ones_like(a)
         v = torch.ones_like(b)
 
