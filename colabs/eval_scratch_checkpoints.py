@@ -37,7 +37,9 @@ print(f"Device: {device}")
 with open(RUN_CONFIG) as f:
     raw = yaml.safe_load(f)
 raw["experiment"]["overrides"]["num_workers"] = 2
-config = load_run_config(raw)
+with open(RUN_CONFIG, "w") as f:
+    yaml.dump(raw, f)
+config = load_run_config(RUN_CONFIG)
 
 data = build_data_bundle(config, seed=config.get("seed", 42))
 val_loader_canonical = data["val_loader_canonical"]
