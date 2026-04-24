@@ -39,10 +39,12 @@ with open(RUN_CONFIG) as f:
 raw["experiment"]["overrides"]["num_workers"] = 2
 with open(RUN_CONFIG, "w") as f:
     yaml.dump(raw, f)
-config = load_run_config(RUN_CONFIG)
+run = load_run_config(RUN_CONFIG)
+config = run["experiment_config"]
+dataset_cfg = run["dataset"]
 
-data = build_data_bundle(config)
-val_loader_canonical = data["val_loader_canonical"]
+data = build_data_bundle(config=config, root_dir=os.getcwd(), dataset_cfg=dataset_cfg)
+val_loader_canonical = data.val_loader_canonical
 print(f"Val loader ready: {len(val_loader_canonical.dataset)} samples")
 
 # ── build model skeleton (weights loaded per checkpoint) ─────────────────────
