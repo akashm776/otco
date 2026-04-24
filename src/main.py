@@ -133,6 +133,9 @@ def build_loss(config, device):
             gate_sim=config.get("gate_sim", -0.05),
             ot_eps=config.get("ot_eps", 0.05),
             sinkhorn_iters=config.get("sinkhorn_iters", 30),
+            adaptive_warmup=config.get("adaptive_warmup", False),
+            entropy_threshold=config.get("entropy_threshold", 3.0),
+            entropy_check_freq=config.get("entropy_check_freq", 100),
         ).to(device)
     if config["loss_type"] == "ot_select":
         return OTSelectLoss(
@@ -288,6 +291,11 @@ def main():
                     print(f"    Alpha:                  {loss_dict['alpha']:.4f}")
                     ot_active = loss_dict['alpha'] > 0
                     print(f"    OT Active:              {ot_active}")
+                    if 'ot_ready' in loss_dict:
+                        print(f"    OT Ready (adaptive):    {bool(loss_dict['ot_ready'])}")
+                    warmup_ent = loss_dict.get('warmup_entropy', 0.0)
+                    if warmup_ent and warmup_ent == warmup_ent:  # not nan, not 0
+                        print(f"    Warmup Plan Entropy:    {warmup_ent:.4f}  (threshold={criterion.entropy_threshold:.2f})")
                     if ot_active:
                         print(f"    Synthetic Loss:         {loss_dict['synthetic_loss']:.6f}")
                         print(f"    Num Gated (active/B):   {loss_dict.get('num_gated', 0)}/{loss_dict.get('num_gated', 0) if loss_dict.get('num_gated', 0) > 0 else 'B'}")

@@ -100,7 +100,8 @@ class SoftmaxMixLoss(nn.Module):
     """
     def __init__(self, init_bias=0.0, alpha=0.5, warmup_steps=1000,
                  top_k=32, tau=0.05, update_freq=10, gate_sim=-0.05,
-                 ot_eps=0.05, sinkhorn_iters=30):
+                 ot_eps=0.05, sinkhorn_iters=30,
+                 adaptive_warmup=False, entropy_threshold=3.0, entropy_check_freq=100):
         super().__init__()
         self.logit_bias = nn.Parameter(torch.tensor(init_bias))
         self.alpha_max = alpha
@@ -111,12 +112,24 @@ class SoftmaxMixLoss(nn.Module):
         self.gate_sim = gate_sim
         self.ot_eps = ot_eps
         self.sinkhorn_iters = sinkhorn_iters
+        self.adaptive_warmup = adaptive_warmup
+        self.entropy_threshold = entropy_threshold
+        self.entropy_check_freq = entropy_check_freq
 
         self.current_step = 0
         self.cached_plan = None  # [B, B] OT coupling
         self.cached_local_mask = None
+        # adaptive warmup state
+        self.ot_ready = not adaptive_warmup  # fixed warmup: always ready after warmup_steps
+        self.steps_since_ready = 0
+        self.last_warmup_entropy = float('nan')
 
     def get_alpha(self):
+        if self.adaptive_warmup:
+            if not self.ot_ready:
+                return 0.0
+            progress = min(1.0, self.steps_since_ready / 1000.0)
+            return self.alpha_max * progress
         if self.current_step < self.warmup_steps:
             return 0.0
         progress = min(1.0, (self.current_step - self.warmup_steps) / 1000.0)
@@ -142,6 +155,18 @@ class SoftmaxMixLoss(nn.Module):
         logits_biased = logits + self.logit_bias
         labels = 2 * torch.eye(B, device=logits.device) - 1
         base_loss = -torch.sum(F.logsigmoid(labels * logits_biased)) / (B * B)
+
+        # Adaptive warmup: check plan entropy every entropy_check_freq steps
+        if self.adaptive_warmup and not self.ot_ready:
+            if self.current_step % self.entropy_check_freq == 0:
+                with torch.no_grad():
+                    test_plan, test_mask = self._make_plan(text_emb, image_emb, logits_biased)
+                    local = test_plan * test_mask.float()
+                    local = local / local.sum(dim=1, keepdim=True).clamp_min(1e-8)
+                    entropy = -(local * local.clamp_min(1e-12).log()).sum(dim=1).mean().item()
+                self.last_warmup_entropy = entropy
+                if entropy < self.entropy_threshold:
+                    self.ot_ready = True
 
         alpha = self.get_alpha()
         synthetic_loss = logits.new_tensor(0.0)
@@ -218,9 +243,13 @@ class SoftmaxMixLoss(nn.Module):
             'pos_selected_gap': pos_selected_gap,
             'coupling_entropy': coupling_entropy,
             'coupling_peak_mass': coupling_peak_mass,
+            'ot_ready': int(self.ot_ready),
+            'warmup_entropy': self.last_warmup_entropy if self.adaptive_warmup and not self.ot_ready else 0.0,
         }
 
         self.current_step += 1
+        if self.ot_ready:
+            self.steps_since_ready += 1
         return total_loss, loss_dict
 
     def _make_plan(self, text_emb, image_emb, logits_biased):
