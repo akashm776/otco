@@ -25,6 +25,12 @@ from data.hf_flickr30k_dataset import (
     HFFlickr30kUniqueImageDataset,
     load_hf_flickr30k_splits,
 )
+from data.hf_cub200_dataset import (
+    HFCUB200AllCaptionsDataset,
+    HFCUB200CanonicalCaptionDataset,
+    HFCUB200UniqueImageDataset,
+    load_hf_cub200_splits,
+)
 
 
 @dataclass
@@ -142,6 +148,26 @@ def _build_hf_flickr30k_datasets(config, dataset_name, hf_train_split, hf_val_sp
     return train_dataset, val_dataset_all, val_dataset_canonical, hf_seed_worker, stats
 
 
+def _build_hf_cub200_datasets(config, dataset_name, hf_train_split, hf_val_split):
+    train_grouped, val_grouped, split_info = load_hf_cub200_splits(
+        dataset_name=dataset_name,
+        train_hf_split=hf_train_split,
+        val_hf_split=hf_val_split,
+    )
+    train_dataset = HFCUB200UniqueImageDataset(train_grouped, is_train=True)
+    val_dataset_all = HFCUB200AllCaptionsDataset(val_grouped)
+    val_dataset_canonical = HFCUB200CanonicalCaptionDataset(val_grouped)
+
+    stats = {
+        "dataset_backend": "hf_cub200",
+        "hf_dataset_name": dataset_name,
+        "num_train_images": len(train_grouped.groups),
+        "num_val_images": len(val_grouped.groups),
+    }
+    stats.update(split_info)
+    return train_dataset, val_dataset_all, val_dataset_canonical, hf_seed_worker, stats
+
+
 def build_data_bundle(
     config,
     root_dir=None,
@@ -177,6 +203,13 @@ def build_data_bundle(
             dataset_name=hf_cfg.get("dataset_name", "nlphuji/flickr30k"),
             hf_train_split=hf_cfg.get("train_split", "test"),
             hf_val_split=hf_cfg.get("val_split"),
+        )
+    elif dataset_backend == "hf_cub200":
+        train_dataset, val_dataset_all, val_dataset_canonical, seed_fn, stats = _build_hf_cub200_datasets(
+            config=config,
+            dataset_name=hf_cfg.get("dataset_name", "alkzar90/CC6204-Hackaton-Cub-Dataset"),
+            hf_train_split=hf_cfg.get("train_split", "train"),
+            hf_val_split=hf_cfg.get("val_split", "test"),
         )
     else:
         raise ValueError(f"Unknown dataset backend: {dataset_backend}")
