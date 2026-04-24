@@ -292,6 +292,7 @@ def main():
                         print(f"    Synthetic Loss:         {loss_dict['synthetic_loss']:.6f}")
                         print(f"    Num Gated (active/B):   {loss_dict.get('num_gated', 0)}/{loss_dict.get('num_gated', 0) if loss_dict.get('num_gated', 0) > 0 else 'B'}")
                         print(f"    Avg Synthetic Sim:      {loss_dict.get('avg_synthetic_sim', 0):.4f}")
+                        print(f"    Avg Synthetic Logit:    {loss_dict.get('avg_synthetic_logit', 0):.4f}")
                         if loss_dict.get('selected_neg_rank_mean', 0) > 0:
                             print(f"    Selected Neg Rank:      mean={loss_dict['selected_neg_rank_mean']:.2f}  median={loss_dict.get('selected_neg_rank_median', 0):.2f}")
                             print(f"    Pos - Selected Gap:     {loss_dict.get('pos_selected_gap', 0):.4f}")

@@ -51,6 +51,30 @@ experiments:
     alpha: 0.5
     warmup_steps: 1000
 
+  softmax_mix_k32_logit_from_baseline:
+    batch_size: 64
+    num_epochs: 30
+    unfreeze_strategy: both_last_layer
+    projection_lr: 0.001
+    encoder_lr: 0.00005
+    weight_decay: 0.01
+    grad_clip_norm: 1.0
+    seed: 42
+    model_vision: microsoft/resnet-50
+    model_text: distilbert-base-uncased
+    train_split: 0.9
+    num_workers: 4
+    drop_last: true
+    loss_type: softmax_mix
+    alpha: 0.1
+    warmup_steps: 0
+    top_k: 32
+    tau: 0.05
+    update_freq: 10
+    gate_sim: -4.0
+    ot_eps: 0.05
+    sinkhorn_iters: 30
+
   softmax_mix_k32_from_baseline:
     batch_size: 64
     num_epochs: 30
