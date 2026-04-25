@@ -235,8 +235,13 @@ def main():
         best_avg_recall = ckpt.get("best_avg_recall", 0.0)
         if hasattr(criterion, "current_step") and "criterion_step" in ckpt:
             criterion.current_step = ckpt["criterion_step"]
+        if hasattr(criterion, "ot_ready") and "ot_ready" in ckpt:
+            criterion.ot_ready = ckpt["ot_ready"]
+        if hasattr(criterion, "steps_since_ready") and "steps_since_ready" in ckpt:
+            criterion.steps_since_ready = ckpt["steps_since_ready"]
         print(f"  Resumed at epoch {start_epoch}, step {global_step}, best R@1 {best_avg_recall:.2f}%")
         print(f"  Loss current_step restored to: {getattr(criterion, 'current_step', 'n/a')}")
+        print(f"  OT ready restored to: {getattr(criterion, 'ot_ready', 'n/a')}")
 
     for epoch in range(start_epoch, config["num_epochs"]):
         print(f"\n{'=' * 80}")
@@ -391,6 +396,8 @@ def main():
             "loss": avg_train_loss,
             "best_avg_recall": best_avg_recall,
             "criterion_step": getattr(criterion, "current_step", 0),
+            "ot_ready": getattr(criterion, "ot_ready", True),
+            "steps_since_ready": getattr(criterion, "steps_since_ready", 0),
         }, latest_path)
         print(f"  Latest checkpoint saved (epoch {epoch + 1})")
 
