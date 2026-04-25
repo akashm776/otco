@@ -279,7 +279,7 @@ def main():
             optimizer.step()
             epoch_loss += loss.item()
 
-            if global_step % 100 == 0:
+            if global_step % 100 == 0 or batch_idx == len(train_loader) - 1:
                 mean_diag = logits.diag().mean()
                 mean_offdiag = (logits.sum() - logits.diag().sum()) / (batch_size**2 - batch_size)
                 diag_std = logits.diag().std()
