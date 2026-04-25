@@ -95,11 +95,25 @@ def print_table(epochs, out_path):
         f"{'I→T R@1':>8} {'I→T R@5':>8} {'I→T R@10':>9} | "
         f"{'Avg R@1':>8}"
     )
+    # Epochs 5/10/15 from checkpoint eval script (R@5/R@10 not captured then)
+    early = [
+        {"epoch":  5, "can_t2i_r1": 0.07, "can_i2t_r1": 0.03, "avg_r1": 0.05},
+        {"epoch": 10, "can_t2i_r1": 0.38, "can_i2t_r1": 0.45, "avg_r1": 0.41},
+        {"epoch": 15, "can_t2i_r1": 0.38, "can_i2t_r1": 0.78, "avg_r1": 0.58},
+    ]
+
     sep = "-" * len(header)
     lines = [
         "CUB-200 Baseline — Canonical Recall (first caption only, 5794-image pool)",
         sep, header, sep,
     ]
+    for e in early:
+        lines.append(
+            f"{e['epoch']:>3} | "
+            f"{e['can_t2i_r1']:>7.2f}%      —         — | "
+            f"{e['can_i2t_r1']:>7.2f}%      —         — | "
+            f"{e['avg_r1']:>7.2f}%"
+        )
     for e in [e for e in epochs if e["epoch"] % 5 == 0]:
         lines.append(
             f"{e['epoch']:>3} | "
