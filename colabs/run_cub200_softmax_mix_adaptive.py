@@ -8,7 +8,7 @@ RESULTS_FILE = f"results/cub200_{CONFIG_NAME}_results.txt"
 token = userdata.get("GITHUB_TOKEN")
 repo_url = f"https://{token}@github.com/akashm776/otco.git"
 repo_dir = "/content/otco"
-checkpoint_dir = "/content/drive/MyDrive/otco_checkpoints/cub200_softmax_mix_adaptive"
+checkpoint_dir = "/content/drive/MyDrive/otco_checkpoints/cub200_softmax_mix_adaptive_v2"
 
 drive.mount('/content/drive')
 os.makedirs(checkpoint_dir, exist_ok=True)
