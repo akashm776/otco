@@ -100,7 +100,7 @@ def print_table(epochs, out_path):
         "CUB-200 Baseline — Canonical Recall (first caption only, 5794-image pool)",
         sep, header, sep,
     ]
-    for e in epochs:
+    for e in [e for e in epochs if e["epoch"] % 5 == 0]:
         lines.append(
             f"{e['epoch']:>3} | "
             f"{e['can_t2i_r1']:>7.2f}% {e['can_t2i_r5']:>7.2f}% {e['can_t2i_r10']:>8.2f}% | "
