@@ -249,6 +249,10 @@ def main():
         print(f"  Cached plan restored: {getattr(criterion, 'cached_plan', None) is not None}")
 
     for epoch in range(start_epoch, config["num_epochs"]):
+        if hasattr(criterion, "cached_plan"):
+            criterion.cached_plan = None
+            criterion.cached_local_mask = None
+
         print(f"\n{'=' * 80}")
         print(f"EPOCH {epoch + 1}/{config['num_epochs']}")
         print(f"{'=' * 80}")
