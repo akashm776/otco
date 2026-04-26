@@ -323,6 +323,18 @@ def main():
                         if loss_dict.get('coupling_entropy', 0) > 0:
                             print(f"    Coupling Entropy:       {loss_dict['coupling_entropy']:.4f}")
                             print(f"    Coupling Peak Mass:     {loss_dict.get('coupling_peak_mass', 0):.4f}")
+                        if 'alpha_effective' in loss_dict:
+                            a_eff = loss_dict['alpha_effective']
+                            a_sched = loss_dict['alpha']
+                            flag = ""
+                            if loss_dict.get('ot_suppressed_entropy'):
+                                flag = "  [suppressed: diffuse plan]"
+                            elif loss_dict.get('ot_suppressed_too_easy'):
+                                flag = "  [suppressed: too easy]"
+                            elif loss_dict.get('ot_downweighted_too_hard'):
+                                flag = "  [downweighted: too hard]"
+                            print(f"    Alpha Effective:        {a_eff:.4f} (scheduled={a_sched:.4f}){flag}")
+                            print(f"    Gap Bucket:             {loss_dict.get('gap_bucket', '?')}")
                 if "select_loss" in loss_dict and loss_dict.get("select_loss", 0) > 0:
                     print(f"  OT-Select Loss: {loss_dict['select_loss']:.4f}")
                     print(f"  Avg Selected Sim: {loss_dict.get('avg_selected_sim', 0):.4f}")
