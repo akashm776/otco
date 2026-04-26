@@ -33,6 +33,7 @@ from data.hf_cub200_dataset import (
     load_hf_cub200_splits,
 )
 from data.stratified_sampler import StratifiedClassSampler
+from data.mixed_sampler import MixedBatchSampler
 
 
 @dataclass
@@ -220,6 +221,7 @@ def build_data_bundle(
         raise ValueError(f"Unknown dataset backend: {dataset_backend}")
 
     use_stratified = config.get("stratified_batching", False) and class_labels is not None
+    use_mixed = config.get("mixed_batching", False) and class_labels is not None
     stratified_sampler = None
 
     if use_stratified:
@@ -227,6 +229,23 @@ def build_data_bundle(
         images_per_class = config["batch_size"] // classes_per_batch
         stratified_sampler = StratifiedClassSampler(
             class_labels=class_labels,
+            classes_per_batch=classes_per_batch,
+            images_per_class=images_per_class,
+            seed=config["seed"],
+        )
+        train_loader = DataLoader(
+            train_dataset,
+            batch_sampler=stratified_sampler,
+            collate_fn=collate_fn,
+            num_workers=config["num_workers"],
+            worker_init_fn=seed_fn,
+        )
+    elif use_mixed:
+        classes_per_batch = config.get("classes_per_batch", 4)
+        images_per_class = config.get("images_per_class", 4)
+        stratified_sampler = MixedBatchSampler(
+            class_labels=class_labels,
+            batch_size=config["batch_size"],
             classes_per_batch=classes_per_batch,
             images_per_class=images_per_class,
             seed=config["seed"],
@@ -265,7 +284,7 @@ def build_data_bundle(
         worker_init_fn=seed_fn,
     )
 
-    if use_stratified:
+    if use_stratified or use_mixed:
         steps_per_epoch = len(stratified_sampler)
     else:
         steps_per_epoch = len(train_dataset) // config["batch_size"]
