@@ -166,6 +166,24 @@ Note: baseline at ep20 was 0.78% but peaked at ep19 (0.86%) — same non-monoton
 
 > **Verdict: promising, inconclusive.** Mixed leads the three-way comparison at ep15, ep20, and ep21. Trajectory variance is high (non-monotone in all three runs). Whether the ep21 lead holds into the ep30–50 acceleration phase is unknown. Full run needed for a definitive comparison.
 
+#### OT-Mix adaptive gated — QUEUED
+
+Same config as adaptive (`gate_sim=-4.0`, `entropy_threshold=3.0`, `alpha=0.05`, seed=42). Adds per-step conditional alpha: OT loss suppressed when plan is diffuse (entropy > 3.0) or synthetic is too easy (gap > +0.10); downweighted to 25% when synthetic dominates positive (gap < −0.07).
+
+**Hypothesis:** instability in adaptive and mixed comes from unconditional OT pressure in stale/easy/overhard steps. Gating should reduce validation oscillation while preserving the useful hard-negative regime (entropy 2.0–2.5, rank 1–3, gap in [−0.05, +0.05]).
+
+**Key comparison metrics** (to be filled after run):
+
+| Metric | Baseline | Adaptive | Adaptive Gated |
+|---|---|---|---|
+| Best canonical Avg R@1 | 1.38% | 1.35% | ? |
+| Final canonical Avg R@1 | 1.38% | 1.28% | ? |
+| Epoch-to-epoch std | ? | ? | ? |
+| Largest validation dip | ? | ? | ? |
+| Useful % | — | — | ? |
+| Too easy suppressed % | — | — | ? |
+| Entropy suppressed % | — | — | ? |
+
 ---
 
 ## Experiment Logs
@@ -179,6 +197,7 @@ Chronological research log in [`experiment_logs/`](experiment_logs/):
 | 2026-04-22 | [`22-4-26-logs.md`](experiment_logs/22-4-26-logs.md) | **Key finding:** cosine-space OT is degenerate with SigLIP embeddings. Logit-space OT fixes it. Cosine entropy ≈ 3.33 (uniform, rank 17); logit entropy ≈ 2.0–2.5 (sharp, rank 1–2) |
 | 2026-04-23 | [`23-4-26-logs.md`](experiment_logs/23-4-26-logs.md) | α=0.1 over-destabilizes converged Flickr30K model (−3.15% dip, never recovers). α=0.05 reduces dip to −1.45%, peaks at 32.50% |
 | 2026-04-24 | [`24-4-26-logs.md`](experiment_logs/24-4-26-logs.md) | **Null result confirmed:** continued baseline reaches 32.50% at ep17 — 11 epochs before OT-Mix. Decision to move to CUB-200 |
+| 2026-04-26 | [`26-4-26-logs.md`](experiment_logs/26-4-26-logs.md) | **Gating hypothesis:** OT-Mix instability from unconditional pressure, not bad negatives. Three failure regimes identified. `compute_alpha_effective()` implemented with per-step entropy/gap gating. `cub200_softmax_mix_adaptive_gated` queued. |
 
 ---
 
@@ -200,6 +219,9 @@ SigLIP's learned `logit_bias` compresses cosine similarities into a very narrow 
 | `alpha` | Max weight of OT loss; ramps linearly over 1000 steps after `ot_ready` |
 | `adaptive_warmup` | Wait for coupling entropy < `entropy_threshold` before activating OT |
 | `entropy_threshold` | Trigger level — log(32) ≈ 3.47 is uniform; healthy operating range ≈ 2.0–2.5 |
+| `gap_suppress_easy` | Suppress OT when `pos_selected_gap` > threshold (synthetic already beaten by positive) |
+| `gap_downweight_hard` | Downweight OT when `pos_selected_gap` < threshold (synthetic beats positive) |
+| `hard_alpha_scale` | Scale factor for downweighted steps (default 0.25) |
 
 ---
 
