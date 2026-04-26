@@ -121,9 +121,7 @@ Random batching. `gate_sim=-4.0`, `entropy_threshold=3.0`, `alpha=0.05`, adaptiv
 | **49** | **0.98%** | **1.71%** | **1.35%** | **+0.06** |
 | 50 | 0.93% | 1.62% | 1.28% | -0.10 |
 
-> **Trajectory note:** OT-Mix learns faster early and stays competitive through epoch 30. It briefly beats baseline at epoch 49 on same-epoch Avg R@1, but baseline finishes stronger at epoch 50. Best OT-Mix checkpoint is epoch 49, not epoch 50.
-> > **Verdict: competitive but not a clean win.**
-> OT-Mix adaptive confirms that OT finds meaningful hard-negative structure on CUB-200 and produces a faster early trajectory. However, the baseline consolidates better late and finishes slightly higher: 1.38 Avg R@1 vs OT-Mix best 1.35. This suggests the OT signal is useful but may need better scheduling, gating, or batching to turn early hard-negative structure into a reliable final gain.
+> **Verdict: competitive but not a clean win.** OT-Mix adaptive confirms that OT finds meaningful hard-negative structure on CUB-200 and produces a faster early trajectory. However, the baseline consolidates better late and finishes slightly higher: 1.38% vs OT-Mix best 1.35% at ep49. This suggests the OT signal is useful but may need better scheduling, gating, or batching to turn early hard-negative structure into a reliable final gain.
 
 #### OT-Mix stratified — RUNNING (ep1–22 observed)
 
@@ -137,11 +135,36 @@ Stratified batching: K=16 classes × 4 images = B=64. `gate_sim=-4.5`, `entropy_
 
 > **Verdict: inconclusive and confounded.** Two things changed from adaptive: (1) stratified batching, and (2) a more permissive OT schedule (entropy_threshold 3.0→3.5, gate_sim −4.0→−4.5). Cannot cleanly attribute underperformance to batching vs OT schedule. Full 50-epoch run in progress for data; not used as a design conclusion.
 
-#### OT-Mix mixed batching — QUEUED
+#### OT-Mix mixed batching — RUNNING (ep1–22 observed)
 
-25% stratified (4 classes × 4 images = 16 within-class hard negatives) + 75% random (48 images, full 200-class diversity). OT schedule identical to adaptive (`gate_sim=-4.0`, `entropy_threshold=3.0`). **Only the batching strategy differs** — isolates batching effect cleanly.
+25% stratified (4 classes × 4 images = 16 within-class hard negatives) + 75% random (48 images, full 200-class diversity). OT schedule identical to adaptive (`gate_sim=-4.0`, `entropy_threshold=3.0`). **Only the batching strategy differs from adaptive** — isolates batching effect cleanly.
 
-> **Hypothesis:** mixed batching gives OT the within-class hard negatives it needs while restoring the cross-class diversity that pure stratified sacrifices.
+| Ep | Avg R@1 | vs Baseline | vs Adaptive |
+|---|---|---|---|
+| 5 | 0.06% | +0.01% | +0.02% |
+| 10 | 0.45% | +0.04% | −0.02% |
+| 15 | 0.68% | +0.10% | +0.14% |
+| 18 | 0.81% | −0.03% | +0.02% |
+| 20 | 0.89% | +0.11% | +0.04% |
+| **21** | **0.98%** | **+0.11%** | — |
+| 22 | 0.69% | −0.18% | — |
+
+OT triggered at ep9 (coupling entropy dropped below 3.0). Alpha ramps over ~1000 steps ≈ 10.75 epochs, so full alpha reached ≈ep20. Trajectory is non-monotone: high-water mark at ep21 (0.98%), then dip to 0.69% at ep22 — same pattern seen in baseline (ep19→ep20: 0.86%→0.78%) and adaptive.
+
+**Three-way comparison (canonical Avg R@1):**
+
+| Ep | Baseline | Adaptive | Mixed |
+|---|---|---|---|
+| 10 | 0.41% | 0.47% | 0.45% |
+| 15 | 0.58% | 0.54% | **0.68%** |
+| 20 | 0.78% | 0.85% | **0.89%** |
+| 21 | 0.87% | — | **0.98%** |
+| 30 | 1.10% | 1.11% | ? |
+| 50 | **1.38%** | 1.28% | ? |
+
+Note: baseline at ep20 was 0.78% but peaked at ep19 (0.86%) — same non-monotone oscillation. Mixed's 0.98% at ep21 is already above baseline's position at this stage. The decisive window is ep30–50, where baseline made its strongest gains (+0.28pp from ep30 to ep50).
+
+> **Verdict: promising, inconclusive.** Mixed leads the three-way comparison at ep15, ep20, and ep21. Trajectory variance is high (non-monotone in all three runs). Whether the ep21 lead holds into the ep30–50 acceleration phase is unknown. Full run needed for a definitive comparison.
 
 ---
 
