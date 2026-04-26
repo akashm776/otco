@@ -258,6 +258,8 @@ def main():
         print(f"{'=' * 80}")
 
         train_dataset.set_epoch(epoch)
+        if data_bundle.stratified_sampler is not None:
+            data_bundle.stratified_sampler.set_epoch(epoch)
         model.train()
         epoch_loss = 0.0
 
