@@ -92,15 +92,19 @@ All runs: ResNet-50 + DistilBERT, 512-d, `both_last_layer` unfreezing, batch siz
 
 #### Baseline — COMPLETE
 
+Random batching. Standard SigLIP-style baseline, no OT term.
+
 | Ep | T→I R@1 | I→T R@1 | Avg R@1 |
-|---|---|---|---|
+|---|---:|---:|---:|
 | 10 | 0.38% | 0.45% | 0.41% |
 | 20 | 0.64% | 0.91% | 0.78% |
 | 30 | 0.81% | 1.38% | 1.10% |
 | 40 | 0.81% | 1.12% | 0.97% |
+| 45 | 0.93% | 1.55% | 1.24% |
+| 47 | 1.12% | 1.50% | 1.31% |
 | **50** | **1.05%** | **1.71%** | **1.38%** |
 
-Note non-monotone trajectory — gains accelerate again at ep45–50.
+> **Trajectory note:** Non-monotone but strong finish. Baseline dips around epoch 40, then accelerates again around epochs 45–50. Final checkpoint is the best observed checkpoint.
 
 #### OT-Mix adaptive — COMPLETE
 
