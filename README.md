@@ -122,6 +122,8 @@ Random batching. `gate_sim=-4.0`, `entropy_threshold=3.0`, `alpha=0.05`, adaptiv
 | 50 | 0.93% | 1.62% | 1.28% | -0.10 |
 
 > **Trajectory note:** OT-Mix learns faster early and stays competitive through epoch 30. It briefly beats baseline at epoch 49 on same-epoch Avg R@1, but baseline finishes stronger at epoch 50. Best OT-Mix checkpoint is epoch 49, not epoch 50.
+> > **Verdict: competitive but not a clean win.**
+> OT-Mix adaptive confirms that OT finds meaningful hard-negative structure on CUB-200 and produces a faster early trajectory. However, the baseline consolidates better late and finishes slightly higher: 1.38 Avg R@1 vs OT-Mix best 1.35. This suggests the OT signal is useful but may need better scheduling, gating, or batching to turn early hard-negative structure into a reliable final gain.
 
 #### OT-Mix stratified — RUNNING (ep1–22 observed)
 
