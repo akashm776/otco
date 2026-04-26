@@ -102,18 +102,22 @@ All runs: ResNet-50 + DistilBERT, 512-d, `both_last_layer` unfreezing, batch siz
 
 Note non-monotone trajectory — gains accelerate again at ep45–50.
 
-#### OT-Mix adaptive — RUNNING (ep1–19 observed)
+#### OT-Mix adaptive — COMPLETE
 
 Random batching. `gate_sim=-4.0`, `entropy_threshold=3.0`, `alpha=0.05`, adaptive OT warmup.
 
-| Ep | Avg R@1 | vs Baseline (same ep) |
-|---|---|---|
-| 10 | ~0.41% | ≈ flat |
-| 16 | 0.73% | −0.05% |
-| 17 | 0.68% | −0.10% |
-| 18 | 0.79% | +0.01% |
+| Ep | T→I R@1 | I→T R@1 | Avg R@1 | vs Baseline same ep |
+|---|---:|---:|---:|---:|
+| 10 | 0.35% | 0.59% | 0.47% | +0.06 |
+| 20 | 0.57% | 1.12% | 0.85% | +0.07 |
+| 30 | 0.81% | 1.42% | 1.11% | +0.01 |
+| 40 | 0.88% | 0.95% | 0.91% | -0.06 |
+| 45 | 0.79% | 1.55% | 1.17% | -0.07 |
+| 47 | 0.93% | 1.55% | 1.24% | -0.07 |
+| **49** | **0.98%** | **1.71%** | **1.35%** | **+0.06** |
+| 50 | 0.93% | 1.62% | 1.28% | -0.10 |
 
-> **Verdict: inconclusive.** OT plan reaches rank-1 selection (same-species negatives) by ep10, confirming OT finds meaningful structure on CUB-200. Performance roughly tracks baseline through ep18. Full 50-epoch run needed.
+> **Trajectory note:** OT-Mix learns faster early and stays competitive through epoch 30. It briefly beats baseline at epoch 49 on same-epoch Avg R@1, but baseline finishes stronger at epoch 50. Best OT-Mix checkpoint is epoch 49, not epoch 50.
 
 #### OT-Mix stratified — RUNNING (ep1–22 observed)
 
