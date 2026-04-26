@@ -213,4 +213,4 @@ Results log to `experiments/exp_<timestamp>.json` and to `results/` when run via
 
 ## Citation
 
-Paper in preparation.
+Paper in preparation. Older draft is at the root level.
