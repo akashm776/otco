@@ -224,3 +224,16 @@ Results log to `experiments/exp_<timestamp>.json` and to `results/` when run via
 ## Citation
 
 Paper in preparation. Older draft is at the root level.
+
+
+## Future Research Directions
+
+### Epochwise OT Plan Bank
+
+One extension of OTCO is to store sparse OT plans across epochs rather than storing large dictionaries or queues of generated negative examples. Each stored plan can be viewed as a transport operator over a support set: when paired with stored or current embeddings, it can regenerate barycentric synthetic negatives on demand.
+
+This differs from MoCo-style memory queues, which store representations. An OT plan bank would instead store relational structure: which examples transport mass to which other examples, how concentrated that transport is, and how the hard-negative geometry evolves during training.
+
+A second direction is to compute image-image, text-text, and image-text OT plans over a fixed holdout/probe set at each epoch. The trajectory of these plans could be used to analyze plan entropy, coupling drift, support overlap, and hard-negative stability. In the long term, interpolating between epochwise plans may provide a curriculum for generating negatives of different difficulty levels.
+
+This is currently a research direction, not an implemented component.
