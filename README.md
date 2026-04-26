@@ -313,16 +313,16 @@ Adds per-step conditional alpha. OT loss is:
 
 **Key comparison metrics:**
 
-| Metric | Baseline | Adaptive | Adaptive Gated |
-|---|---:|---:|---:|
-| Best canonical Avg R@1 | 1.38% | 1.35% | ? |
-| Final canonical Avg R@1 | 1.38% | 1.28% | ? |
-| Epoch-to-epoch std | 0.134 | 0.134 | ? |
-| Largest validation dip | ? | ? | ? |
-| Useful % | — | — | ? |
-| Too easy suppressed % | — | — | ? |
-| Too hard downweighted % | — | — | ? |
-| Entropy suppressed % | — | — | ? |
+| Metric | Baseline | Adaptive | Mixed | Adaptive Gated |
+|---|---:|---:|---:|---:|
+| Best canonical Avg R@1 | 1.38% (ep50) | 1.35% (ep49) | 1.32% (ep50) | ? |
+| Final canonical Avg R@1 | 1.38% | 1.28% | 1.32% | ? |
+| Epoch-to-epoch std (ep30–50) | 0.134 | 0.134 | 0.110 | ? |
+| Largest validation dip | −0.27pp (ep42→43) | −0.29pp (ep30→31) | −0.31pp (ep28→29) | ? |
+| Useful % | — | — | 52% (74/141) | ? |
+| Too easy suppressed % | — | — | 42% (59/141) | ? |
+| Too hard downweighted % | — | — | 0% (0/141) | ? |
+| Entropy suppressed % | — | — | 0% (0/141) | ? |
 
 The purpose of this run is not only to improve R@1. It is also to test whether conditional OT pressure suppresses stale/easy OT states while preserving useful rank-1/rank-2 synthetic negatives.
 
