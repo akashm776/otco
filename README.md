@@ -58,7 +58,7 @@ A few conclusions are already clear:
 
 - OT-derived synthetic negatives are **not automatically helpful**.
 - Performance depends strongly on encoder quality, the candidate negative pool, batching strategy, and OT activation schedule.
-- Some settings produce **null results**, which is an important part of the research story.
+- Some settings produce **null results**.
 - Current work is focused on understanding **why** OT helps in some regimes and fails in others.
 
 This repository should be read as a **research artifact**, not a finished benchmark report.
