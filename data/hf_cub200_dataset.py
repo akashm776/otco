@@ -42,13 +42,35 @@ def _build_grouped_split(hf_split, split_name):
 def get_cub200_class_labels(grouped_split):
     """Return list of class labels parallel to grouped_split.groups.
 
-    CUB-200 file_name format: '001.Black_footed_Albatross/image.jpg'
-    Class label = directory prefix before the first '/'.
+    Priority:
+    1. 'label' column in the raw HF split (integer class index 0-199)
+    2. Directory prefix of file_name: '001.Black_footed_Albatross/img.jpg' → '001.Black_footed_Albatross'
+    3. Species name from filename: 'Black_Footed_Albatross_0001_796111.jpg' → 'Black_Footed_Albatross'
     """
+    hf_split = grouped_split.hf_split
+    first = hf_split[0] if len(hf_split) > 0 else {}
+
+    if "label" in first:
+        return [str(hf_split[g.row_index]["label"]) for g in grouped_split.groups]
+
     labels = []
     for group in grouped_split.groups:
-        label = group.image_key.split("/")[0]
-        labels.append(label)
+        key = group.image_key
+        if "/" in key:
+            labels.append(key.split("/")[0])
+        else:
+            # Strip extension and trailing numeric IDs from bare filenames
+            name = key.rsplit(".", 1)[0]
+            for _ in range(2):
+                parts = name.rsplit("_", 1)
+                if len(parts) == 2 and parts[1].isdigit():
+                    name = parts[0]
+                else:
+                    break
+            labels.append(name)
+
+    unique = len(set(labels))
+    print(f"get_cub200_class_labels: {unique} unique classes from {len(labels)} images")
     return labels
 
 
