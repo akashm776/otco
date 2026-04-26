@@ -4,7 +4,7 @@ Research code for studying whether **Optimal Transport (OT)** can generate usefu
 
 ## Status
 
-This is an **active research repository**. The codebase is functional and experiments are ongoing, but results should be treated as **exploratory rather than final**.
+This is an **active research repository**. Several core experiments are complete, and follow-up experiments are ongoing. Results should be treated as **exploratory rather than final**.
 
 The goal of this repo is not to assume that OT-generated negatives always help. The goal is to understand:
 
@@ -195,7 +195,7 @@ The CUB-200 results should not be read only through recall. The intermediate log
 
 ### Useful OT regime
 
-Mixed batching often produces the desired OT behavior:
+Across sampled/logged diagnostic steps, mixed batching frequently produces the desired OT behavior:
 
 - selected synthetic negatives are usually rank 1–3 during active useful steps
 - coupling entropy is sharp, usually around 2.1–2.6
@@ -233,9 +233,9 @@ This is the main training-dynamics issue. OT can find useful hard negatives, but
 
 ### Parsed diagnostic summary
 
-Logged OT diagnostic steps show the same pattern:
+Sampled/logged OT diagnostic steps show the same pattern:
 
-| Diagnostic from logged steps | Adaptive | Mixed | Read |
+| Diagnostic from sampled/logged OT steps | Adaptive | Mixed | Read |
 |---|---:|---:|---|
 | OT diagnostic steps parsed | 96 | 141 | Mixed log has more sampled OT steps |
 | Steps with positive synthetic loss | 55 / 96 | 82 / 141 | Both fire OT in about 58% of sampled OT steps |
@@ -275,6 +275,8 @@ Across epochs 30–50:
 | OT-Mix mixed | 1.089% | **0.110** | 0.93 | 1.32 | 1.32 |
 
 Mixed looked unstable earlier, but from epoch 30 onward it is actually the least variable of the three. Its limitation is not late collapse. Its limitation is that the final ceiling is still lower than baseline.
+
+This stability summary only covers epochs 30–50; earlier mixed training was more volatile, including the epoch-29 Text → Image wobble.
 
 ---
 
@@ -318,7 +320,7 @@ Adds per-step conditional alpha. OT loss is:
 | Best canonical Avg R@1 | 1.38% (ep50) | 1.35% (ep49) | 1.32% (ep50) | ? |
 | Final canonical Avg R@1 | 1.38% | 1.28% | 1.32% | ? |
 | Epoch-to-epoch std (ep30–50) | 0.134 | 0.134 | 0.110 | ? |
-| Largest validation dip | −0.27pp (ep42→43) | −0.29pp (ep30→31) | −0.31pp (ep28→29) | ? |
+| Largest validation dip (pp) | −0.27pp (ep42→43) | −0.29pp (ep30→31) | −0.31pp (ep28→29) | ? |
 | Useful % | — | — | 52% (74/141) | ? |
 | Too easy suppressed % | — | — | 42% (59/141) | ? |
 | Too hard downweighted % | — | — | 0% (0/141) | ? |
