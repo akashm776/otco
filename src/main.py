@@ -136,6 +136,9 @@ def build_loss(config, device):
             adaptive_warmup=config.get("adaptive_warmup", False),
             entropy_threshold=config.get("entropy_threshold", 3.0),
             entropy_check_freq=config.get("entropy_check_freq", 100),
+            gap_suppress_easy=config.get("gap_suppress_easy", 0.10),
+            gap_downweight_hard=config.get("gap_downweight_hard", -0.07),
+            hard_alpha_scale=config.get("hard_alpha_scale", 0.25),
         ).to(device)
     if config["loss_type"] == "ot_select":
         return OTSelectLoss(
@@ -304,8 +307,9 @@ def main():
                 if "synthetic_loss" in loss_dict:
                     print(f"\n  OT-MIX STATE")
                     print(f"    OT Step (loss counter): {loss_dict.get('ot_step', '?')}")
-                    print(f"    Alpha:                  {loss_dict['alpha']:.4f}")
-                    ot_active = loss_dict['alpha'] > 0
+                    alpha_key = 'alpha_scheduled' if 'alpha_scheduled' in loss_dict else 'alpha'
+                    print(f"    Alpha:                  {loss_dict[alpha_key]:.4f}")
+                    ot_active = loss_dict[alpha_key] > 0
                     print(f"    OT Active:              {ot_active}")
                     if 'ot_ready' in loss_dict:
                         print(f"    OT Ready (adaptive):    {bool(loss_dict['ot_ready'])}")
@@ -324,8 +328,10 @@ def main():
                             print(f"    Coupling Entropy:       {loss_dict['coupling_entropy']:.4f}")
                             print(f"    Coupling Peak Mass:     {loss_dict.get('coupling_peak_mass', 0):.4f}")
                         if 'alpha_effective' in loss_dict:
+                            _bucket_names = {0: "useful", 1: "too_easy", 2: "too_hard", 3: "diffuse", 4: "inactive"}
                             a_eff = loss_dict['alpha_effective']
-                            a_sched = loss_dict['alpha']
+                            a_sched = loss_dict.get('alpha_scheduled', loss_dict.get('alpha', 0))
+                            bucket_id = loss_dict.get('gap_bucket_id', -1)
                             flag = ""
                             if loss_dict.get('ot_suppressed_entropy'):
                                 flag = "  [suppressed: diffuse plan]"
@@ -334,7 +340,7 @@ def main():
                             elif loss_dict.get('ot_downweighted_too_hard'):
                                 flag = "  [downweighted: too hard]"
                             print(f"    Alpha Effective:        {a_eff:.4f} (scheduled={a_sched:.4f}){flag}")
-                            print(f"    Gap Bucket:             {loss_dict.get('gap_bucket', '?')}")
+                            print(f"    Gap Bucket:             {_bucket_names.get(bucket_id, '?')}")
                 if "select_loss" in loss_dict and loss_dict.get("select_loss", 0) > 0:
                     print(f"  OT-Select Loss: {loss_dict['select_loss']:.4f}")
                     print(f"  Avg Selected Sim: {loss_dict.get('avg_selected_sim', 0):.4f}")

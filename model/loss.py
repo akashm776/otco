@@ -3,6 +3,40 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+def compute_alpha_effective(
+    alpha,
+    coupling_entropy,
+    pos_selected_gap,
+    entropy_threshold=3.0,
+    gap_suppress_easy=0.10,
+    gap_downweight_hard=-0.07,
+    hard_alpha_scale=0.25,
+):
+    """
+    Return (alpha_effective, gap_bucket_id) for one training step.
+
+    Gap bucket IDs:
+      0 = useful     (-0.05 <= gap <= gap_suppress_easy)
+      1 = too_easy   (gap > gap_suppress_easy)
+      2 = too_hard   (gap < gap_downweight_hard)
+      3 = diffuse    (coupling_entropy > entropy_threshold)
+      4 = inactive   (alpha == 0)
+    """
+    if alpha == 0.0:
+        return 0.0, 4
+
+    if coupling_entropy > entropy_threshold:
+        return 0.0, 3
+
+    if pos_selected_gap > gap_suppress_easy:
+        return 0.0, 1
+
+    if pos_selected_gap < gap_downweight_hard:
+        return alpha * hard_alpha_scale, 2
+
+    return alpha, 0
+
+
 def _negative_rank_stats(raw_sim, selected_indices):
     """Rank diagnostics for chosen negatives within each batch row."""
     bsz = raw_sim.size(0)
@@ -231,38 +265,20 @@ class SoftmaxMixLoss(nn.Module):
                 coupling_entropy = row_entropy.mean().item()
                 coupling_peak_mass = local_mass.max(dim=1).values.mean().item()
 
-        # Conditional alpha: suppress or downweight OT when signal quality is poor
-        alpha_effective = alpha
-        suppressed_entropy = False
-        suppressed_too_easy = False
-        downweighted_too_hard = False
-        if alpha > 0:
-            if coupling_entropy > self.entropy_threshold:
-                alpha_effective = 0.0
-                suppressed_entropy = True
-            elif pos_selected_gap > self.gap_suppress_easy:
-                alpha_effective = 0.0
-                suppressed_too_easy = True
-            elif pos_selected_gap < self.gap_downweight_hard:
-                alpha_effective = alpha * self.hard_alpha_scale
-                downweighted_too_hard = True
-
-        # Gap bucket for analysis: maps pos_selected_gap to a named regime
-        if pos_selected_gap > self.gap_suppress_easy:
-            gap_bucket = "easy"
-        elif pos_selected_gap >= -0.05:
-            gap_bucket = "useful"
-        elif pos_selected_gap >= self.gap_downweight_hard:
-            gap_bucket = "borderline"
-        else:
-            gap_bucket = "hard"
+        alpha_effective, gap_bucket_id = compute_alpha_effective(
+            alpha, coupling_entropy, pos_selected_gap,
+            entropy_threshold=self.entropy_threshold,
+            gap_suppress_easy=self.gap_suppress_easy,
+            gap_downweight_hard=self.gap_downweight_hard,
+            hard_alpha_scale=self.hard_alpha_scale,
+        )
 
         total_loss = base_loss + alpha_effective * synthetic_loss
 
         loss_dict = {
             'base_loss': base_loss.item(),
             'synthetic_loss': synthetic_loss.item(),
-            'alpha': float(alpha),
+            'alpha_scheduled': float(alpha),
             'alpha_effective': float(alpha_effective),
             'total_loss': total_loss.item(),
             'avg_synthetic_sim': avg_synth_sim.item(),
@@ -277,10 +293,13 @@ class SoftmaxMixLoss(nn.Module):
             'coupling_peak_mass': coupling_peak_mass,
             'ot_ready': int(self.ot_ready),
             'warmup_entropy': self.last_warmup_entropy if self.adaptive_warmup and not self.ot_ready else 0.0,
-            'ot_suppressed_entropy': int(suppressed_entropy),
-            'ot_suppressed_too_easy': int(suppressed_too_easy),
-            'ot_downweighted_too_hard': int(downweighted_too_hard),
-            'gap_bucket': gap_bucket,
+            'ot_suppressed_entropy': float(gap_bucket_id == 3),
+            'ot_suppressed_too_easy': float(gap_bucket_id == 1),
+            'ot_downweighted_too_hard': float(gap_bucket_id == 2),
+            'gap_bucket_id': gap_bucket_id,
+            'gap_bucket_useful': float(gap_bucket_id == 0),
+            'gap_bucket_too_easy': float(gap_bucket_id == 1),
+            'gap_bucket_too_hard': float(gap_bucket_id == 2),
         }
 
         self.current_step += 1
