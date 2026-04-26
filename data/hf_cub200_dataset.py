@@ -18,6 +18,7 @@ __all__ = [
     "HFCUB200AllCaptionsDataset",
     "HFCUB200CanonicalCaptionDataset",
     "load_hf_cub200_splits",
+    "get_cub200_class_labels",
     "seed_worker",
 ]
 
@@ -36,6 +37,19 @@ def _build_grouped_split(hf_split, split_name):
             continue
         groups.append(HFGroupedImage(row_index=row_index, image_key=image_key, captions=captions))
     return HFGroupedSplit(split_name=split_name, hf_split=hf_split, schema=_SCHEMA, groups=groups)
+
+
+def get_cub200_class_labels(grouped_split):
+    """Return list of class labels parallel to grouped_split.groups.
+
+    CUB-200 file_name format: '001.Black_footed_Albatross/image.jpg'
+    Class label = directory prefix before the first '/'.
+    """
+    labels = []
+    for group in grouped_split.groups:
+        label = group.image_key.split("/")[0]
+        labels.append(label)
+    return labels
 
 
 def load_hf_cub200_splits(

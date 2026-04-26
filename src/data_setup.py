@@ -29,8 +29,10 @@ from data.hf_cub200_dataset import (
     HFCUB200AllCaptionsDataset,
     HFCUB200CanonicalCaptionDataset,
     HFCUB200UniqueImageDataset,
+    get_cub200_class_labels,
     load_hf_cub200_splits,
 )
+from data.stratified_sampler import StratifiedClassSampler
 
 
 @dataclass
@@ -43,6 +45,7 @@ class DataBundle:
     val_loader_all: object
     val_loader_canonical: object
     stats: dict
+    stratified_sampler: object = None
 
 
 def _load_local_flickr8k_from_disk(root_dir, train_split):
@@ -157,6 +160,7 @@ def _build_hf_cub200_datasets(config, dataset_name, hf_train_split, hf_val_split
     train_dataset = HFCUB200UniqueImageDataset(train_grouped, is_train=True)
     val_dataset_all = HFCUB200AllCaptionsDataset(val_grouped)
     val_dataset_canonical = HFCUB200CanonicalCaptionDataset(val_grouped)
+    class_labels = get_cub200_class_labels(train_grouped)
 
     stats = {
         "dataset_backend": "hf_cub200",
@@ -165,7 +169,7 @@ def _build_hf_cub200_datasets(config, dataset_name, hf_train_split, hf_val_split
         "num_val_images": len(val_grouped.groups),
     }
     stats.update(split_info)
-    return train_dataset, val_dataset_all, val_dataset_canonical, hf_seed_worker, stats
+    return train_dataset, val_dataset_all, val_dataset_canonical, hf_seed_worker, stats, class_labels
 
 
 def build_data_bundle(
@@ -185,6 +189,7 @@ def build_data_bundle(
     tokenizer = AutoTokenizer.from_pretrained(config["model_text"])
     collate_fn = partial(caption_collate_batch, tokenizer=tokenizer)
 
+    class_labels = None
     if dataset_backend == "local_flickr8k":
         train_dataset, val_dataset_all, val_dataset_canonical, seed_fn, stats = _build_local_datasets(
             root_dir=root_dir,
@@ -205,7 +210,7 @@ def build_data_bundle(
             hf_val_split=hf_cfg.get("val_split"),
         )
     elif dataset_backend == "hf_cub200":
-        train_dataset, val_dataset_all, val_dataset_canonical, seed_fn, stats = _build_hf_cub200_datasets(
+        train_dataset, val_dataset_all, val_dataset_canonical, seed_fn, stats, class_labels = _build_hf_cub200_datasets(
             config=config,
             dataset_name=hf_cfg.get("dataset_name", "alkzar90/CC6204-Hackaton-Cub-Dataset"),
             hf_train_split=hf_cfg.get("train_split", "train"),
@@ -214,15 +219,35 @@ def build_data_bundle(
     else:
         raise ValueError(f"Unknown dataset backend: {dataset_backend}")
 
-    train_loader = DataLoader(
-        train_dataset,
-        batch_size=config["batch_size"],
-        shuffle=True,
-        collate_fn=collate_fn,
-        num_workers=config["num_workers"],
-        worker_init_fn=seed_fn,
-        drop_last=config["drop_last"],
-    )
+    use_stratified = config.get("stratified_batching", False) and class_labels is not None
+    stratified_sampler = None
+
+    if use_stratified:
+        classes_per_batch = config.get("classes_per_batch", config["batch_size"] // 4)
+        images_per_class = config["batch_size"] // classes_per_batch
+        stratified_sampler = StratifiedClassSampler(
+            class_labels=class_labels,
+            classes_per_batch=classes_per_batch,
+            images_per_class=images_per_class,
+            seed=config["seed"],
+        )
+        train_loader = DataLoader(
+            train_dataset,
+            batch_sampler=stratified_sampler,
+            collate_fn=collate_fn,
+            num_workers=config["num_workers"],
+            worker_init_fn=seed_fn,
+        )
+    else:
+        train_loader = DataLoader(
+            train_dataset,
+            batch_size=config["batch_size"],
+            shuffle=True,
+            collate_fn=collate_fn,
+            num_workers=config["num_workers"],
+            worker_init_fn=seed_fn,
+            drop_last=config["drop_last"],
+        )
     val_loader_all = DataLoader(
         val_dataset_all,
         batch_size=config["batch_size"],
@@ -240,9 +265,12 @@ def build_data_bundle(
         worker_init_fn=seed_fn,
     )
 
-    steps_per_epoch = len(train_dataset) // config["batch_size"]
-    if not config["drop_last"] and len(train_dataset) % config["batch_size"] != 0:
-        steps_per_epoch += 1
+    if use_stratified:
+        steps_per_epoch = len(stratified_sampler)
+    else:
+        steps_per_epoch = len(train_dataset) // config["batch_size"]
+        if not config["drop_last"] and len(train_dataset) % config["batch_size"] != 0:
+            steps_per_epoch += 1
     total_steps = config["num_epochs"] * steps_per_epoch
 
     stats.update(
@@ -264,4 +292,5 @@ def build_data_bundle(
         val_loader_all=val_loader_all,
         val_loader_canonical=val_loader_canonical,
         stats=stats,
+        stratified_sampler=stratified_sampler,
     )
