@@ -1,41 +1,67 @@
 # OTCO: Optimal Transport Contrastive Learning
 
-Research implementation of **OT-Mix**, an optimal-transport-based method for generating structured synthetic negatives in multimodal contrastive learning.
+Research code for studying whether **Optimal Transport (OT)** can generate useful **synthetic hard negatives** for multimodal contrastive learning.
 
-> **Status:** Active experimentation on CUB-200. Paper in preparation.
+## Status
 
----
+This is an **active research repository**. The codebase is functional and experiments are ongoing, but results should be treated as **exploratory rather than final**.
 
-## Overview
+The goal of this repo is not to assume OT-generated negatives always help. The goal is to understand:
 
-Standard contrastive learning treats all in-batch negatives equally. OT-Mix uses optimal transport to identify which images compete semantically for a given caption, then synthesizes a *barycentric* negative representing aggregate semantic confusion rather than any single hard negative.
-
-```
-L = L_base + α · L_OT
-```
-
-`L_base` is a SigLIP-style sigmoid contrastive loss. `L_OT` penalizes similarity between each text embedding and its OT-derived synthetic negative. The OT plan is built in logit space (not cosine space — see experiment log 2026-04-22 for why this matters) and cached every `update_freq` steps with gradients stopped through the plan.
+> **When do OT-derived synthetic negatives improve contrastive learning, and when do they hurt?**
 
 ---
 
-## Methods
+## Research Question
+
+Standard contrastive learning often relies on random in-batch negatives or simple hard-negative heuristics. Many of these negatives are too easy to be useful.
+
+OTCO investigates whether Optimal Transport can improve this process by:
+
+- identifying semantically close but mismatched examples
+- constructing synthetic negatives through barycentric mixing
+- injecting harder training signal than standard random sampling
+
+This repository is focused on **hard-negative generation**, **training dynamics**, and **the regimes in which OT-based negatives are useful**.
+
+---
+
+## What Is Implemented
 
 | Method | `loss_type` | Description |
 |---|---|---|
-| `baseline` | `baseline` | SigLIP sigmoid contrastive loss |
-| `hard_negative` | `hard_negative` | SigLIP + explicit push on hardest in-batch negative |
-| `ot_select` | `ot_select` | SigLIP + softmax-weighted selection over top-k |
-| **`softmax_mix` (OT-Mix)** | `softmax_mix` | SigLIP + barycentric synthetic negative via Sinkhorn OT **(proposed)** |
-| `memory_bank` | `memory_bank` | SigLIP + hard negatives from a rolling embedding queue |
+| Baseline | `baseline` | SigLIP-style sigmoid contrastive loss |
+| Hard Negative | `hard_negative` | SigLIP + explicit push on hardest in-batch negative |
+| OT-Select | `ot_select` | SigLIP + OT-based selection of difficult negatives |
+| **OT-Mix** | `softmax_mix` | SigLIP + barycentric synthetic negative via Sinkhorn OT **(proposed)** |
+| Memory Bank | `memory_bank` | SigLIP + negatives drawn from a rolling embedding queue |
+
+**Architecture:** ResNet-50 → 512-d projection · DistilBERT → 512-d projection · L2-normalized shared space · temperature = 0.07
 
 ---
 
-## Architecture
+## Datasets
 
-- **Image encoder:** ResNet-50 → 512-d linear projection
-- **Text encoder:** DistilBERT → 512-d linear projection
-- **Shared space:** L2-normalized, cosine similarity, temperature = 0.07
-- **Datasets:** Flickr8K · Flickr30K · CUB-200-2011 (Reed et al. fine-grained captions)
+| Dataset | Role |
+|---|---|
+| Flickr8K | Early diagnostics — OT neighborhood quality, false-negative pressure |
+| Flickr30K | Null result — OT adds no signal on generic captions (see below) |
+| **CUB-200-2011** | **Active** — fine-grained bird retrieval, 200 species, Reed et al. captions |
+
+These datasets span a range of retrieval difficulty and negative granularity, chosen to test in which regimes OT-generated negatives are useful.
+
+---
+
+## Current Findings
+
+A few conclusions are already clear:
+
+- OT-derived synthetic negatives are **not automatically helpful**.
+- Performance depends strongly on encoder quality, the candidate negative pool, batching strategy, and OT activation schedule.
+- Some settings produce **null results**, which is an important part of the research story.
+- Current work is focused on understanding **why** OT helps in some regimes and fails in others.
+
+This repository should be read as a **research artifact**, not a finished benchmark report.
 
 ---
 
@@ -43,18 +69,18 @@ L = L_base + α · L_OT
 
 ### Flickr30K — CONCLUDED (null result)
 
-> **Finding: OT-Mix adds no signal on Flickr30K. Random in-batch negatives are too easy for OT to find meaningful hard-negative structure.**
+> **Finding: OT-Mix adds no signal on Flickr30K. Random in-batch negatives are too easy for OT to find meaningful transport structure.**
 
 ResNet-50 + DistilBERT, 512-d, canonical R@1 (first caption, full val pool):
 
-| Experiment | Loss | Start | Epochs | Best Avg R@1 | Status |
+| Experiment | Loss | Start | Epochs | Best Avg R@1 | Verdict |
 |---|---|---|---|---|---|
-| Baseline | SigLIP | scratch | 50 | 32.10% | **reference** |
+| Baseline | SigLIP | scratch | 50 | 32.10% | reference |
 | OT-Mix fine-tune (α=0.05) | SigLIP + OT | baseline ckpt | 30 | 32.50% (ep28) | null — matched by continued baseline |
 | Continued baseline | SigLIP | baseline ckpt | 30 | 32.50% (ep17) | null — same gain, no OT |
 | OT-Mix scratch (α=0.05, adaptive) | SigLIP + OT | scratch | 50 | 31.25% | null — worse than baseline |
 
-The +0.40% from the OT-Mix fine-tune is entirely explained by extra gradient steps. SigLIP alone, from the same checkpoint, reaches the same result 11 epochs faster. Captions in Flickr30K are generic high-level descriptions; in-batch negatives are already semantically distant and OT finds no meaningful transport structure.
+The +0.40% from OT-Mix fine-tune is entirely explained by extra gradient steps. SigLIP alone, from the same checkpoint, reaches the same result 11 epochs faster. Flickr30K captions are generic high-level descriptions; in-batch random negatives are already semantically distant and OT finds no meaningful structure.
 
 ---
 
@@ -64,7 +90,7 @@ Fine-grained bird retrieval: 200 species, 10 Reed et al. attribute-rich captions
 
 All runs: ResNet-50 + DistilBERT, 512-d, `both_last_layer` unfreezing, batch size 64, 50 epochs.
 
-#### Baseline (COMPLETE)
+#### Baseline — COMPLETE
 
 | Ep | T→I R@1 | I→T R@1 | Avg R@1 |
 |---|---|---|---|
@@ -74,11 +100,11 @@ All runs: ResNet-50 + DistilBERT, 512-d, `both_last_layer` unfreezing, batch siz
 | 40 | 0.81% | 1.12% | 0.97% |
 | **50** | **1.05%** | **1.71%** | **1.38%** |
 
-Best epoch 50. Note non-monotone trajectory — gains accelerate again at ep45–50.
+Note non-monotone trajectory — gains accelerate again at ep45–50.
 
-#### OT-Mix adaptive (ep1–19 observed, RUNNING)
+#### OT-Mix adaptive — RUNNING (ep1–19 observed)
 
-Config: `cub200_softmax_mix_adaptive`. Random batching, `gate_sim=-4.0`, `entropy_threshold=3.0`, `alpha=0.05`, adaptive OT warmup. OT plan in logit space.
+Random batching. `gate_sim=-4.0`, `entropy_threshold=3.0`, `alpha=0.05`, adaptive OT warmup.
 
 | Ep | Avg R@1 | vs Baseline (same ep) |
 |---|---|---|
@@ -87,11 +113,11 @@ Config: `cub200_softmax_mix_adaptive`. Random batching, `gate_sim=-4.0`, `entrop
 | 17 | 0.68% | −0.10% |
 | 18 | 0.79% | +0.01% |
 
-> **Verdict: inconclusive.** Mid-epoch OT plan reaches rank-1 selection (same-species negatives) by ep10, confirming OT finds meaningful structure. Stale plan at epoch boundaries causes rank reversion — end-of-epoch batches always show 0/B gated. Performance roughly tracks baseline through ep18. Full 50-epoch run needed.
+> **Verdict: inconclusive.** OT plan reaches rank-1 selection (same-species negatives) by ep10, confirming OT finds meaningful structure on CUB-200. Performance roughly tracks baseline through ep18. Full 50-epoch run needed.
 
-#### OT-Mix stratified (ep1–22 observed, RUNNING)
+#### OT-Mix stratified — RUNNING (ep1–22 observed)
 
-Config: `cub200_softmax_mix_stratified`. Stratified batching: K=16 classes × 4 images = B=64, guaranteeing same-class negatives in every batch. `gate_sim=-4.5`, `entropy_threshold=3.5` (more permissive OT schedule than adaptive).
+Stratified batching: K=16 classes × 4 images = B=64. `gate_sim=-4.5`, `entropy_threshold=3.5`.
 
 | Ep | Avg R@1 | vs Baseline (same ep) |
 |---|---|---|
@@ -99,52 +125,48 @@ Config: `cub200_softmax_mix_stratified`. Stratified batching: K=16 classes × 4 
 | 16 | ~0.60% | −0.13% |
 | 21 | 0.71% | −0.16% |
 
-> **Verdict: inconclusive and confounded.** Two things changed from adaptive: (1) stratified batching, and (2) a more permissive OT schedule (`entropy_threshold` 3.0→3.5, `gate_sim` −4.0→−4.5). Cannot cleanly attribute underperformance to batching vs OT schedule. Full 50-epoch run in progress for data; not used as a design conclusion.
+> **Verdict: inconclusive and confounded.** Two things changed from adaptive: (1) stratified batching, and (2) a more permissive OT schedule (entropy_threshold 3.0→3.5, gate_sim −4.0→−4.5). Cannot cleanly attribute underperformance to batching vs OT schedule. Full 50-epoch run in progress for data; not used as a design conclusion.
 
-#### OT-Mix mixed batching (QUEUED)
+#### OT-Mix mixed batching — QUEUED
 
-Config: `cub200_softmax_mix_mixed`. **Primary next experiment.** 25% stratified (4 classes × 4 images = 16 guaranteed within-class hard negatives) + 75% random (48 images, full 200-class diversity). OT schedule identical to adaptive run (`gate_sim=-4.0`, `entropy_threshold=3.0`, `alpha=0.05`). Only the batching strategy differs — isolates batching effect cleanly.
+25% stratified (4 classes × 4 images = 16 within-class hard negatives) + 75% random (48 images, full 200-class diversity). OT schedule identical to adaptive (`gate_sim=-4.0`, `entropy_threshold=3.0`). **Only the batching strategy differs** — isolates batching effect cleanly.
 
 > **Hypothesis:** mixed batching gives OT the within-class hard negatives it needs while restoring the cross-class diversity that pure stratified sacrifices.
 
 ---
 
-## Experiment Design Notes
-
-### Why CUB-200 and not Flickr30K/8K
-
-Flickr captions are generic descriptions. In-batch random negatives are already semantically distant. OT finds no meaningful transport structure (plan entropy stays near log(k), barycentric negatives ≈ mean of all negatives = uninformative noise). CUB-200 provides 200 visually similar species with attribute-rich fine-grained captions — same-species negatives are structurally confusable, which is the regime OT-Mix is designed for.
-
-### Why logit-space OT
-
-SigLIP's learned `logit_bias` compresses cosine similarities into a very narrow range (~0.27 spread). Building the OT cost matrix in cosine space gives `exp(-C/ε)` a near-uniform Gibbs kernel — Sinkhorn produces near-uniform plans regardless of embedding geometry. Moving to logit space (scale ~14×) restores the discriminative range. This was verified empirically: cosine-space OT produced coupling entropy ≈ 3.33 and selected rank ≈ 17 (chance); logit-space OT produces entropy ≈ 2.0–2.5 and selected rank ≈ 1–2.
-
-### OT-Mix key hyperparameters
-
-| Parameter | Description |
-|---|---|
-| `top_k` | Local neighborhood size for OT support (32) |
-| `ot_eps` | Sinkhorn entropy regularization — calibrated for logit space (0.7) |
-| `sinkhorn_iters` | Number of Sinkhorn iterations (30) |
-| `update_freq` | Steps between OT plan recomputation (10) |
-| `gate_sim` | Logit-space threshold; synthetics below this are excluded from loss |
-| `alpha` | Max weight of OT loss term; ramps linearly over 1000 steps after `ot_ready` |
-| `adaptive_warmup` | Wait for coupling entropy < `entropy_threshold` before activating OT |
-| `entropy_threshold` | Trigger level: log(32) ≈ 3.47 = uniform; healthy operating range ≈ 2.0–2.5 |
-
----
-
 ## Experiment Logs
 
-Chronological research log in `experiment_logs/`:
+Chronological research log in [`experiment_logs/`](experiment_logs/):
 
 | Date | File | Summary |
 |---|---|---|
 | 2026-03-11 | [`11-3-26-logs.md`](experiment_logs/11-3-26-logs.md) | OT diagnostic on Flickr8K: negatives are semantically plausible but false-negative pressure is high (P(neg1 > GT) = 0.65) |
 | 2026-04-17 | [`17-4-26-logs.md`](experiment_logs/17-4-26-logs.md) | Plan: re-run diagnostic after better encoder convergence; hypothesis that geometry separation reduces false-negative pressure |
-| 2026-04-22 | [`22-4-26-logs.md`](experiment_logs/22-4-26-logs.md) | **Key finding:** cosine-space OT is degenerate with SigLIP embeddings. Logit-space OT fixes it. Empirically confirmed: cosine plan entropy ≈ 3.33 (uniform), logit plan entropy ≈ 2.0–2.5 (sharp) |
-| 2026-04-23 | [`23-4-26-logs.md`](experiment_logs/23-4-26-logs.md) | α=0.1 over-destabilizes converged Flickr30K baseline (−3.15% dip, never recovers). α=0.05 reduces dip to −1.45%, peaks at 32.50% (ep28) |
-| 2026-04-24 | [`24-4-26-logs.md`](experiment_logs/24-4-26-logs.md) | **Null result confirmed:** continued baseline (SigLIP only) reaches 32.50% at ep17 — 11 epochs before OT-Mix. Decision to move to CUB-200 |
+| 2026-04-22 | [`22-4-26-logs.md`](experiment_logs/22-4-26-logs.md) | **Key finding:** cosine-space OT is degenerate with SigLIP embeddings. Logit-space OT fixes it. Cosine entropy ≈ 3.33 (uniform, rank 17); logit entropy ≈ 2.0–2.5 (sharp, rank 1–2) |
+| 2026-04-23 | [`23-4-26-logs.md`](experiment_logs/23-4-26-logs.md) | α=0.1 over-destabilizes converged Flickr30K model (−3.15% dip, never recovers). α=0.05 reduces dip to −1.45%, peaks at 32.50% |
+| 2026-04-24 | [`24-4-26-logs.md`](experiment_logs/24-4-26-logs.md) | **Null result confirmed:** continued baseline reaches 32.50% at ep17 — 11 epochs before OT-Mix. Decision to move to CUB-200 |
+
+---
+
+## Technical Notes
+
+### Why logit-space OT
+
+SigLIP's learned `logit_bias` compresses cosine similarities into a very narrow range (~0.27 spread). Building the OT cost matrix in cosine space gives `exp(-C/ε)` a near-uniform Gibbs kernel — Sinkhorn produces near-uniform plans regardless of embedding geometry. Moving to logit space (~14× range) restores discriminative signal. Verified empirically: cosine-space OT, coupling entropy ≈ 3.33, selected rank ≈ 17 (chance); logit-space OT, entropy ≈ 2.0–2.5, rank ≈ 1–2.
+
+### OT-Mix hyperparameters
+
+| Parameter | Description |
+|---|---|
+| `top_k` | Local neighborhood size for OT support (32) |
+| `ot_eps` | Sinkhorn entropy regularization — calibrated for logit space (0.7) |
+| `sinkhorn_iters` | Sinkhorn iterations (30) |
+| `update_freq` | Steps between OT plan recomputation (10) |
+| `gate_sim` | Logit-space threshold; synthetics below this are excluded from the loss |
+| `alpha` | Max weight of OT loss; ramps linearly over 1000 steps after `ot_ready` |
+| `adaptive_warmup` | Wait for coupling entropy < `entropy_threshold` before activating OT |
+| `entropy_threshold` | Trigger level — log(32) ≈ 3.47 is uniform; healthy operating range ≈ 2.0–2.5 |
 
 ---
 
@@ -177,7 +199,7 @@ python -m src.test --config configs/diagnostic.yaml
 python -m src.analyze_log
 ```
 
-Switch experiments by editing `configs/default.yaml → experiment.name` to any key in `configs/experiments.yaml`, or use `experiment.overrides` to patch fields without editing the registry.
+Switch experiments by editing `configs/default.yaml → experiment.name` to any key in `configs/experiments.yaml`, or use `experiment.overrides` to patch fields without modifying the registry.
 
 **CUB-200 run configs** (for Colab/Kaggle):
 - `configs/hf_cub200_baseline.yaml`
