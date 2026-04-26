@@ -12,7 +12,7 @@ class MixedBatchSampler(Sampler):
       - batch_size - (classes_per_batch × images_per_class) random indices (cross-class diversity)
 
     Default at batch_size=64, classes_per_batch=4, images_per_class=4:
-      16 stratified (25%) + 48 random (75%) per batch.
+      16 stratified (25%) + 48 random (75%) per batch. All 64 indices are distinct.
 
     Call set_epoch(epoch) before each epoch so batches differ across epochs.
     """
@@ -44,6 +44,12 @@ class MixedBatchSampler(Sampler):
         }
         self.classes = sorted(self.class_buckets.keys())
 
+        if len(self.classes) < classes_per_batch:
+            raise ValueError(
+                f"Not enough eligible classes: found {len(self.classes)}, "
+                f"need {classes_per_batch}. Reduce classes_per_batch or images_per_class."
+            )
+
         # Same number of batches as a pure random loader with drop_last=True
         self._num_batches = len(self.all_indices) // batch_size
 
@@ -63,23 +69,28 @@ class MixedBatchSampler(Sampler):
     def __iter__(self):
         rng = random.Random(self.seed + self._epoch)
 
-        # Pre-build the random pool: shuffle all indices, consume random_count per batch
         random_pool = list(self.all_indices)
         rng.shuffle(random_pool)
-        # random_pool has len(all_indices) elements; we need _num_batches * random_count
-        # which is always <= len(all_indices) since random_count < batch_size
+        pool_cursor = 0
 
-        for i in range(self._num_batches):
+        for _ in range(self._num_batches):
             # Stratified block: pick classes_per_batch distinct classes, images_per_class each
             chosen_classes = rng.sample(self.classes, self.classes_per_batch)
             strat_indices = []
             for cls in chosen_classes:
-                pool = self.class_buckets[cls]
-                strat_indices.extend(rng.sample(pool, self.images_per_class))
+                strat_indices.extend(rng.sample(self.class_buckets[cls], self.images_per_class))
+            strat_set = set(strat_indices)
 
-            # Random block: sequential slice through pre-shuffled pool
-            rand_start = i * self.random_count
-            rand_indices = random_pool[rand_start : rand_start + self.random_count]
+            # Random block: consume from pool, skipping any index already in stratified block
+            rand_indices = []
+            while len(rand_indices) < self.random_count:
+                if pool_cursor >= len(random_pool):
+                    pool_cursor = 0
+                    rng.shuffle(random_pool)
+                idx = random_pool[pool_cursor]
+                pool_cursor += 1
+                if idx not in strat_set:
+                    rand_indices.append(idx)
 
             batch = strat_indices + rand_indices
             rng.shuffle(batch)
