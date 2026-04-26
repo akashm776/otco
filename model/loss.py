@@ -101,7 +101,8 @@ class SoftmaxMixLoss(nn.Module):
     def __init__(self, init_bias=0.0, alpha=0.5, warmup_steps=1000,
                  top_k=32, tau=0.05, update_freq=10, gate_sim=-0.05,
                  ot_eps=0.05, sinkhorn_iters=30,
-                 adaptive_warmup=False, entropy_threshold=3.0, entropy_check_freq=100):
+                 adaptive_warmup=False, entropy_threshold=3.0, entropy_check_freq=100,
+                 gap_suppress_easy=0.10, gap_downweight_hard=-0.07, hard_alpha_scale=0.25):
         super().__init__()
         self.logit_bias = nn.Parameter(torch.tensor(init_bias))
         self.alpha_max = alpha
@@ -115,6 +116,10 @@ class SoftmaxMixLoss(nn.Module):
         self.adaptive_warmup = adaptive_warmup
         self.entropy_threshold = entropy_threshold
         self.entropy_check_freq = entropy_check_freq
+        # Conditional alpha gating thresholds (initial values — tune per dataset)
+        self.gap_suppress_easy = gap_suppress_easy
+        self.gap_downweight_hard = gap_downweight_hard
+        self.hard_alpha_scale = hard_alpha_scale
 
         self.current_step = 0
         self.cached_plan = None  # [B, B] OT coupling
@@ -226,12 +231,39 @@ class SoftmaxMixLoss(nn.Module):
                 coupling_entropy = row_entropy.mean().item()
                 coupling_peak_mass = local_mass.max(dim=1).values.mean().item()
 
-        total_loss = base_loss + alpha * synthetic_loss
+        # Conditional alpha: suppress or downweight OT when signal quality is poor
+        alpha_effective = alpha
+        suppressed_entropy = False
+        suppressed_too_easy = False
+        downweighted_too_hard = False
+        if alpha > 0:
+            if coupling_entropy > self.entropy_threshold:
+                alpha_effective = 0.0
+                suppressed_entropy = True
+            elif pos_selected_gap > self.gap_suppress_easy:
+                alpha_effective = 0.0
+                suppressed_too_easy = True
+            elif pos_selected_gap < self.gap_downweight_hard:
+                alpha_effective = alpha * self.hard_alpha_scale
+                downweighted_too_hard = True
+
+        # Gap bucket for analysis: maps pos_selected_gap to a named regime
+        if pos_selected_gap > self.gap_suppress_easy:
+            gap_bucket = "easy"
+        elif pos_selected_gap >= -0.05:
+            gap_bucket = "useful"
+        elif pos_selected_gap >= self.gap_downweight_hard:
+            gap_bucket = "borderline"
+        else:
+            gap_bucket = "hard"
+
+        total_loss = base_loss + alpha_effective * synthetic_loss
 
         loss_dict = {
             'base_loss': base_loss.item(),
             'synthetic_loss': synthetic_loss.item(),
             'alpha': float(alpha),
+            'alpha_effective': float(alpha_effective),
             'total_loss': total_loss.item(),
             'avg_synthetic_sim': avg_synth_sim.item(),
             'avg_synthetic_logit': avg_synth_logit.item(),
@@ -245,6 +277,10 @@ class SoftmaxMixLoss(nn.Module):
             'coupling_peak_mass': coupling_peak_mass,
             'ot_ready': int(self.ot_ready),
             'warmup_entropy': self.last_warmup_entropy if self.adaptive_warmup and not self.ot_ready else 0.0,
+            'ot_suppressed_entropy': int(suppressed_entropy),
+            'ot_suppressed_too_easy': int(suppressed_too_easy),
+            'ot_downweighted_too_hard': int(downweighted_too_hard),
+            'gap_bucket': gap_bucket,
         }
 
         self.current_step += 1
