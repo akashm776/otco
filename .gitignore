@@ -12,6 +12,9 @@ wheels/
 # OS / editor artifacts
 .DS_Store
 
+# Claude Code worktrees and session data
+.claude/worktrees/
+
 # Experiment artifacts and local datasets
 checkpoints/
 outputs/
