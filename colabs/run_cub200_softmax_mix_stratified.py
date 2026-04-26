@@ -9,6 +9,7 @@ token = userdata.get("GITHUB_TOKEN")
 repo_url = f"https://{token}@github.com/akashm776/otco.git"
 repo_dir = "/content/otco"
 checkpoint_dir = "/content/drive/MyDrive/otco_checkpoints/cub200_softmax_mix_stratified"
+drive_results_file = f"{checkpoint_dir}/training_log.txt"
 
 drive.mount('/content/drive')
 os.makedirs(checkpoint_dir, exist_ok=True)
@@ -38,10 +39,12 @@ process = subprocess.Popen(
     stderr=subprocess.STDOUT,
     text=True,
 )
-with open(RESULTS_FILE, "w") as log:
+with open(RESULTS_FILE, "w") as local_log, open(drive_results_file, "w") as drive_log:
     for line in process.stdout:
         print(line, end="", flush=True)
-        log.write(line)
+        local_log.write(line)
+        drive_log.write(line)
+        drive_log.flush()
 process.wait()
 
 subprocess.run(["git", "-C", repo_dir, "add", "experiments/", "results/"], check=False)
