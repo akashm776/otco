@@ -63,10 +63,10 @@ Several findings are now clear:
 - CUB-200 produced meaningful OT structure: OT-Mix often selected rank-1/rank-2 hard negatives with sharp transport plans.
 - Ungated OT-Mix variants found useful local hard-negative structure, but did **not** beat the baseline in final retrieval.
 - Mixed batching was the strongest ungated OT variant and finished second among ungated runs: **1.32% Avg R@1**, below the baseline's **1.38%**.
-- **Mixed gated OT-Mix produced the best observed CUB-200 result so far: 1.44% Avg R@1**, above the baseline's **1.38%**.
-- The main open issue is no longer whether OT can find hard negatives. It can. The issue is how to combine **candidate construction** and **loss gating** so OT pressure is applied only when useful.
+- **Adaptive gated OT-Mix produced the best observed CUB-200 result so far: 1.44% Avg R@1**, above the baseline's **1.38%**.
+- The main open issue is no longer whether OT can find hard negatives. It can. The issue is how to decide **when OT pressure should be applied**.
 
-This repository should be read as a **research artifact**, not a finished benchmark report. The mixed-gated result is a positive one-seed result and should be validated with additional seeds and ablations.
+This repository should be read as a **research artifact**, not a finished benchmark report. The gated result is a positive one-seed result and should be validated with additional seeds and ablations.
 
 ---
 
@@ -108,18 +108,13 @@ All CUB runs use:
 
 | Setting | Batching | OT Schedule | Final / official Avg R@1 | Best Avg R@1 | Final T→I R@1 | Final I→T R@1 | Verdict |
 |---|---|---|---:|---:|---:|---:|---|
-| **OT-Mix mixed gated** | **25% stratified + 75% random** | Adaptive OT + conditional alpha | **1.44%** | **1.44% @ best checkpoint/final eval** | **1.19%** | 1.69% | Best observed run |
+| **OT-Mix adaptive gated** | Random | Adaptive OT + conditional alpha | **1.44%** | **1.44% @ best checkpoint/final eval** | **1.19%** | 1.69% | Best observed run |
 | Baseline | Random | None | 1.38% | 1.38% @ ep50 | 1.05% | **1.71%** | Strongest non-OT baseline |
-| OT-Mix adaptive | Random | Adaptive OT, fixed α=0.05 | 1.35% best eval / 1.28% ep50 | 1.35% @ ep49 | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | Competitive, not a win |
-| OT-Mix mixed batching | 25% stratified + 75% random | Adaptive OT, fixed α=0.05 | 1.32% | 1.32% @ ep50 | 1.12% | 1.52% | Best ungated OT variant |
+| OT-Mix adaptive | Random | Adaptive OT, α=0.05 | 1.35% best eval / 1.28% ep50 | 1.35% @ ep49 | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | Competitive, not a win |
+| OT-Mix mixed batching | 25% stratified + 75% random | Same as adaptive | 1.32% | 1.32% @ ep50 | 1.12% | 1.52% | Best ungated OT variant |
 | OT-Mix stratified | 100% stratified | More permissive OT | incomplete | incomplete | — | — | Confounded diagnostic run |
 
-**Main conclusion:** OT-Mix can find meaningful hard negatives on CUB-200. Ungated OT-Mix does not reliably beat the baseline, but **mixed gated OT-Mix converts the local OT signal into a small positive retrieval gain**: 1.44% Avg R@1 vs. 1.38% for the baseline. This result combines two interventions:
-
-1. **Mixed batching** supplies a candidate pool with more fine-grained within-class hard negatives.
-2. **Conditional alpha gating** applies OT pressure only when the transport signal is trustworthy.
-
-This is a promising one-seed result, not yet a general claim.
+**Main conclusion:** OT-Mix can find meaningful hard negatives on CUB-200. Ungated OT-Mix does not reliably beat the baseline, but **adaptive gated OT-Mix converts the local OT signal into a small positive retrieval gain**: 1.44% Avg R@1 vs. 1.38% for the baseline. This is a promising one-seed result, not yet a general claim.
 
 ---
 
@@ -198,34 +193,25 @@ Only the batching strategy differs from OT-Mix adaptive, making this a cleaner t
 
 ---
 
-#### OT-Mix Mixed Gated — COMPLETE
+#### OT-Mix Adaptive Gated — COMPLETE
 
-This run combines the two interventions that individually looked most promising:
+Same base configuration as OT-Mix adaptive:
 
-- **mixed batching:** 25% stratified + 75% random
-- **conditional alpha gating:** suppress/downweight OT depending on entropy and margin geometry
-
-Batching:
-
-- 4 classes × 4 images = 16 within-class hard-negative candidates
-- 48 random images from the full 200-class pool
-
-OT schedule:
-
+- random batching
 - `gate_sim=-4.0`
 - `entropy_threshold=3.0`
-- scheduled `alpha=0.05`
-- `alpha_effective` computed per step
+- `alpha=0.05`
+- seed 42
 
-Gating rule:
+Adds per-step conditional alpha. OT loss is:
 
-- suppress when the plan is diffuse: `coupling_entropy > 3.0`
-- suppress when the synthetic is too easy: `pos_selected_gap > +0.10`
-- downweight to 25% when the synthetic dominates the positive: `pos_selected_gap < -0.07`
+- suppressed when the plan is diffuse: `coupling_entropy > 3.0`
+- suppressed when the synthetic is too easy: `pos_selected_gap > +0.10`
+- downweighted to 25% when the synthetic dominates the positive: `pos_selected_gap < -0.07`
 
 | Stage | T→I R@1 | I→T R@1 | Avg R@1 | Note |
 |---|---:|---:|---:|---|
-| Epoch 10 | 0.38% | 0.47% | 0.42% | conservative early trajectory |
+| Epoch 10 | 0.38% | 0.47% | 0.42% | slightly slower than ungated adaptive |
 | Epoch 11 | 0.45% | 0.66% | 0.55% | improves cleanly |
 | Epoch 12 | 0.52% | 0.74% | 0.63% | steady |
 | Epoch 13 | 0.57% | 0.76% | 0.66% | steady |
@@ -235,7 +221,7 @@ Gating rule:
 | Epoch 50 | 1.05% | 1.59% | 1.32% | lower than best checkpoint |
 | Final evaluation | **1.19%** | **1.69%** | **1.44%** | official best-checkpoint eval |
 
-> **Verdict:** Best observed CUB-200 run. Mixed gated OT-Mix is the first OTCO variant to beat the baseline on canonical Avg R@1: 1.44% vs. 1.38%. The improvement is small and should be validated across seeds, but the intermediate logs show that the gate is doing the intended thing: suppressing diffuse and too-easy OT states while preserving useful near-boundary hard negatives.
+> **Verdict:** Best observed CUB-200 run. Adaptive gated OT-Mix is the first OTCO variant to beat the baseline on canonical Avg R@1: 1.44% vs. 1.38%. The improvement is small and should be validated across seeds, but the intermediate logs show that the gate is doing the intended thing: suppressing diffuse and too-easy OT states while preserving useful near-boundary hard negatives.
 
 ---
 
@@ -285,7 +271,7 @@ This is the main training-dynamics issue. OT can find useful hard negatives, but
 
 ## Gated OT Analysis
 
-The mixed gated run directly tests whether conditional OT pressure can preserve useful OT states while suppressing bad ones.
+The adaptive gated run directly tests whether conditional OT pressure can preserve useful OT states while suppressing bad ones.
 
 ### Early diffuse plans are suppressed
 
@@ -322,7 +308,7 @@ This is the key improvement over ungated OT-Mix. The selected synthetic is no lo
 
 ### Parsed gated diagnostic summary
 
-Sampled/logged OT diagnostic steps from mixed gated:
+Sampled/logged OT diagnostic steps from adaptive gated:
 
 | Bucket | Count | Mean effective α | Mean selected rank | Mean `Pos - Selected Gap` | Mean entropy | Read |
 |---|---:|---:|---:|---:|---:|---|
@@ -331,17 +317,17 @@ Sampled/logged OT diagnostic steps from mixed gated:
 | Diffuse | 12 | 0.0000 | 23.81 | -0.0067 | 3.2163 | OT correctly off |
 | Too hard | 1 | 0.0125 | 2.25 | -0.0700 | 2.5533 | OT correctly downweighted |
 
-**Interpretation:** Mixed gated OT-Mix combines better candidate construction with a controller. Mixed batching improves the probability that OT sees fine-grained hard negatives; gating prevents OT from contributing when the selected synthetic is diffuse, stale, or too easy.
+**Interpretation:** Adaptive gating turns OT-Mix from a fixed auxiliary loss into a controller. The useful signal is not just “synthetic negatives exist,” but that OT pressure is applied only when plan quality and margin geometry indicate that the synthetic negative is informative.
 
 ---
 
 ## Directional Retrieval Analysis
 
-Mixed gated improves the average primarily by improving Text → Image while keeping Image → Text close to baseline:
+Adaptive gated improves the average primarily by improving Text → Image while keeping Image → Text close to baseline:
 
 | Setting | Final / official T→I R@1 | Final / official I→T R@1 | Final / official Avg R@1 |
 |---|---:|---:|---:|
-| **OT-Mix mixed gated** | **1.19%** | 1.69% | **1.44%** |
+| **OT-Mix adaptive gated** | **1.19%** | 1.69% | **1.44%** |
 | Baseline | 1.05% | **1.71%** | 1.38% |
 | OT-Mix adaptive | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | 1.35% best eval / 1.28% ep50 |
 | OT-Mix mixed | 1.12% | 1.52% | 1.32% |
@@ -364,7 +350,7 @@ Mixed looked unstable earlier, but from epoch 30 onward it is actually the least
 
 This stability summary only covers epochs 30–50; earlier mixed training was more volatile, including the epoch-29 Text → Image wobble.
 
-For mixed gated, the best checkpoint reaches 1.44%, but the epoch-50 checkpoint falls to 1.32%. This means checkpoint selection matters. The next analysis should compare epoch-to-epoch variance and best-vs-final behavior across the gated run once a clean parsed table is available.
+For adaptive gated, the best checkpoint reaches 1.44%, but the epoch-50 checkpoint falls to 1.32%. This means checkpoint selection matters. The next analysis should compare epoch-to-epoch variance and best-vs-final behavior across the gated run once a clean parsed table is available.
 
 ---
 
@@ -394,7 +380,7 @@ Chronological research logs are in [`experiment_logs/`](experiment_logs/):
 | 2026-04-23 | [`23-4-26-logs.md`](experiment_logs/23-4-26-logs.md) | α=0.1 over-destabilizes a converged Flickr30K model. α=0.05 reduces the dip and peaks at 32.50% |
 | 2026-04-24 | [`24-4-26-logs.md`](experiment_logs/24-4-26-logs.md) | Null result confirmed: continued baseline reaches 32.50% at epoch 17, 11 epochs before OT-Mix. Decision to move to CUB-200 |
 | 2026-04-26 | [`26-4-26-logs.md`](experiment_logs/26-4-26-logs.md) | CUB-200 ungated analysis: baseline remained strongest; mixed batching was best ungated OT variant; OT found rank-1/rank-2 hard negatives but did not yet beat baseline |
-| 2026-04-27 | [`27-4-26-logs.md`](experiment_logs/27-4-26-logs.md) | Mixed gated OT-Mix produced the best observed CUB-200 result so far: 1.44% Avg R@1. Mixed batching supplied fine-grained candidates; gating suppressed diffuse and too-easy OT states while preserving useful rank-1/rank-2 synthetic negatives |
+| 2026-04-27 | [`27-4-26-logs.md`](experiment_logs/27-4-26-logs.md) | Adaptive gated OT-Mix produced the best observed CUB-200 result so far: 1.44% Avg R@1. Gating suppressed diffuse and too-easy OT states while preserving useful rank-1/rank-2 synthetic negatives |
 
 ---
 
@@ -496,7 +482,7 @@ or use `experiment.overrides` to patch fields without modifying the registry.
 - `configs/hf_cub200_softmax_mix_adaptive.yaml`
 - `configs/hf_cub200_softmax_mix_stratified.yaml`
 - `configs/hf_cub200_softmax_mix_mixed.yaml`
-- `configs/hf_cub200_softmax_mix_mixed_gated.yaml`
+- `configs/hf_cub200_softmax_mix_adaptive_gated.yaml`
 
 Results are written to:
 
@@ -517,11 +503,11 @@ Paper in preparation. Older draft is at the root level.
 
 ## Future Research Directions
 
-Future work should test whether the mixed gated OT result is robust and whether transport structure can be made more persistent across training.
+Future work should test whether the gated OT result is robust and whether transport structure can be made more persistent across training.
 
 Priority next steps:
 
-- repeat mixed gated across additional seeds
+- repeat adaptive gated across additional seeds
 - compare adaptive gated vs. mixed gated under identical logging
 - add selected-rank-aware gating as a possible third condition
 - parse epoch-to-epoch stability for the gated run
