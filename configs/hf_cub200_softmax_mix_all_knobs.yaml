@@ -1,0 +1,21 @@
+experiment:
+  name: cub200_softmax_mix_all_knobs
+  experiments_file: experiments.yaml
+  overrides: {}
+
+dataset:
+  backend: hf_cub200
+  local:
+    root_dir: null
+  hf:
+    dataset_name: alkzar90/CC6204-Hackaton-Cub-Dataset
+    train_split: train
+    val_split: test
+
+model:
+  vision: null
+  text: null
+
+run:
+  checkpoint_dir: null
+  print_experiment_comparison: true
