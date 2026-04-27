@@ -108,7 +108,7 @@ All CUB runs use:
 
 | Setting | Batching | OT Schedule | Final / official Avg R@1 | Best Avg R@1 | Final T→I R@1 | Final I→T R@1 | Verdict |
 |---|---|---|---:|---:|---:|---:|---|
-| **OT-Mix adaptive gated** | Random | Adaptive OT + conditional alpha | **1.44%** | **1.44% @ best checkpoint/final eval** | **1.19%** | 1.69% | Best observed run |
+| **OT-Mix adaptive gated** | 25% stratified + 75% random | Adaptive OT + conditional alpha | **1.44%** | **1.44% @ best checkpoint/final eval** | **1.19%** | 1.69% | Best observed run |
 | Baseline | Random | None | 1.38% | 1.38% @ ep50 | 1.05% | **1.71%** | Strongest non-OT baseline |
 | OT-Mix adaptive | Random | Adaptive OT, α=0.05 | 1.35% best eval / 1.28% ep50 | 1.35% @ ep49 | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | Competitive, not a win |
 | OT-Mix mixed batching | 25% stratified + 75% random | Same as adaptive | 1.32% | 1.32% @ ep50 | 1.12% | 1.52% | Best ungated OT variant |
