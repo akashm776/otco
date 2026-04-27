@@ -195,9 +195,9 @@ Only the batching strategy differs from OT-Mix adaptive, making this a cleaner t
 
 #### OT-Mix Adaptive Gated — COMPLETE
 
-Same base configuration as OT-Mix adaptive:
+Same stratified configuration as OT-Mix mixed batching adaptive:
 
-- random batching
+- 25% stratified + 75% random
 - `gate_sim=-4.0`
 - `entropy_threshold=3.0`
 - `alpha=0.05`
