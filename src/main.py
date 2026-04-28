@@ -4,7 +4,9 @@ import random
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 import torch.optim as optim
+from torch.utils.data import DataLoader
 from transformers import AutoModel
 
 from src.config_loader import load_run_config
@@ -22,6 +24,42 @@ from src.utils import (
     sanity_check_eval,
     save_checkpoint,
 )
+
+
+def _image_only_collate(batch):
+    """Lightweight collate for pool building — images and IDs only, no tokenization."""
+    images = torch.stack([item["image"] for item in batch])
+    image_ids = torch.tensor([item["image_id"] for item in batch], dtype=torch.long)
+    return {"images": images, "image_id": image_ids}
+
+
+@torch.no_grad()
+def _build_image_pool(model, train_dataset, config, device):
+    """Forward all training images at epoch start and return cached embeddings.
+
+    Returns:
+        pool_feats: [N_train, d] normalized image embeddings on device
+        pool_image_ids: [N_train] integer image IDs on device
+    """
+    pool_loader = DataLoader(
+        train_dataset,
+        batch_size=256,
+        shuffle=False,
+        collate_fn=_image_only_collate,
+        num_workers=config.get("num_workers", 4),
+        drop_last=False,
+    )
+    model.eval()
+    all_feats = []
+    all_ids = []
+    for batch in pool_loader:
+        images = batch["images"].to(device)
+        proj = model.encode_images(images)
+        feats = F.normalize(proj, dim=-1)
+        all_feats.append(feats)
+        all_ids.append(batch["image_id"].to(device))
+    model.train()
+    return torch.cat(all_feats, dim=0), torch.cat(all_ids, dim=0)
 
 
 def parse_args():
@@ -251,6 +289,8 @@ def main():
         print(f"  OT ready restored to: {getattr(criterion, 'ot_ready', 'n/a')}")
         print(f"  Cached plan restored: {getattr(criterion, 'cached_plan', None) is not None}")
 
+    pool_size = config.get("pool_size", 0)
+
     for epoch in range(start_epoch, config["num_epochs"]):
         if hasattr(criterion, "cached_plan"):
             criterion.cached_plan = None
@@ -259,6 +299,14 @@ def main():
         print(f"\n{'=' * 80}")
         print(f"EPOCH {epoch + 1}/{config['num_epochs']}")
         print(f"{'=' * 80}")
+
+        # Build epoch image pool for large-pool OT (Option A: epoch cache)
+        pool_feats = None
+        pool_image_ids = None
+        if pool_size > 0:
+            print(f"  Building image pool (pool_size={pool_size}, N_train={len(train_dataset)})...")
+            pool_feats, pool_image_ids = _build_image_pool(model, train_dataset, config, device)
+            print(f"  Pool cached: {pool_feats.shape[0]} embeddings on {device}")
 
         train_dataset.set_epoch(epoch)
         if data_bundle.stratified_sampler is not None:
@@ -274,13 +322,29 @@ def main():
             image_batch = batch["images"].to(device)
             batch_size = image_batch.size(0)
 
+            # Sample pool for large-pool OT, excluding current batch positives.
+            # Build eligible set FIRST (exclude batch positives), THEN sample exactly
+            # pool_size from it. Invariant: image_pool.shape[0] == pool_size whenever
+            # N_train - batch_size >= pool_size (always true for CUB-200).
+            image_pool = None
+            if pool_size > 0 and pool_feats is not None:
+                batch_ids = batch["image_ids"].to(device)
+                exclude_mask = torch.isin(pool_image_ids, batch_ids)
+                available_idx = (~exclude_mask).nonzero(as_tuple=True)[0]
+                n_sample = min(pool_size, len(available_idx))
+                if n_sample < pool_size:
+                    print(f"  [WARN] pool: only {n_sample}/{pool_size} eligible images after positive exclusion")
+                perm = torch.randperm(len(available_idx), device=device)[:n_sample]
+                chosen_idx = available_idx[perm]
+                image_pool = pool_feats[chosen_idx]  # [n_sample, d], detached
+
             logits, image_features, text_features = model(image_batch, text_batch)
 
             if config["loss_type"] == "baseline":
                 loss = criterion(logits)
                 loss_dict = {"base_loss": loss.item(), "total_loss": loss.item()}
             else:
-                loss, loss_dict = criterion(logits, text_features, image_features, temp=model.temp)
+                loss, loss_dict = criterion(logits, text_features, image_features, temp=model.temp, image_pool=image_pool)
 
             optimizer.zero_grad()
             loss.backward()
@@ -324,6 +388,8 @@ def main():
                         if loss_dict.get('selected_neg_rank_mean', 0) > 0:
                             print(f"    Selected Neg Rank:      mean={loss_dict['selected_neg_rank_mean']:.2f}  median={loss_dict.get('selected_neg_rank_median', 0):.2f}")
                             print(f"    Pos - Selected Gap:     {loss_dict.get('pos_selected_gap', 0):.4f}")
+                        if loss_dict.get('pool_size', 0) > 0:
+                            print(f"    Pool Mode:              pool (N={loss_dict['pool_size']})")
                         if loss_dict.get('coupling_entropy', 0) > 0:
                             print(f"    Coupling Entropy:       {loss_dict['coupling_entropy']:.4f}")
                             print(f"    Coupling Peak Mass:     {loss_dict.get('coupling_peak_mass', 0):.4f}")
