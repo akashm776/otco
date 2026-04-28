@@ -474,15 +474,6 @@ def main():
         avg_recall_canonical = (val_metrics_t2i_canonical["R@1"] + val_metrics_i2t_canonical["R@1"]) / 2
         print(f"\n🎯 Average Recall@1 (canonical): {avg_recall_canonical:.2f}%")
 
-        if (epoch + 1) % 5 == 0:
-            save_checkpoint(
-                model,
-                optimizer,
-                global_step,
-                avg_train_loss,
-                f"{checkpoint_dir}/checkpoint_epoch_{epoch + 1}.pt",
-            )
-
         torch.save({
             "epoch": epoch,
             "global_step": global_step,
