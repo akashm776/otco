@@ -63,7 +63,8 @@ Several findings are now clear:
 - CUB-200 produced meaningful OT structure: OT-Mix often selected rank-1/rank-2 hard negatives with sharp transport plans.
 - Ungated OT-Mix variants found useful local hard-negative structure, but did **not** beat the baseline in final retrieval.
 - Mixed batching was the strongest ungated OT variant and finished second among ungated runs: **1.32% Avg R@1**, below the baseline's **1.38%**.
-- **Adaptive gated OT-Mix produced the best observed CUB-200 result so far: 1.44% Avg R@1**, above the baseline's **1.38%**.
+- Mixed-gated OT-Mix reached **1.33% Avg R@1**, improving Text → Image to **1.24%** but reducing Image → Text to **1.42%**.
+- **Adaptive gated OT-Mix with random batching remains the best observed CUB-200 result so far: 1.44% Avg R@1**, above the baseline's **1.38%**.
 - The main open issue is no longer whether OT can find hard negatives. It can. The issue is how to decide **when OT pressure should be applied**.
 
 This repository should be read as a **research artifact**, not a finished benchmark report. The gated result is a positive one-seed result and should be validated with additional seeds and ablations.
@@ -111,10 +112,11 @@ All CUB runs use:
 | **OT-Mix adaptive gated** | Random | Adaptive OT + conditional alpha | **1.44%** | **1.44% @ best checkpoint/final eval** | **1.19%** | 1.69% | Best observed run |
 | Baseline | Random | None | 1.38% | 1.38% @ ep50 | 1.05% | **1.71%** | Strongest non-OT baseline |
 | OT-Mix adaptive | Random | Adaptive OT, α=0.05 | 1.35% best eval / 1.28% ep50 | 1.35% @ ep49 | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | Competitive, not a win |
+| OT-Mix mixed-gated | 25% stratified + 75% random | Adaptive OT + conditional alpha | 1.33% | 1.33% @ best checkpoint/final eval | **1.24%** | 1.42% | Best T→I, but lower Avg R@1 |
 | OT-Mix mixed batching | 25% stratified + 75% random | Same as adaptive | 1.32% | 1.32% @ ep50 | 1.12% | 1.52% | Best ungated OT variant |
 | OT-Mix stratified | 100% stratified | More permissive OT | incomplete | incomplete | — | — | Confounded diagnostic run |
 
-**Main conclusion:** OT-Mix can find meaningful hard negatives on CUB-200. Ungated OT-Mix does not reliably beat the baseline, but **adaptive gated OT-Mix converts the local OT signal into a small positive retrieval gain**: 1.44% Avg R@1 vs. 1.38% for the baseline. This is a promising one-seed result, not yet a general claim.
+**Main conclusion:** OT-Mix can find meaningful hard negatives on CUB-200. Ungated OT-Mix does not reliably beat the baseline, and mixed-gated OT-Mix does not improve the overall average. **Adaptive gated OT-Mix with random batching remains the best observed run**, with 1.44% Avg R@1 vs. 1.38% for the baseline. This is a promising one-seed result, not yet a general claim.
 
 ---
 
@@ -323,16 +325,17 @@ Sampled/logged OT diagnostic steps from adaptive gated:
 
 ## Directional Retrieval Analysis
 
-Adaptive gated improves the average primarily by improving Text → Image while keeping Image → Text close to baseline:
+Adaptive gated improves the average primarily by improving Text → Image while keeping Image → Text close to baseline. Mixed-gated produces the best Text → Image result, but loses too much Image → Text to improve the average:
 
 | Setting | Final / official T→I R@1 | Final / official I→T R@1 | Final / official Avg R@1 |
 |---|---:|---:|---:|
-| **OT-Mix adaptive gated** | **1.19%** | 1.69% | **1.44%** |
+| **OT-Mix adaptive gated** | 1.19% | 1.69% | **1.44%** |
 | Baseline | 1.05% | **1.71%** | 1.38% |
+| OT-Mix mixed-gated | **1.24%** | 1.42% | 1.33% |
 | OT-Mix adaptive | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | 1.35% best eval / 1.28% ep50 |
 | OT-Mix mixed | 1.12% | 1.52% | 1.32% |
 
-This suggests conditional OT pressure may help the text-query-to-image direction, while avoiding the Image → Text degradation seen in ungated mixed batching.
+This suggests conditional OT pressure may help the text-query-to-image direction, but mixed batching shifts the directional tradeoff too far toward Text → Image.
 
 ---
 
