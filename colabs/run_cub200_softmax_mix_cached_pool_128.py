@@ -26,7 +26,7 @@ else:
 
 os.chdir(repo_dir)
 subprocess.run(
-    [sys.executable, "-m", "pip", "install", "datasets<3.0.0", "pyyaml", "-q"],
+    [sys.executable, "-m", "pip", "install", "datasets<3.0.0", "--force-reinstall", "pyyaml", "-q"],
     check=True,
 )
 os.environ["TOKENIZERS_PARALLELISM"] = "false"

@@ -20,7 +20,7 @@ else:
     subprocess.run(["git", "clone", repo_url, repo_dir], check=True)
 
 os.chdir(repo_dir)
-subprocess.run([sys.executable, "-m", "pip", "install", "datasets<3.0.0", "pyyaml", "-q"], check=True)
+subprocess.run([sys.executable, "-m", "pip", "install", "datasets<3.0.0", "--force-reinstall", "pyyaml", "-q"], check=True)
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 os.makedirs("results", exist_ok=True)
