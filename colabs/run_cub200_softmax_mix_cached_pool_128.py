@@ -25,10 +25,10 @@ else:
     subprocess.run(["git", "clone", "--branch", BRANCH, repo_url, repo_dir], check=True)
 
 os.chdir(repo_dir)
-subprocess.run(
-    [sys.executable, "-m", "pip", "install", "datasets<3.0.0", "--force-reinstall", "pyyaml", "-q"],
-    check=True,
-)
+subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y", "datasets"], check=False)
+subprocess.run([sys.executable, "-m", "pip", "install", "datasets<3.0.0", "pyyaml"], check=True)
+import shutil; shutil.rmtree(os.path.expanduser("~/.cache/huggingface/datasets"), ignore_errors=True)
+import importlib, datasets as _ds; print(f"datasets version: {_ds.__version__}")
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 os.makedirs("results", exist_ok=True)
 
