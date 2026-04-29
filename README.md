@@ -36,6 +36,7 @@ This repository focuses on **hard-negative generation**, **training dynamics**, 
 | OT-Select | `ot_select` | SigLIP + OT-based selection of difficult negatives |
 | **OT-Mix** | `softmax_mix` | SigLIP + barycentric synthetic negative via Sinkhorn OT |
 | **OT-Mix Gated** | `softmax_mix` + alpha gating | OT-Mix with conditional `alpha_effective` based on plan quality and margin geometry |
+| **OT-Mix Cached Pool** | `softmax_mix` + `image_pool` | OT-Mix with epoch-cached image embeddings; runs OT over current batch texts × randomly sampled cached image pool |
 | Memory Bank | `memory_bank` | SigLIP + negatives drawn from a rolling embedding queue |
 
 **Architecture:** ResNet-50 → 512-d projection · DistilBERT → 512-d projection · L2-normalized shared space · temperature = 0.07
@@ -110,6 +111,7 @@ All CUB runs use:
 | Setting | Batching | OT Schedule | Final / official Avg R@1 | Best Avg R@1 | Final T→I R@1 | Final I→T R@1 | Verdict |
 |---|---|---|---:|---:|---:|---:|---|
 | **OT-Mix adaptive gated** | Random | Adaptive OT + conditional alpha | **1.44%** | **1.44% @ best checkpoint/final eval** | **1.19%** | 1.69% | Best observed run |
+| OT-Mix cached-pool gated | Random cached pool, N=128 | Adaptive OT + conditional alpha over B texts × 128 cached images | pending | pending | pending | pending | Next Phase III run |
 | Baseline | Random | None | 1.38% | 1.38% @ ep50 | 1.05% | **1.71%** | Strongest non-OT baseline |
 | OT-Mix adaptive | Random | Adaptive OT, α=0.05 | 1.35% best eval / 1.28% ep50 | 1.35% @ ep49 | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | Competitive, not a win |
 | OT-Mix mixed-gated | 25% stratified + 75% random | Adaptive OT + conditional alpha | 1.33% | 1.33% @ best checkpoint/final eval | **1.24%** | 1.42% | Best T→I, but lower Avg R@1 |
@@ -117,6 +119,8 @@ All CUB runs use:
 | OT-Mix stratified | 100% stratified | More permissive OT | incomplete | incomplete | — | — | Confounded diagnostic run |
 
 **Main conclusion:** OT-Mix can find meaningful hard negatives on CUB-200. Ungated OT-Mix does not reliably beat the baseline, and mixed-gated OT-Mix does not improve the overall average. **Adaptive gated OT-Mix with random batching remains the best observed run**, with 1.44% Avg R@1 vs. 1.38% for the baseline. This is a promising one-seed result, not yet a general claim.
+
+> **Next run:** Phase III extends the best current setting by replacing batch-local OT support with a larger randomly sampled cached image pool. Instead of running OT over the current B=64 batch images, the new run computes OT over current batch texts × N=128 detached cached image embeddings, using the same alpha ramping and gating logic.
 
 ---
 
@@ -224,6 +228,31 @@ Adds per-step conditional alpha. OT loss is:
 | Final evaluation | **1.19%** | **1.69%** | **1.44%** | official best-checkpoint eval |
 
 > **Verdict:** Best observed CUB-200 run. Adaptive gated OT-Mix is the first OTCO variant to beat the baseline on canonical Avg R@1: 1.44% vs. 1.38%. The improvement is small and should be validated across seeds, but the intermediate logs show that the gate is doing the intended thing: suppressing diffuse and too-easy OT states while preserving useful near-boundary hard negatives.
+
+---
+
+#### OT-Mix Cached-Pool Gated — NEXT RUN
+
+This is the Phase III extension of the best current run. The current best setting computes OT over the current batch:
+
+```text
+B texts × B live batch images
+```
+
+The cached-pool extension keeps the same adaptive gating and alpha ramping, but replaces the OT support with a larger random image pool:
+
+```text
+B texts × N=128 detached cached image embeddings
+```
+
+At the start of each epoch, image embeddings are cached with `model.eval()` and `torch.no_grad()`. During training, each step samples 128 cached image embeddings while excluding the current batch positives by image ID. The synthetic negative is built from detached cached image embeddings, so the synthetic OT loss primarily updates the text encoder. The vision encoder still receives gradients through the base contrastive loss.
+
+| Setting | Pool | OT Support | Image-side synthetic grad | Purpose |
+|---|---:|---|---|---|
+| Adaptive gated OT-Mix | current batch | B × B | yes | current best reference |
+| Cached-pool gated OT-Mix | random cached pool, N=128 | B × 128 | no | test whether larger random support improves OT candidate quality |
+
+> **Verdict:** This is a natural diagnostic extension of the best current run. It tests whether adaptive gated OT benefits from broader random negative support while preserving the same alpha ramping and gating logic. Because cached pool embeddings are detached, this should be treated as a candidate-quality and text-side training diagnostic, not yet the final large-pool method.
 
 ---
 
@@ -486,6 +515,7 @@ or use `experiment.overrides` to patch fields without modifying the registry.
 - `configs/hf_cub200_softmax_mix_stratified.yaml`
 - `configs/hf_cub200_softmax_mix_mixed.yaml`
 - `configs/hf_cub200_softmax_mix_adaptive_gated.yaml`
+- `configs/hf_cub200_softmax_mix_cached_pool_128.yaml`
 
 Results are written to:
 
@@ -511,7 +541,10 @@ Future work should test whether the gated OT result is robust and whether transp
 Priority next steps:
 
 - repeat adaptive gated across additional seeds
-- compare adaptive gated vs. mixed gated under identical logging
+- run Phase III cached-pool gated OT-Mix with random N=128 image pool
+- compare cached-pool N=128 against adaptive gated random-batch OT-Mix
+- if N=128 improves OT diagnostics, test N=256 and N=512
+- if detached cached-pool OT improves candidate quality but not retrieval, add live re-forwarding for top OT contributors
 - add selected-rank-aware gating as a possible third condition
 - parse epoch-to-epoch stability for the gated run
 - study whether persistent transport structure can reduce stale/easy OT states
