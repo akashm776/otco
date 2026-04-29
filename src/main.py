@@ -390,7 +390,7 @@ def main():
             if (pool_size > 0 and config.get("live_reforward", False)
                     and pool_feats is not None and image_pool is not None
                     and criterion.get_alpha() > 0):
-                scale_val = 1.0 / float(model.temp.item())
+                scale_val = 1.0 / float(model.temp.item() if hasattr(model.temp, 'item') else model.temp)
                 with torch.no_grad():
                     pool_logits = (text_features @ image_pool.T * scale_val
                                    + criterion.logit_bias.detach())
