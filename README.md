@@ -65,10 +65,11 @@ Several findings are now clear:
 - Ungated OT-Mix variants found useful local hard-negative structure, but did **not** beat the baseline in final retrieval.
 - Mixed batching was the strongest ungated OT variant and finished second among ungated runs: **1.32% Avg R@1**, below the baseline's **1.38%**.
 - Mixed-gated OT-Mix reached **1.33% Avg R@1**, improving Text → Image to **1.24%** but reducing Image → Text to **1.42%**.
-- **Adaptive gated OT-Mix with random batching remains the best observed CUB-200 result so far: 1.44% Avg R@1**, above the baseline's **1.38%**.
+- **Adaptive gated OT-Mix with random batching was the first OTCO variant to beat the baseline: 1.44% Avg R@1**, above the baseline's **1.38%**.
+- **Cached-pool gated OT-Mix is the best observed CUB-200 result so far: 1.48% Avg R@1**, with **1.36% Text → Image** and **1.61% Image → Text**.
 - The main open issue is no longer whether OT can find hard negatives. It can. The issue is how to decide **when OT pressure should be applied**.
 
-This repository should be read as a **research artifact**, not a finished benchmark report. The gated result is a positive one-seed result and should be validated with additional seeds and ablations.
+This repository should be read as a **research artifact**, not a finished benchmark report. The gated and cached-pool results are positive one-seed results and should be validated with additional seeds and ablations.
 
 ---
 
@@ -110,17 +111,17 @@ All CUB runs use:
 
 | Setting | Batching | OT Schedule | Final / official Avg R@1 | Best Avg R@1 | Final T→I R@1 | Final I→T R@1 | Verdict |
 |---|---|---|---:|---:|---:|---:|---|
-| **OT-Mix adaptive gated** | Random | Adaptive OT + conditional alpha | **1.44%** | **1.44% @ best checkpoint/final eval** | **1.19%** | 1.69% | Best observed run |
-| OT-Mix cached-pool gated | Random cached pool, N=128 | Adaptive OT + conditional alpha over B texts × 128 cached images | pending | pending | pending | pending | Next Phase III run |
+| **OT-Mix cached-pool gated** | Random cached pool, N=128 | Adaptive OT + conditional alpha over B texts × 128 cached images | **1.48%** | **1.48% @ best checkpoint/final eval** | **1.36%** | 1.61% | Best observed run |
+| OT-Mix adaptive gated | Random | Adaptive OT + conditional alpha | 1.44% | 1.44% @ best checkpoint/final eval | 1.19% | 1.69% | Best batch-local OT run |
 | Baseline | Random | None | 1.38% | 1.38% @ ep50 | 1.05% | **1.71%** | Strongest non-OT baseline |
 | OT-Mix adaptive | Random | Adaptive OT, α=0.05 | 1.35% best eval / 1.28% ep50 | 1.35% @ ep49 | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | Competitive, not a win |
 | OT-Mix mixed-gated | 25% stratified + 75% random | Adaptive OT + conditional alpha | 1.33% | 1.33% @ best checkpoint/final eval | **1.24%** | 1.42% | Best T→I, but lower Avg R@1 |
 | OT-Mix mixed batching | 25% stratified + 75% random | Same as adaptive | 1.32% | 1.32% @ ep50 | 1.12% | 1.52% | Best ungated OT variant |
 | OT-Mix stratified | 100% stratified | More permissive OT | incomplete | incomplete | — | — | Confounded diagnostic run |
 
-**Main conclusion:** OT-Mix can find meaningful hard negatives on CUB-200. Ungated OT-Mix does not reliably beat the baseline, and mixed-gated OT-Mix does not improve the overall average. **Adaptive gated OT-Mix with random batching remains the best observed run**, with 1.44% Avg R@1 vs. 1.38% for the baseline. This is a promising one-seed result, not yet a general claim.
+**Main conclusion:** OT-Mix can find meaningful hard negatives on CUB-200. Ungated OT-Mix does not reliably beat the baseline, and mixed-gated OT-Mix does not improve the overall average. **Cached-pool gated OT-Mix is the best observed run**, reaching 1.48% Avg R@1 vs. 1.44% for batch-local adaptive gated OT-Mix and 1.38% for the baseline. This is a promising one-seed result, not yet a general claim.
 
-> **Next run:** Phase III extends the best current setting by replacing batch-local OT support with a larger randomly sampled cached image pool. Instead of running OT over the current B=64 batch images, the new run computes OT over current batch texts × N=128 detached cached image embeddings, using the same alpha ramping and gating logic.
+> **Next run:** Phase III v2 should keep the cached-pool candidate-mining setup, but re-forward the top OT contributors live before constructing the synthetic negative. This tests whether the cached-pool gain can be preserved while restoring image-side synthetic gradients.
 
 ---
 
@@ -231,9 +232,9 @@ Adds per-step conditional alpha. OT loss is:
 
 ---
 
-#### OT-Mix Cached-Pool Gated — NEXT RUN
+#### OT-Mix Cached-Pool Gated — COMPLETE
 
-This is the Phase III extension of the best current run. The current best setting computes OT over the current batch:
+This is the Phase III extension of the best batch-local run. The previous adaptive gated setting computes OT over the current batch:
 
 ```text
 B texts × B live batch images
@@ -247,12 +248,12 @@ B texts × N=128 detached cached image embeddings
 
 At the start of each epoch, image embeddings are cached with `model.eval()` and `torch.no_grad()`. During training, each step samples 128 cached image embeddings while excluding the current batch positives by image ID. The synthetic negative is built from detached cached image embeddings, so the synthetic OT loss primarily updates the text encoder. The vision encoder still receives gradients through the base contrastive loss.
 
-| Setting | Pool | OT Support | Image-side synthetic grad | Purpose |
-|---|---:|---|---|---|
-| Adaptive gated OT-Mix | current batch | B × B | yes | current best reference |
-| Cached-pool gated OT-Mix | random cached pool, N=128 | B × 128 | no | test whether larger random support improves OT candidate quality |
+| Setting | Pool | OT Support | Image-side synthetic grad | T→I R@1 | I→T R@1 | Avg R@1 | Purpose |
+|---|---:|---|---|---:|---:|---:|---|
+| Adaptive gated OT-Mix | current batch | B × B | yes | 1.19% | 1.69% | 1.44% | best batch-local reference |
+| Cached-pool gated OT-Mix | random cached pool, N=128 | B × 128 | no | **1.36%** | 1.61% | **1.48%** | best observed run |
 
-> **Verdict:** This is a natural diagnostic extension of the best current run. It tests whether adaptive gated OT benefits from broader random negative support while preserving the same alpha ramping and gating logic. Because cached pool embeddings are detached, this should be treated as a candidate-quality and text-side training diagnostic, not yet the final large-pool method.
+> **Verdict:** Cached-pool gated OT-Mix improves the best observed Avg R@1 from 1.44% to 1.48%. The gain is driven by a stronger Text → Image result, while Image → Text remains below the baseline and batch-local gated run. This supports the Phase III hypothesis that larger random OT support can improve candidate quality, but the detached pool still creates an asymmetric synthetic-loss path. The next run should re-forward the top OT contributors live to test whether the cached-pool gain can be kept while restoring image-side synthetic gradients.
 
 ---
 
@@ -354,17 +355,18 @@ Sampled/logged OT diagnostic steps from adaptive gated:
 
 ## Directional Retrieval Analysis
 
-Adaptive gated improves the average primarily by improving Text → Image while keeping Image → Text close to baseline. Mixed-gated produces the best Text → Image result, but loses too much Image → Text to improve the average:
+Cached-pool gated produces the best average and strongest Text → Image result so far. Adaptive gated random batching keeps Image → Text closest to the baseline, while mixed-gated improves Text → Image but loses too much Image → Text to improve the average:
 
 | Setting | Final / official T→I R@1 | Final / official I→T R@1 | Final / official Avg R@1 |
 |---|---:|---:|---:|
-| **OT-Mix adaptive gated** | 1.19% | 1.69% | **1.44%** |
+| **OT-Mix cached-pool gated** | **1.36%** | 1.61% | **1.48%** |
+| OT-Mix adaptive gated | 1.19% | 1.69% | 1.44% |
 | Baseline | 1.05% | **1.71%** | 1.38% |
 | OT-Mix mixed-gated | **1.24%** | 1.42% | 1.33% |
 | OT-Mix adaptive | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | 1.35% best eval / 1.28% ep50 |
 | OT-Mix mixed | 1.12% | 1.52% | 1.32% |
 
-This suggests conditional OT pressure may help the text-query-to-image direction, but mixed batching shifts the directional tradeoff too far toward Text → Image.
+This suggests larger random cached-pool support strengthens the Text → Image direction more effectively than mixed batching, while still preserving enough Image → Text performance to improve the overall average.
 
 ---
 
@@ -540,13 +542,11 @@ Future work should test whether the gated OT result is robust and whether transp
 
 Priority next steps:
 
-- repeat adaptive gated across additional seeds
-- run Phase III cached-pool gated OT-Mix with random N=128 image pool
-- compare cached-pool N=128 against adaptive gated random-batch OT-Mix
-- if N=128 improves OT diagnostics, test N=256 and N=512
-- if detached cached-pool OT improves candidate quality but not retrieval, add live re-forwarding for top OT contributors
+- repeat cached-pool gated and adaptive gated across additional seeds
+- run Phase III v2: cached-pool candidate mining with live re-forwarded top OT contributors
+- compare cached-pool N=128 against N=256 and N=512
 - add selected-rank-aware gating as a possible third condition
-- parse epoch-to-epoch stability for the gated run
+- parse epoch-to-epoch stability for the gated and cached-pool runs
 - study whether persistent transport structure can reduce stale/easy OT states
 
 Rather than storing large banks of generated negatives, a future version may store compact transport information that captures how hard-negative relationships evolve over time.
