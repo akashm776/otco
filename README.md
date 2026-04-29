@@ -362,7 +362,7 @@ Cached-pool gated produces the best average and strongest Text → Image result 
 | **OT-Mix cached-pool gated** | **1.36%** | 1.61% | **1.48%** |
 | OT-Mix adaptive gated | 1.19% | 1.69% | 1.44% |
 | Baseline | 1.05% | **1.71%** | 1.38% |
-| OT-Mix mixed-gated | **1.24%** | 1.42% | 1.33% |
+| OT-Mix mixed-gated | 1.24% | 1.42% | 1.33% |
 | OT-Mix adaptive | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | 1.35% best eval / 1.28% ep50 |
 | OT-Mix mixed | 1.12% | 1.52% | 1.32% |
 
@@ -538,7 +538,7 @@ Paper in preparation. Older draft is at the root level.
 
 ## Future Research Directions
 
-Future work should test whether the gated OT result is robust and whether transport structure can be made more persistent across training.
+Future work should test whether the cached-pool and gated OT results are robust and whether transport structure can be made more persistent across training.
 
 Priority next steps:
 
