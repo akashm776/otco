@@ -194,7 +194,9 @@ class SoftmaxMixLoss(nn.Module):
         progress = min(1.0, (self.current_step - self.warmup_steps) / 1000.0)
         return self.alpha_max * progress
 
-    def forward(self, logits, text_emb, image_emb, temp=None, image_pool=None):
+    def forward(self, logits, text_emb, image_emb, temp=None, image_pool=None,
+                precomputed_plan=None, precomputed_local_mask=None,
+                live_feats=None, live_local_idx=None):
         """
         image_pool: optional [N, d] detached epoch-cached image embeddings.
         When provided, OT runs over [B, N] instead of [B, B].
@@ -215,6 +217,7 @@ class SoftmaxMixLoss(nn.Module):
         pos_selected_gap = 0.0
         coupling_entropy = 0.0
         coupling_peak_mass = 0.0
+        mass_retained = 1.0
 
         # Base SigLIP loss (always over the batch; unchanged by pool mode)
         logits_biased = logits + self.logit_bias
@@ -257,14 +260,27 @@ class SoftmaxMixLoss(nn.Module):
                 # ── Pool path: OT over [B, N] ──────────────────────────────────
                 N = image_pool.size(0)
                 pool_size_used = N
-                with torch.no_grad():
-                    pool_logits = text_emb @ image_pool.T * scale + self.logit_bias  # [B, N]
-                    plan, local_mask = self._make_plan_pool(pool_logits)
+                if precomputed_plan is not None:
+                    plan = precomputed_plan
+                    local_mask = precomputed_local_mask if precomputed_local_mask is not None else (plan > 1e-12)
+                else:
+                    with torch.no_grad():
+                        pool_logits = text_emb @ image_pool.T * scale + self.logit_bias  # [B, N]
+                        plan, local_mask = self._make_plan_pool(pool_logits)
 
-                row_mass = plan.sum(dim=1, keepdim=True).clamp_min(1e-8)
-                row_weights = plan / row_mass
-                # image_pool is already detached; synthetic gets no grad through pool
-                synthetic_neg = row_weights @ image_pool  # [B, d]
+                if live_feats is not None and live_local_idx is not None:
+                    # Live re-forward path: synthetic built from live image features (has gradient)
+                    live_plan_w = plan[:, live_local_idx]           # [B, M]
+                    Z = live_plan_w.sum(dim=1, keepdim=True).clamp_min(1e-8)
+                    live_weights = live_plan_w / Z                   # [B, M] renormalized over live set
+                    synthetic_neg = live_weights @ live_feats         # [B, d], grad flows through live_feats
+                    mass_retained = (live_plan_w.sum(dim=1) / plan.sum(dim=1).clamp_min(1e-8)).mean().item()
+                else:
+                    # Detached pool path (v1)
+                    row_mass = plan.sum(dim=1, keepdim=True).clamp_min(1e-8)
+                    row_weights = plan / row_mass
+                    synthetic_neg = row_weights @ image_pool          # [B, d], detached
+                    mass_retained = 1.0
                 synthetic_neg = synthetic_neg / (synthetic_neg.norm(dim=1, keepdim=True) + 1e-8)
 
                 synth_sim = (text_emb * synthetic_neg).sum(dim=1)  # [B]
@@ -374,6 +390,7 @@ class SoftmaxMixLoss(nn.Module):
             'gap_bucket_too_hard': float(gap_bucket_id == 2),
             'pool_size': pool_size_used,
             'pool_mode': 'pool' if image_pool is not None else 'batch',
+            'mass_retained': mass_retained,
         }
 
         self.current_step += 1
