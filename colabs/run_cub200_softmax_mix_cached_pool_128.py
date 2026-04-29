@@ -14,7 +14,8 @@ repo_dir      = "/content/otco"
 checkpoint_dir = "/content/drive/MyDrive/otco_checkpoints/cub200_softmax_mix_cached_pool_128"
 
 # ── Setup ──────────────────────────────────────────────────────────────────────
-drive.mount('/content/drive')
+if not os.path.isdir('/content/drive/MyDrive'):
+    drive.mount('/content/drive')
 os.makedirs(checkpoint_dir, exist_ok=True)
 
 if os.path.exists(repo_dir):

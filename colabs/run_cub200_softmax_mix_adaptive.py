@@ -10,7 +10,8 @@ repo_url = f"https://{token}@github.com/akashm776/otco.git"
 repo_dir = "/content/otco"
 checkpoint_dir = "/content/drive/MyDrive/otco_checkpoints/cub200_softmax_mix_adaptive_v2"
 
-drive.mount('/content/drive')
+if not os.path.isdir('/content/drive/MyDrive'):
+    drive.mount('/content/drive')
 os.makedirs(checkpoint_dir, exist_ok=True)
 
 if os.path.exists(repo_dir):

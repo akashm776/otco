@@ -11,7 +11,8 @@ repo_dir = "/content/otco"
 checkpoint_dir = "/content/drive/MyDrive/otco_checkpoints/cub200_softmax_mix_stratified"
 drive_results_file = f"{checkpoint_dir}/training_log.txt"
 
-drive.mount('/content/drive')
+if not os.path.isdir('/content/drive/MyDrive'):
+    drive.mount('/content/drive')
 os.makedirs(checkpoint_dir, exist_ok=True)
 
 if os.path.exists(repo_dir):
