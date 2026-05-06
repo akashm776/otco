@@ -20,7 +20,7 @@ OTCO investigates whether Optimal Transport can improve this process by:
 
 - identifying semantically close but mismatched examples
 - constructing synthetic negatives through barycentric mixing
-- injecting harder training signal than standard random negative sampling
+- injecting harder training signal than standard random negative sampling or top K sampling
 - controlling when synthetic-negative pressure is useful rather than harmful
 
 This repository focuses on **hard-negative generation**, **training dynamics**, and **the regimes where OT-based negatives are useful or harmful**.
