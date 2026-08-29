@@ -57,6 +57,26 @@ def _negative_rank_stats(raw_sim, selected_indices):
     }
 
 
+def _pool_rank_stats(pool_sim, selected_indices, pos_sims):
+    """Rank diagnostics for pool-based OT (no diagonal masking).
+
+    pool_sim: [B, N] cosine similarities between batch texts and pool images
+    selected_indices: [B] argmax of OT plan per text
+    pos_sims: [B] cosine similarity of each text with its true positive image
+    """
+    bsz = pool_sim.size(0)
+    batch_idx = torch.arange(bsz, device=pool_sim.device)
+    selected_sims = pool_sim[batch_idx, selected_indices]
+    rank = (pool_sim > selected_sims.unsqueeze(1)).sum(dim=1).float() + 1.0
+    gap = pos_sims - selected_sims
+    return {
+        "mean_selected_rank": rank.mean().item(),
+        "median_selected_rank": rank.median().item(),
+        "avg_selected_sim": selected_sims.mean().item(),
+        "pos_selected_gap": gap.mean().item(),
+    }
+
+
 class SigLIPLoss(nn.Module):
     """Baseline SigLIP loss (no synthetic negatives)"""
     def __init__(self, init_bias=0.0):
@@ -174,11 +194,19 @@ class SoftmaxMixLoss(nn.Module):
         progress = min(1.0, (self.current_step - self.warmup_steps) / 1000.0)
         return self.alpha_max * progress
 
-    def forward(self, logits, text_emb, image_emb, temp=None):
+    def forward(self, logits, text_emb, image_emb, temp=None, image_pool=None,
+                precomputed_plan=None, precomputed_local_mask=None,
+                live_feats=None, live_local_idx=None):
+        """
+        image_pool: optional [N, d] detached epoch-cached image embeddings.
+        When provided, OT runs over [B, N] instead of [B, B].
+        Positive-ID exclusion is handled upstream in main.py before passing the pool.
+        """
         B = logits.shape[0]
 
-        # Safety: if batch size changes, invalidate cached plan
-        if self.cached_plan is not None and self.cached_plan.size(0) != B:
+        # Safety: invalidate batch-local cached plan when batch size changes.
+        # Pool plans are never cached (recomputed every step for fresh pool samples).
+        if image_pool is None and self.cached_plan is not None and self.cached_plan.size(0) != B:
             self.cached_plan = None
             self.cached_local_mask = None
 
@@ -189,17 +217,24 @@ class SoftmaxMixLoss(nn.Module):
         pos_selected_gap = 0.0
         coupling_entropy = 0.0
         coupling_peak_mass = 0.0
+        mass_retained = 1.0
 
-        # Base SigLIP loss
+        # Base SigLIP loss (always over the batch; unchanged by pool mode)
         logits_biased = logits + self.logit_bias
         labels = 2 * torch.eye(B, device=logits.device) - 1
         base_loss = -torch.sum(F.logsigmoid(labels * logits_biased)) / (B * B)
+
+        scale = logits.new_tensor(1.0 / float(temp)) if temp is not None else None
 
         # Adaptive warmup: check plan entropy every entropy_check_freq steps
         if self.adaptive_warmup and not self.ot_ready:
             if self.current_step % self.entropy_check_freq == 0:
                 with torch.no_grad():
-                    test_plan, test_mask = self._make_plan(text_emb, image_emb, logits_biased)
+                    if image_pool is not None and scale is not None:
+                        test_logits = text_emb @ image_pool.T * scale + self.logit_bias
+                        test_plan, test_mask = self._make_plan_pool(test_logits)
+                    else:
+                        test_plan, test_mask = self._make_plan(text_emb, image_emb, logits_biased)
                     local = test_plan * test_mask.float()
                     local = local / local.sum(dim=1, keepdim=True).clamp_min(1e-8)
                     entropy = -(local * local.clamp_min(1e-12).log()).sum(dim=1).mean().item()
@@ -211,59 +246,112 @@ class SoftmaxMixLoss(nn.Module):
         synthetic_loss = logits.new_tensor(0.0)
         avg_synth_sim = logits.new_tensor(0.0)
         avg_synth_logit = logits.new_tensor(0.0)
+        # Always reflect passed pool size, even if OT is inactive (warmup / gated off)
+        pool_size_used = image_pool.size(0) if image_pool is not None else 0
 
         if alpha > 0:
-            # Update cached OT plan periodically (no grad through plan)
-            if (self.current_step % self.update_freq == 0) or (self.cached_plan is None):
-                with torch.no_grad():
-                    plan, local_mask = self._make_plan(text_emb, image_emb, logits_biased)
-                self.cached_plan = plan.detach()
-                self.cached_local_mask = local_mask
-
-            # Rebuild synthetic negative with gradients only to image embeddings
-            row_mass = self.cached_plan.sum(dim=1, keepdim=True).clamp_min(1e-8)
-            row_weights = self.cached_plan / row_mass
-            synthetic_neg = row_weights @ image_emb  # [B, d]
-            synthetic_neg = synthetic_neg / (synthetic_neg.norm(dim=1, keepdim=True) + 1e-8)
-
-            # Exact scale
-            if temp is None:
+            if scale is None:
                 with torch.no_grad():
                     raw = text_emb @ image_emb.T
                     off = ~torch.eye(B, dtype=torch.bool, device=logits.device)
                     scale = (logits.detach()[off] / (raw.detach()[off] + 1e-8)).median()
+
+            if image_pool is not None:
+                # ── Pool path: OT over [B, N] ──────────────────────────────────
+                N = image_pool.size(0)
+                pool_size_used = N
+                if precomputed_plan is not None:
+                    plan = precomputed_plan
+                    local_mask = precomputed_local_mask if precomputed_local_mask is not None else (plan > 1e-12)
+                else:
+                    with torch.no_grad():
+                        pool_logits = text_emb @ image_pool.T * scale + self.logit_bias  # [B, N]
+                        plan, local_mask = self._make_plan_pool(pool_logits)
+
+                if live_feats is not None and live_local_idx is not None:
+                    # Live re-forward path: synthetic built from live image features (has gradient)
+                    live_plan_w = plan[:, live_local_idx]           # [B, M]
+                    Z = live_plan_w.sum(dim=1, keepdim=True).clamp_min(1e-8)
+                    live_weights = live_plan_w / Z                   # [B, M] renormalized over live set
+                    synthetic_neg = live_weights @ live_feats         # [B, d], grad flows through live_feats
+                    mass_retained = (live_plan_w.sum(dim=1) / plan.sum(dim=1).clamp_min(1e-8)).mean().item()
+                else:
+                    # Detached pool path (v1)
+                    row_mass = plan.sum(dim=1, keepdim=True).clamp_min(1e-8)
+                    row_weights = plan / row_mass
+                    synthetic_neg = row_weights @ image_pool          # [B, d], detached
+                    mass_retained = 1.0
+                synthetic_neg = synthetic_neg / (synthetic_neg.norm(dim=1, keepdim=True) + 1e-8)
+
+                synth_sim = (text_emb * synthetic_neg).sum(dim=1)  # [B]
+                synth_logits = scale * synth_sim
+
+                gate = (synth_logits > self.gate_sim).float()
+                num_gated = int(gate.sum().item())
+                if num_gated > 0:
+                    synthetic_loss = (-F.logsigmoid(-synth_logits) * gate).sum() / (gate.sum() + 1e-8)
+                else:
+                    synthetic_loss = synth_logits.mean() * 0.0
+
+                avg_synth_sim = synth_sim.mean()
+                avg_synth_logit = synth_logits.mean()
+
+                with torch.no_grad():
+                    pool_sim = text_emb @ image_pool.T  # [B, N] raw cosine
+                    pos_sims = (text_emb * image_emb).sum(dim=1)  # [B] positive pair cosines
+                    selected_indices = plan.argmax(dim=1)
+                    rank_stats = _pool_rank_stats(pool_sim, selected_indices, pos_sims)
+                    selected_rank = rank_stats["mean_selected_rank"]
+                    selected_rank_median = rank_stats["median_selected_rank"]
+                    selected_sim_mean = rank_stats["avg_selected_sim"]
+                    pos_selected_gap = rank_stats["pos_selected_gap"]
+
+                    local_mass = plan * local_mask.float()
+                    local_mass = local_mass / local_mass.sum(dim=1, keepdim=True).clamp_min(1e-8)
+                    row_entropy = -(local_mass * local_mass.clamp_min(1e-12).log()).sum(dim=1)
+                    coupling_entropy = row_entropy.mean().item()
+                    coupling_peak_mass = local_mass.max(dim=1).values.mean().item()
+
             else:
-                scale = logits.new_tensor(1.0 / float(temp))
+                # ── Batch-local path (existing behavior) ───────────────────────
+                if (self.current_step % self.update_freq == 0) or (self.cached_plan is None):
+                    with torch.no_grad():
+                        plan, local_mask = self._make_plan(text_emb, image_emb, logits_biased)
+                    self.cached_plan = plan.detach()
+                    self.cached_local_mask = local_mask
 
-            synth_sim = (text_emb * synthetic_neg).sum(dim=1)  # [B]
-            synth_logits = scale * synth_sim
+                row_mass = self.cached_plan.sum(dim=1, keepdim=True).clamp_min(1e-8)
+                row_weights = self.cached_plan / row_mass
+                synthetic_neg = row_weights @ image_emb  # [B, d]
+                synthetic_neg = synthetic_neg / (synthetic_neg.norm(dim=1, keepdim=True) + 1e-8)
 
-            # Gate in logit space: skip synthetics easier than gate_sim threshold
-            gate = (synth_logits > self.gate_sim).float()
-            num_gated = int(gate.sum().item())
+                synth_sim = (text_emb * synthetic_neg).sum(dim=1)  # [B]
+                synth_logits = scale * synth_sim
 
-            if num_gated > 0:
-                synthetic_loss = (-F.logsigmoid(-synth_logits) * gate).sum() / (gate.sum() + 1e-8)
-            else:
-                synthetic_loss = synth_logits.mean() * 0.0
+                gate = (synth_logits > self.gate_sim).float()
+                num_gated = int(gate.sum().item())
+                if num_gated > 0:
+                    synthetic_loss = (-F.logsigmoid(-synth_logits) * gate).sum() / (gate.sum() + 1e-8)
+                else:
+                    synthetic_loss = synth_logits.mean() * 0.0
 
-            avg_synth_sim = synth_sim.mean()
-            avg_synth_logit = synth_logits.mean()
+                avg_synth_sim = synth_sim.mean()
+                avg_synth_logit = synth_logits.mean()
 
-            with torch.no_grad():
-                raw_sim = text_emb @ image_emb.T
-                selected_indices = self.cached_plan.argmax(dim=1)
-                rank_stats = _negative_rank_stats(raw_sim, selected_indices)
-                selected_rank = rank_stats["mean_selected_rank"]
-                selected_rank_median = rank_stats["median_selected_rank"]
-                selected_sim_mean = rank_stats["avg_selected_sim"]
-                pos_selected_gap = rank_stats["pos_selected_gap"]
+                with torch.no_grad():
+                    raw_sim = text_emb @ image_emb.T
+                    selected_indices = self.cached_plan.argmax(dim=1)
+                    rank_stats = _negative_rank_stats(raw_sim, selected_indices)
+                    selected_rank = rank_stats["mean_selected_rank"]
+                    selected_rank_median = rank_stats["median_selected_rank"]
+                    selected_sim_mean = rank_stats["avg_selected_sim"]
+                    pos_selected_gap = rank_stats["pos_selected_gap"]
 
-                local_mass = self.cached_plan * self.cached_local_mask.float()
-                local_mass = local_mass / local_mass.sum(dim=1, keepdim=True).clamp_min(1e-8)
-                row_entropy = -(local_mass * (local_mass.clamp_min(1e-12)).log()).sum(dim=1)
-                coupling_entropy = row_entropy.mean().item()
-                coupling_peak_mass = local_mass.max(dim=1).values.mean().item()
+                    local_mass = self.cached_plan * self.cached_local_mask.float()
+                    local_mass = local_mass / local_mass.sum(dim=1, keepdim=True).clamp_min(1e-8)
+                    row_entropy = -(local_mass * (local_mass.clamp_min(1e-12)).log()).sum(dim=1)
+                    coupling_entropy = row_entropy.mean().item()
+                    coupling_peak_mass = local_mass.max(dim=1).values.mean().item()
 
         alpha_effective, gap_bucket_id = compute_alpha_effective(
             alpha, coupling_entropy, pos_selected_gap,
@@ -300,12 +388,47 @@ class SoftmaxMixLoss(nn.Module):
             'gap_bucket_useful': float(gap_bucket_id == 0),
             'gap_bucket_too_easy': float(gap_bucket_id == 1),
             'gap_bucket_too_hard': float(gap_bucket_id == 2),
+            'pool_size': pool_size_used,
+            'pool_mode': 'pool' if image_pool is not None else 'batch',
+            'mass_retained': mass_retained,
         }
 
         self.current_step += 1
         if self.ot_ready:
             self.steps_since_ready += 1
         return total_loss, loss_dict
+
+    def _make_plan_pool(self, pool_logits):
+        """OT plan over [B, N] pool (no diagonal masking).
+
+        pool_logits: [B, N] biased logits between batch texts and pool images
+        Returns plan [B, N] and local_mask [B, N].
+        """
+        B, N = pool_logits.shape
+        k = min(self.top_k, N)
+
+        _, topk_indices = torch.topk(pool_logits, k=k, dim=1)
+        local_mask = torch.zeros(B, N, dtype=torch.bool, device=pool_logits.device)
+        local_mask.scatter_(1, topk_indices, True)
+
+        max_logit = pool_logits.max()
+        cost = (max_logit - pool_logits).clamp_min(0.0)
+
+        kernel = torch.exp(-cost / self.ot_eps) * local_mask.float()
+        kernel = kernel.clamp_min(1e-12)
+
+        a = torch.full((B,), 1.0 / B, device=pool_logits.device)
+        b = torch.full((N,), 1.0 / N, device=pool_logits.device)
+        u = torch.ones_like(a)
+        v = torch.ones_like(b)
+
+        for _ in range(self.sinkhorn_iters):
+            u = a / (kernel @ v + 1e-8)
+            v = b / (kernel.t() @ u + 1e-8)
+
+        plan = (u.unsqueeze(1) * kernel) * v.unsqueeze(0)
+        plan = plan * local_mask.float()
+        return plan, local_mask
 
     def _make_plan(self, text_emb, image_emb, logits_biased):
         B = text_emb.size(0)
