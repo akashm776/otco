@@ -64,6 +64,7 @@ def load_training_config(path):
         "cub200_clip_vit_b32_baseline": False,
         "cub200_clip_vit_b32_otco_rawcos_gap_gate": True,
         "cub200_clip_vit_b32_otco_relative_denominator": True,
+        "cub200_clip_vit_b32_otco_relative_native_strength": True,
     }
     name = config["experiment"]["name"]
     if name not in expected_arm or bool(ot["enabled"]) != expected_arm[name]:
@@ -76,6 +77,9 @@ def load_training_config(path):
         "cub200_clip_vit_b32_otco_relative_denominator": (
             "clip_relative_denominator"
         ),
+        "cub200_clip_vit_b32_otco_relative_native_strength": (
+            "clip_relative_denominator"
+        ),
     }
     if ot["loss_type"] != expected_loss_type[name]:
         raise ValueError("Experiment name and OT loss type do not match")
@@ -85,6 +89,14 @@ def load_training_config(path):
             "Absolute synthetic-logit gating must be enabled only for the "
             "historical loss mode"
         )
+    expected_alpha_max = {
+        "cub200_clip_vit_b32_baseline": 0.05,
+        "cub200_clip_vit_b32_otco_rawcos_gap_gate": 0.05,
+        "cub200_clip_vit_b32_otco_relative_denominator": 0.05,
+        "cub200_clip_vit_b32_otco_relative_native_strength": 0.5,
+    }
+    if ot["alpha_max"] != expected_alpha_max[name]:
+        raise ValueError("Experiment name and OT alpha_max do not match")
     if config["training"]["mixed_precision"] not in {"bf16", "none"}:
         raise ValueError("The first A100 experiment supports bf16 or none")
     return config
@@ -188,7 +200,8 @@ def diagnostic_gradient_norms(loss_output, projection_parameters):
         retain_graph=True,
         allow_unused=True,
     )
-    result = {"projection_gradient_norm_clip": tensor_gradient_norm(base_gradients)}
+    clip_norm = tensor_gradient_norm(base_gradients)
+    result = {"projection_gradient_norm_clip": clip_norm}
     if loss_output.weighted_ot_loss is not None:
         ot_gradients = torch.autograd.grad(
             loss_output.weighted_ot_loss,
@@ -196,8 +209,10 @@ def diagnostic_gradient_norms(loss_output, projection_parameters):
             retain_graph=True,
             allow_unused=True,
         )
-        result["projection_gradient_norm_weighted_ot"] = tensor_gradient_norm(
-            ot_gradients
+        weighted_ot_norm = tensor_gradient_norm(ot_gradients)
+        result["projection_gradient_norm_weighted_ot"] = weighted_ot_norm
+        result["projection_gradient_ratio_weighted_ot_to_clip"] = (
+            weighted_ot_norm / max(clip_norm, 1e-12)
         )
     return result
 

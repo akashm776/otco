@@ -22,7 +22,11 @@ from src.clip_training_data import (
     load_diagnostic_holdout,
 )
 from src.clip_training_eval import chunked_bidirectional_retrieval
-from src.clip_train import consider_species_checkpoint, load_training_config
+from src.clip_train import (
+    consider_species_checkpoint,
+    diagnostic_gradient_norms,
+    load_training_config,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -281,6 +285,51 @@ def test_baseline_and_relative_otco_configs_differ_only_by_treatment():
     assert normalized_baseline == normalized_treatment
     load_training_config(
         ROOT / "configs/hf_cub200_clip_vit_b32_otco_relative_denominator.yaml"
+    )
+
+
+def test_native_strength_differs_from_weak_relative_only_by_name_and_alpha():
+    weak = yaml.safe_load(
+        (
+            ROOT
+            / "configs/hf_cub200_clip_vit_b32_otco_relative_denominator.yaml"
+        ).read_text()
+    )
+    native = yaml.safe_load(
+        (
+            ROOT
+            / "configs/hf_cub200_clip_vit_b32_otco_relative_native_strength.yaml"
+        ).read_text()
+    )
+    normalized_weak = copy.deepcopy(weak)
+    normalized_native = copy.deepcopy(native)
+    normalized_weak["experiment"]["name"] = "arm"
+    normalized_native["experiment"]["name"] = "arm"
+    normalized_weak["ot"]["alpha_max"] = 0.5
+    assert normalized_weak == normalized_native
+    load_training_config(
+        ROOT
+        / "configs/hf_cub200_clip_vit_b32_otco_relative_native_strength.yaml"
+    )
+
+
+def test_projection_gradient_ratio_is_weighted_ot_norm_over_clip_norm():
+    parameter = nn.Parameter(torch.tensor([1.0, -2.0]))
+    loss_output = type(
+        "LossOutput",
+        (),
+        {
+            "clip_loss": (2.0 * parameter).sum(),
+            "weighted_ot_loss": (0.5 * parameter).sum(),
+        },
+    )()
+    metrics = diagnostic_gradient_norms(loss_output, [parameter])
+    assert metrics["projection_gradient_norm_clip"] == pytest.approx(2.0**1.5)
+    assert metrics["projection_gradient_norm_weighted_ot"] == pytest.approx(
+        0.5 * 2.0**0.5
+    )
+    assert metrics["projection_gradient_ratio_weighted_ot_to_clip"] == (
+        pytest.approx(0.25)
     )
 
 
