@@ -1,0 +1,44 @@
+experiment:
+  name: cub200_frozen_clip_vit_b32_barycentric_weight_ablation
+  mode: frozen_barycentric_weight_ablation
+  purpose: isolate OT weights from uniform weights on identical hard top-k support
+
+dataset:
+  backend: hf_cub200
+  dataset_name: alkzar90/CC6204-Hackaton-Cub-Dataset
+  train_split: train
+  val_split: test
+
+model:
+  backend: clip
+  checkpoint: openai/clip-vit-base-patch32
+
+sampling:
+  source_split: train
+  holdout_indices_path: configs/cub200_clip_diagnostic_holdout_indices.json
+  holdout_size: 1024
+  seed: 42
+  caption_view: canonical_first_caption
+
+runtime:
+  device: cuda
+  require_cuda: true
+  min_vram_mib: 14000
+  batch_size: 64
+  num_workers: 2
+
+ot:
+  solver: historical_sparse_ot
+  cost_space: raw_cosine
+  top_k: 32
+  ot_eps: 0.049
+  sinkhorn_iters: 30
+  exclude_same_image_positives: true
+
+comparison:
+  tie_tolerance: 0.000001
+  bootstrap_seed: 42
+  bootstrap_samples: 10000
+
+output:
+  directory: outputs/cub200_frozen_clip_vit_b32_barycentric_weight_ablation
