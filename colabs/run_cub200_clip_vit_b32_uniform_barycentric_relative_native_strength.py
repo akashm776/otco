@@ -17,7 +17,7 @@ CONFIG_FILE = (
     "configs/"
     "hf_cub200_clip_vit_b32_uniform_barycentric_relative_native_strength.yaml"
 )
-PINNED_COMMIT = "__PIN_AFTER_REVIEW__"
+PINNED_COMMIT = "6076f92324af4fee056fc0e7a7b1123f03ea1e9d"
 REPO_DIR = Path("/content/otco")
 OUTPUT_DIR = Path("/content/otco_outputs") / EXPERIMENT_NAME
 CHECKPOINT_DIR = Path("/content/otco_checkpoints") / EXPERIMENT_NAME
