@@ -511,6 +511,43 @@ python -m src.test --config configs/diagnostic.yaml
 python -m src.analyze_log
 ```
 
+### Frozen CLIP geometry diagnostic
+
+Before training CLIP with OTCO, run the no-training diagnostic:
+
+```bash
+python -m src.clip_geometry_diagnostic \
+  --config configs/hf_cub200_clip_geometry.yaml
+```
+
+It evaluates a deterministic, species-balanced holdout from the CUB training
+split with frozen `openai/clip-vit-base-patch32`. The CLIP processor handles
+both images and captions, embeddings are L2-normalized, raw cosine similarity
+is kept separate from CLIP's learned logit scale, and same-image positives are
+excluded from every OT candidate set.
+
+The report includes frozen retrieval, coupling entropy (raw and normalized),
+peak mass, positive-to-selected gap, OT-selected rank/percentile, wrong-class
+margin, synthetic similarity/logit, species identity of selected negatives,
+and a comparison with strict hardest-negative selection. Historical OTCO gate
+thresholds are shown only as observational overlays; they do not gate a loss or
+change any CLIP parameters.
+
+Outputs are written to:
+
+```text
+outputs/cub200_frozen_clip_vit_b32_geometry/
+├── clip_geometry_report.json
+├── clip_geometry_per_query.csv
+└── diagnostic_holdout_indices.json
+```
+
+Keep the holdout-index file. If these diagnostics are later used to choose OT
+thresholds, those image IDs must remain outside the fine-tuning data. This
+phase determines whether CLIP exposes plausible, structured OT neighborhoods;
+only a subsequent controlled baseline-vs-OTCO training pair can establish that
+OT actually improves the model.
+
 Switch experiments by editing:
 
 ```text
