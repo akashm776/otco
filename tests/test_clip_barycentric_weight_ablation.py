@@ -1,8 +1,12 @@
 """Focused tests for the frozen OT-vs-uniform barycentric ablation."""
 
+from types import SimpleNamespace
+
+import pytest
 import torch
 import torch.nn.functional as F
 
+from src.clip_barycentric_weight_ablation import validate_holdout_indices
 from src.clip_barycentric_weight_metrics import (
     compute_barycentric_weight_ablation,
     construct_normalized_barycenters,
@@ -10,6 +14,14 @@ from src.clip_barycentric_weight_metrics import (
     summarize_barycentric_weight_ablation,
     uniform_weights_from_support,
 )
+
+
+def test_holdout_bounds_use_grouped_split_groups_without_requiring_len():
+    grouped_split = SimpleNamespace(groups=[object(), object(), object()])
+
+    validate_holdout_indices([0, 2], grouped_split, expected_count=2)
+    with pytest.raises(ValueError, match="out-of-range"):
+        validate_holdout_indices([0, 3], grouped_split, expected_count=2)
 
 
 def _three_point_fixture(plan=None):

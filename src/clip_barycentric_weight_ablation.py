@@ -51,6 +51,16 @@ def load_committed_holdout(path):
     return indices, hashlib.sha256(contents).hexdigest(), resolved
 
 
+def validate_holdout_indices(indices, grouped_split, expected_count):
+    """Validate fixed source indices against ``HFGroupedSplit.groups``."""
+    if len(indices) != expected_count:
+        raise ValueError(
+            f"Committed holdout has {len(indices)} entries; expected {expected_count}"
+        )
+    if max(indices) >= len(grouped_split.groups):
+        raise ValueError("Committed holdout contains an out-of-range source index")
+
+
 def _scalar(tensor, index):
     return float(tensor[index].detach().cpu().item())
 
@@ -182,11 +192,6 @@ def run(config):
         config["sampling"]["holdout_indices_path"]
     )
     expected_count = config["sampling"]["holdout_size"]
-    if len(selected_indices) != expected_count:
-        raise ValueError(
-            f"Committed holdout has {len(selected_indices)} entries; "
-            f"expected {expected_count}"
-        )
 
     dataset_config = config["dataset"]
     train_grouped, val_grouped, split_info = load_hf_cub200_splits(
@@ -198,8 +203,7 @@ def run(config):
     if source_name not in {"train", "val"}:
         raise ValueError("sampling.source_split must be 'train' or 'val'")
     grouped_split = train_grouped if source_name == "train" else val_grouped
-    if max(selected_indices) >= len(grouped_split):
-        raise ValueError("Committed holdout contains an out-of-range source index")
+    validate_holdout_indices(selected_indices, grouped_split, expected_count)
     species_ids = get_cub200_class_labels(grouped_split)
     dataset = CUBCLIPDiagnosticDataset(
         grouped_split, species_ids, selected_indices
