@@ -21,7 +21,7 @@ from src.clip_training_data import (
     load_diagnostic_holdout,
 )
 from src.clip_training_eval import chunked_bidirectional_retrieval
-from src.clip_train import load_training_config
+from src.clip_train import consider_species_checkpoint, load_training_config
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -304,3 +304,54 @@ def test_chunked_retrieval_handles_multiple_captions_per_image():
     )
     assert metrics["text_to_image"]["r_at_1"] == pytest.approx(100.0)
     assert metrics["image_to_text"]["r_at_1"] == pytest.approx(100.0)
+
+
+def test_ot_loss_detaches_logit_scale_but_native_clip_loss_trains_it():
+    generator = torch.Generator().manual_seed(21)
+    image = F.normalize(
+        torch.randn(8, 6, generator=generator, requires_grad=True), dim=-1
+    )
+    text = F.normalize(
+        torch.randn(8, 6, generator=generator, requires_grad=True), dim=-1
+    )
+    raw = text @ image.T
+    logit_scale = torch.tensor(25.0, requires_grad=True)
+    output = CLIPSimilarityOutput(
+        raw_similarity=raw,
+        logits=raw * logit_scale,
+        image_features=image,
+        text_features=text,
+        logit_scale=logit_scale,
+    )
+    result = CLIPTrainingObjective(ot_config())(
+        output, species_ids=torch.arange(8), step=0
+    )
+    native_gradient = torch.autograd.grad(
+        result.clip_loss, logit_scale, retain_graph=True
+    )[0]
+    ot_gradient = torch.autograd.grad(
+        result.ot_loss, logit_scale, allow_unused=True
+    )[0]
+    assert native_gradient.abs().item() > 0
+    assert ot_gradient is None
+
+
+def test_epoch_zero_can_remain_the_best_checkpoint():
+    epoch_zero = {
+        "epoch": 0,
+        "evaluation": {"species": {"top_1_accuracy": 0.5352}},
+    }
+    best_score, best_epoch, should_save = consider_species_checkpoint(epoch_zero)
+    assert should_save
+    assert best_epoch == 0
+    assert best_score == pytest.approx(0.5352)
+
+    worse_epoch = {
+        "epoch": 1,
+        "evaluation": {"species": {"top_1_accuracy": 0.50}},
+    }
+    best_score, best_epoch, should_save = consider_species_checkpoint(
+        worse_epoch, best_score, best_epoch
+    )
+    assert not should_save
+    assert best_epoch == 0

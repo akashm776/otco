@@ -220,7 +220,9 @@ class FreshBatchRawCosineOTCO(nn.Module):
         live_weights = weights.to(image_features.dtype)
         synthetic_features = F.normalize(live_weights @ image_features, dim=-1)
         synthetic_similarity = (text_features * synthetic_features).sum(1)
-        synthetic_logits = synthetic_similarity * logit_scale
+        # CLIP's learned scale remains trainable through the native contrastive
+        # logits, but OT must not update it merely to soften its auxiliary loss.
+        synthetic_logits = synthetic_similarity * logit_scale.detach()
         gate_threshold = self.config.get("synthetic_logit_gate", -4.0)
         synthetic_gate = synthetic_logits > gate_threshold
         if synthetic_gate.any():

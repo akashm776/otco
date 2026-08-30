@@ -260,6 +260,14 @@ def save_checkpoint(path, model, optimizer, scheduler, config, epoch, metrics):
     )
 
 
+def consider_species_checkpoint(record, best_score=float("-inf"), best_epoch=None):
+    """Return updated best-state metadata, including a valid epoch-zero win."""
+    score = record["evaluation"]["species"]["top_1_accuracy"]
+    if score > best_score:
+        return score, record["epoch"], True
+    return best_score, best_epoch, False
+
+
 def run(config, *, output_directory=None, checkpoint_directory=None):
     from transformers import AutoProcessor
 
@@ -327,8 +335,20 @@ def run(config, *, output_directory=None, checkpoint_directory=None):
         handle.write(json.dumps(epoch_zero) + "\n")
     print(json.dumps(epoch_zero, indent=2))
 
-    best_species_top1 = float("-inf")
-    best_epoch = None
+    best_species_top1, best_epoch, epoch_zero_is_best = (
+        consider_species_checkpoint(epoch_zero)
+    )
+    if not epoch_zero_is_best:
+        raise AssertionError("Epoch zero must initialize the best checkpoint")
+    save_checkpoint(
+        checkpoint_dir / "best_model.pt",
+        model,
+        optimizer,
+        scheduler,
+        config,
+        0,
+        epoch_zero,
+    )
     global_step = 0
     remaining_gradient_diagnostics = config["diagnostics"][
         "separate_projection_gradient_steps"
@@ -368,10 +388,10 @@ def run(config, *, output_directory=None, checkpoint_directory=None):
             epoch,
             record,
         )
-        species_top1 = evaluation["species"]["top_1_accuracy"]
-        if species_top1 > best_species_top1:
-            best_species_top1 = species_top1
-            best_epoch = epoch
+        best_species_top1, best_epoch, is_new_best = consider_species_checkpoint(
+            record, best_species_top1, best_epoch
+        )
+        if is_new_best:
             save_checkpoint(
                 checkpoint_dir / "best_model.pt",
                 model,
