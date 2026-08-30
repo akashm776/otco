@@ -177,6 +177,11 @@ def test_batch_emulation_uses_actual_batch_mean_gate_semantics():
         )
         assert record["alpha_effective"] == expected_alpha
         assert record["gap_bucket_id"] == expected_bucket
+        assert "mean_synthetic_vs_hardest_real_similarity_delta" in record
+        assert "mean_synthetic_vs_hardest_real_logit_delta" in record
+        assert (
+            "fraction_synthetic_harder_than_hardest_real_contributor" in record
+        )
 
 
 def test_species_evaluation_and_report_fields_are_explicit():
@@ -207,15 +212,66 @@ def test_species_evaluation_and_report_fields_are_explicit():
         },
     )
     summary = summarize_transport_variant(diagnostics)
+    contributor_mask = diagnostics["plan"] > 0
+    expected_hardest_real = diagnostics["raw_similarity"].masked_fill(
+        ~contributor_mask, float("-inf")
+    ).max(1).values
+    expected_delta = diagnostics["synthetic_similarity"] - expected_hardest_real
 
     assert evaluation["top_1_accuracy"] == 1.0
     assert evaluation["top_5_accuracy"] == 1.0
+    assert torch.allclose(
+        diagnostics["hardest_real_contributor_similarity"],
+        expected_hardest_real,
+    )
+    assert torch.allclose(
+        diagnostics["synthetic_vs_hardest_real_similarity_delta"],
+        expected_delta,
+    )
+    assert torch.allclose(
+        diagnostics["synthetic_vs_hardest_real_logit_delta"],
+        expected_delta * 100.0,
+    )
     assert "fraction_positive_selected_gap_lt_0" in summary["extreme_gap_behavior"]
     assert (
         "fraction_synthetic_similarity_gt_positive_similarity"
+        in summary["extreme_gap_behavior"]
+    )
+    assert (
+        "fraction_synthetic_harder_than_hardest_real_contributor"
         in summary["extreme_gap_behavior"]
     )
     assert "top-k" in summary["strict_hardest_comparison"]["selected_rank_context"]
     assert "Observational" in summary[
         "per_query_historical_threshold_overlay"
     ]["interpretation"]
+
+
+def test_barycenter_can_be_harder_than_every_real_contributor():
+    # The two contributors are symmetric around the anchor. Their normalized
+    # barycenter aligns perfectly with it even though each real contributor has
+    # cosine similarity 0.8.
+    features = torch.tensor([[1.0, 0.0], [0.8, 0.6], [0.8, -0.6]])
+    diagnostics = compute_transport_variant(
+        image_features=features,
+        text_features=features,
+        logit_scale=100.0,
+        image_ids=[0, 1, 2],
+        species_ids=["a", "b", "c"],
+        cost_space="raw_cosine",
+        top_k=2,
+        ot_eps=10.0,
+        sinkhorn_iters=100,
+    )
+
+    assert torch.isclose(
+        diagnostics["hardest_real_contributor_similarity"][0],
+        torch.tensor(0.8),
+    )
+    assert torch.isclose(
+        diagnostics["synthetic_similarity"][0], torch.tensor(1.0)
+    )
+    assert torch.isclose(
+        diagnostics["synthetic_vs_hardest_real_similarity_delta"][0],
+        torch.tensor(0.2),
+    )

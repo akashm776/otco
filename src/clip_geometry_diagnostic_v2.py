@@ -88,10 +88,16 @@ def build_per_query_rows(variant_name, diagnostics, metadata, gate_sim):
     rows = []
     selected = diagnostics["selected_indices"].detach().cpu().tolist()
     hardest = diagnostics["hardest_indices"].detach().cpu().tolist()
+    hardest_real_contributors = diagnostics[
+        "hardest_real_contributor_indices"
+    ].detach().cpu().tolist()
     overlay = diagnostics["per_query_historical_threshold_overlay"]
     for index, anchor in enumerate(metadata):
         selected_record = metadata[selected[index]]
         hardest_record = metadata[hardest[index]]
+        hardest_real_contributor_record = metadata[
+            hardest_real_contributors[index]
+        ]
         synthetic_logit = _value(diagnostics["synthetic_logits"], index)
         rows.append(
             {
@@ -138,6 +144,33 @@ def build_per_query_rows(variant_name, diagnostics, metadata, gate_sim):
                     diagnostics["synthetic_similarity"], index
                 ),
                 "synthetic_logit": synthetic_logit,
+                "hardest_real_contributor_index": hardest_real_contributors[index],
+                "hardest_real_contributor_image_key": (
+                    hardest_real_contributor_record["image_key"]
+                ),
+                "hardest_real_contributor_species_id": (
+                    hardest_real_contributor_record["species_id"]
+                ),
+                "hardest_real_contributor_similarity": _value(
+                    diagnostics["hardest_real_contributor_similarity"], index
+                ),
+                "synthetic_vs_hardest_real_similarity_delta": _value(
+                    diagnostics[
+                        "synthetic_vs_hardest_real_similarity_delta"
+                    ],
+                    index,
+                ),
+                "synthetic_vs_hardest_real_logit_delta": _value(
+                    diagnostics["synthetic_vs_hardest_real_logit_delta"],
+                    index,
+                ),
+                "synthetic_harder_than_hardest_real_contributor": _value(
+                    diagnostics[
+                        "synthetic_vs_hardest_real_similarity_delta"
+                    ],
+                    index,
+                )
+                > 0,
                 "synthetic_similarity_gt_positive": _value(
                     diagnostics["synthetic_similarity"], index
                 )

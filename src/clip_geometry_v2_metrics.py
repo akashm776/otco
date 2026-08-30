@@ -295,8 +295,26 @@ def compute_transport_variant(
 
     synthetic_features = F.normalize(weights @ image_features, dim=-1)
     synthetic_similarity = (text_features * synthetic_features).sum(1)
-    synthetic_logits = synthetic_similarity * torch.as_tensor(
+    scale = torch.as_tensor(
         logit_scale, device=device, dtype=raw_similarity.dtype
+    )
+    synthetic_logits = synthetic_similarity * scale
+
+    # Compare the normalized barycenter with the hardest actual image that
+    # received positive returned transport weight. This is distinct from both
+    # the largest-mass representative and the globally hardest negative.
+    contributor_mask = transport.plan > 0
+    contributor_similarity = raw_similarity.masked_fill(
+        ~contributor_mask, float("-inf")
+    )
+    hardest_real_contributor_similarity, hardest_real_contributor = (
+        contributor_similarity.max(1)
+    )
+    synthetic_vs_hardest_real_similarity_delta = (
+        synthetic_similarity - hardest_real_contributor_similarity
+    )
+    synthetic_vs_hardest_real_logit_delta = (
+        synthetic_vs_hardest_real_similarity_delta * scale
     )
 
     thresholds = historical_thresholds or {}
@@ -327,6 +345,16 @@ def compute_transport_variant(
         "coupling_peak_mass": peak_mass,
         "synthetic_similarity": synthetic_similarity,
         "synthetic_logits": synthetic_logits,
+        "hardest_real_contributor_indices": hardest_real_contributor,
+        "hardest_real_contributor_similarity": (
+            hardest_real_contributor_similarity
+        ),
+        "synthetic_vs_hardest_real_similarity_delta": (
+            synthetic_vs_hardest_real_similarity_delta
+        ),
+        "synthetic_vs_hardest_real_logit_delta": (
+            synthetic_vs_hardest_real_logit_delta
+        ),
         "selected_same_species": selected_same_species,
         "hardest_same_species": hardest_same_species,
         "random_same_species_chance": random_same_species_chance,
@@ -351,6 +379,9 @@ def summarize_transport_variant(diagnostics):
         "coupling_peak_mass",
         "synthetic_similarity",
         "synthetic_logits",
+        "hardest_real_contributor_similarity",
+        "synthetic_vs_hardest_real_similarity_delta",
+        "synthetic_vs_hardest_real_logit_delta",
         "best_same_species_rank",
         "best_wrong_species_rank",
         "wrong_species_margin",
@@ -379,6 +410,15 @@ def summarize_transport_variant(diagnostics):
                 (
                     diagnostics["synthetic_similarity"]
                     > diagnostics["positive_similarity"]
+                )
+                .float()
+                .mean()
+                .item()
+            ),
+            "fraction_synthetic_harder_than_hardest_real_contributor": float(
+                (
+                    diagnostics["synthetic_vs_hardest_real_similarity_delta"]
+                    > 0
                 )
                 .float()
                 .mean()
@@ -539,6 +579,34 @@ def emulate_batch_local_gates(
                     "mean_synthetic_logit": float(
                         diagnostics["synthetic_logits"].mean().item()
                     ),
+                    "mean_hardest_real_contributor_similarity": float(
+                        diagnostics["hardest_real_contributor_similarity"]
+                        .mean()
+                        .item()
+                    ),
+                    "mean_synthetic_vs_hardest_real_similarity_delta": float(
+                        diagnostics[
+                            "synthetic_vs_hardest_real_similarity_delta"
+                        ]
+                        .mean()
+                        .item()
+                    ),
+                    "mean_synthetic_vs_hardest_real_logit_delta": float(
+                        diagnostics["synthetic_vs_hardest_real_logit_delta"]
+                        .mean()
+                        .item()
+                    ),
+                    "fraction_synthetic_harder_than_hardest_real_contributor": float(
+                        (
+                            diagnostics[
+                                "synthetic_vs_hardest_real_similarity_delta"
+                            ]
+                            > 0
+                        )
+                        .float()
+                        .mean()
+                        .item()
+                    ),
                     "fraction_synthetics_passing_gate_sim": float(
                         (
                             diagnostics["synthetic_logits"]
@@ -577,6 +645,10 @@ def summarize_batch_emulation(records):
             "median_selected_rank",
             "mean_synthetic_similarity",
             "mean_synthetic_logit",
+            "mean_hardest_real_contributor_similarity",
+            "mean_synthetic_vs_hardest_real_similarity_delta",
+            "mean_synthetic_vs_hardest_real_logit_delta",
+            "fraction_synthetic_harder_than_hardest_real_contributor",
             "fraction_synthetics_passing_gate_sim",
             "alpha_effective",
             "total_mass_returned",

@@ -593,7 +593,10 @@ diagnostic-only support-preserving solver is included for mathematical
 comparison; it is not connected to training. V2 additionally reports fixed-
 prompt zero-shot species top-1/top-5 accuracy, species margin, same-species
 neighborhood enrichment, and the fractions for which selected or synthetic
-similarity exceeds the paired-positive similarity.
+similarity exceeds the paired-positive similarity. It also measures the
+barycentric synthetic's cosine/logit difference from the hardest real image
+that received positive transport weight, including the fraction of synthetics
+that are harder than every real contributor used to construct them.
 
 Outputs are written separately to:
 
