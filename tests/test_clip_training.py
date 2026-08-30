@@ -12,6 +12,7 @@ from model.clip_backend import CLIPEncoderBackend, CLIPSimilarityOutput
 from model.clip_training import (
     CLIPTrainingObjective,
     FreshBatchRawCosineOTCO,
+    clip_relative_denominator_loss,
     compute_clip_alpha_effective,
     configure_clip_trainable_parameters,
     native_clip_contrastive_loss,
@@ -30,6 +31,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def ot_config(**overrides):
     config = {
         "enabled": True,
+        "loss_type": "historical_absolute_sigmoid",
         "cost_space": "raw_cosine",
         "top_k": 32,
         "ot_eps": 0.049,
@@ -44,10 +46,19 @@ def ot_config(**overrides):
         "gap_suppress_easy": 0.10,
         "gap_downweight_hard": -0.07,
         "hard_alpha_scale": 0.25,
+        "synthetic_logit_gate_enabled": True,
         "synthetic_logit_gate": -4.0,
     }
     config.update(overrides)
     return config
+
+
+def relative_ot_config(**overrides):
+    return ot_config(
+        loss_type="clip_relative_denominator",
+        synthetic_logit_gate_enabled=False,
+        **overrides,
+    )
 
 
 def feature_output(seed=0, count=8, dimension=6, logit_scale=25.0):
@@ -66,6 +77,43 @@ def test_native_clip_loss_uses_symmetric_diagonal_targets():
         F.cross_entropy(logits, targets) + F.cross_entropy(logits.T, targets)
     )
     assert torch.allclose(native_clip_contrastive_loss(logits), expected)
+
+
+def test_relative_denominator_loss_matches_exact_manual_calculation():
+    base_logits = torch.tensor([[2.0, 0.5], [-1.0, 1.5]])
+    synthetic_logits = torch.tensor([1.25, 0.75])
+    loss, base_lse, augmented_lse = clip_relative_denominator_loss(
+        base_logits, synthetic_logits
+    )
+    expected_base = torch.logsumexp(base_logits, dim=1)
+    expected_augmented = torch.logsumexp(
+        torch.cat((base_logits, synthetic_logits[:, None]), dim=1), dim=1
+    )
+    assert torch.equal(base_lse, expected_base)
+    assert torch.equal(augmented_lse, expected_augmented)
+    assert torch.allclose(
+        loss, (expected_augmented - expected_base).mean(), atol=1e-7, rtol=1e-7
+    )
+    assert loss.item() >= 0
+
+
+def test_relative_denominator_loss_is_invariant_to_common_logit_shift():
+    base_logits = torch.tensor([[3.0, 1.0, -2.0], [0.5, -1.0, 2.5]])
+    synthetic_logits = torch.tensor([2.0, 1.25])
+    original = clip_relative_denominator_loss(base_logits, synthetic_logits)[0]
+    shifted = clip_relative_denominator_loss(
+        base_logits - 37.0, synthetic_logits - 37.0
+    )[0]
+    assert torch.allclose(original, shifted, atol=1e-6, rtol=1e-6)
+
+
+def test_relative_denominator_loss_tracks_synthetic_competitiveness():
+    base_logits = torch.tensor([[2.0, 0.0], [0.5, 1.0]])
+    synthetic_logits = torch.tensor([0.25, 0.75])
+    lower = clip_relative_denominator_loss(base_logits, synthetic_logits - 2.0)[0]
+    middle = clip_relative_denominator_loss(base_logits, synthetic_logits)[0]
+    higher = clip_relative_denominator_loss(base_logits, synthetic_logits + 2.0)[0]
+    assert lower < middle < higher
 
 
 class FakeCLIP(nn.Module):
@@ -213,6 +261,29 @@ def test_baseline_and_otco_configs_share_trainable_policy_and_controls():
     )
 
 
+def test_baseline_and_relative_otco_configs_differ_only_by_treatment():
+    baseline = yaml.safe_load(
+        (ROOT / "configs/hf_cub200_clip_vit_b32_baseline.yaml").read_text()
+    )
+    treatment = yaml.safe_load(
+        (
+            ROOT
+            / "configs/hf_cub200_clip_vit_b32_otco_relative_denominator.yaml"
+        ).read_text()
+    )
+    normalized_baseline = copy.deepcopy(baseline)
+    normalized_treatment = copy.deepcopy(treatment)
+    normalized_baseline["experiment"]["name"] = "arm"
+    normalized_treatment["experiment"]["name"] = "arm"
+    normalized_baseline["ot"]["enabled"] = True
+    normalized_baseline["ot"]["loss_type"] = "clip_relative_denominator"
+    normalized_baseline["ot"]["synthetic_logit_gate_enabled"] = False
+    assert normalized_baseline == normalized_treatment
+    load_training_config(
+        ROOT / "configs/hf_cub200_clip_vit_b32_otco_relative_denominator.yaml"
+    )
+
+
 def test_exact_diagnostic_holdout_is_excluded_from_training():
     path = ROOT / "configs/cub200_clip_diagnostic_holdout_indices.json"
     holdout = load_diagnostic_holdout(path, original_count=10_000)
@@ -238,6 +309,18 @@ def test_otco_total_reduces_exactly_to_baseline_when_alpha_is_zero():
     )
     treatment = CLIPTrainingObjective(
         ot_config(enabled=True, warmup_steps=100)
+    )(output, species_ids=torch.arange(8), step=0)
+    assert treatment.metrics["alpha_effective"] == 0
+    assert torch.equal(treatment.total_loss, baseline.total_loss)
+
+
+def test_relative_otco_total_reduces_exactly_to_baseline_when_alpha_is_zero():
+    output = feature_output(seed=18)
+    baseline = CLIPTrainingObjective(ot_config(enabled=False))(
+        output, species_ids=torch.arange(8), step=0
+    )
+    treatment = CLIPTrainingObjective(
+        relative_ot_config(enabled=True, warmup_steps=100)
     )(output, species_ids=torch.arange(8), step=0)
     assert treatment.metrics["alpha_effective"] == 0
     assert torch.equal(treatment.total_loss, baseline.total_loss)
@@ -334,6 +417,66 @@ def test_ot_loss_detaches_logit_scale_but_native_clip_loss_trains_it():
     )[0]
     assert native_gradient.abs().item() > 0
     assert ot_gradient is None
+
+
+def test_relative_ot_loss_detaches_scale_but_keeps_representation_gradients_live():
+    generator = torch.Generator().manual_seed(31)
+    image_source = torch.randn(8, 6, generator=generator, requires_grad=True)
+    text_source = torch.randn(8, 6, generator=generator, requires_grad=True)
+    image = F.normalize(image_source, dim=-1)
+    text = F.normalize(text_source, dim=-1)
+    raw = text @ image.T
+    logit_scale = torch.tensor(25.0, requires_grad=True)
+    output = CLIPSimilarityOutput(
+        raw_similarity=raw,
+        logits=raw * logit_scale,
+        image_features=image,
+        text_features=text,
+        logit_scale=logit_scale,
+    )
+    result = CLIPTrainingObjective(relative_ot_config())(
+        output, species_ids=torch.arange(8), step=0
+    )
+    scale_gradient = torch.autograd.grad(
+        result.ot_loss, logit_scale, retain_graph=True, allow_unused=True
+    )[0]
+    image_gradient, text_gradient = torch.autograd.grad(
+        result.ot_loss, (image_source, text_source)
+    )
+    assert scale_gradient is None
+    assert image_gradient.norm().item() > 0
+    assert text_gradient.norm().item() > 0
+    assert result.metrics["ot_relative_loss"] == pytest.approx(
+        result.ot_loss.detach().item()
+    )
+    assert result.metrics["weighted_ot_relative_loss"] == pytest.approx(
+        result.weighted_ot_loss.detach().item()
+    )
+
+
+def test_relative_loss_bypasses_absolute_gate_while_historical_mode_retains_it():
+    output = feature_output(seed=37)
+    species = torch.arange(8)
+    relative_low = CLIPTrainingObjective(
+        relative_ot_config(synthetic_logit_gate=-1.0e9)
+    )(output, species_ids=species, step=0)
+    relative_high = CLIPTrainingObjective(
+        relative_ot_config(synthetic_logit_gate=1.0e9)
+    )(output, species_ids=species, step=0)
+    assert torch.equal(relative_low.ot_loss, relative_high.ot_loss)
+    assert relative_low.metrics["synthetic_gate_active_fraction"] == 1.0
+    assert relative_high.metrics["synthetic_gate_active_fraction"] == 1.0
+
+    historical_active = CLIPTrainingObjective(
+        ot_config(synthetic_logit_gate=-1.0e9)
+    )(output, species_ids=species, step=0)
+    historical_suppressed = CLIPTrainingObjective(
+        ot_config(synthetic_logit_gate=1.0e9)
+    )(output, species_ids=species, step=0)
+    assert historical_active.metrics["synthetic_gate_active_fraction"] == 1.0
+    assert historical_active.ot_loss.item() > 0
+    assert historical_suppressed.metrics["synthetic_gate_active_fraction"] == 0.0
+    assert historical_suppressed.ot_loss.item() == 0.0
 
 
 def test_epoch_zero_can_remain_the_best_checkpoint():

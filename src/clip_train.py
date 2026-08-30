@@ -63,10 +63,28 @@ def load_training_config(path):
     expected_arm = {
         "cub200_clip_vit_b32_baseline": False,
         "cub200_clip_vit_b32_otco_rawcos_gap_gate": True,
+        "cub200_clip_vit_b32_otco_relative_denominator": True,
     }
     name = config["experiment"]["name"]
     if name not in expected_arm or bool(ot["enabled"]) != expected_arm[name]:
         raise ValueError("Experiment name and OT treatment flag do not match")
+    expected_loss_type = {
+        "cub200_clip_vit_b32_baseline": "historical_absolute_sigmoid",
+        "cub200_clip_vit_b32_otco_rawcos_gap_gate": (
+            "historical_absolute_sigmoid"
+        ),
+        "cub200_clip_vit_b32_otco_relative_denominator": (
+            "clip_relative_denominator"
+        ),
+    }
+    if ot["loss_type"] != expected_loss_type[name]:
+        raise ValueError("Experiment name and OT loss type do not match")
+    expected_absolute_gate = ot["loss_type"] == "historical_absolute_sigmoid"
+    if bool(ot["synthetic_logit_gate_enabled"]) != expected_absolute_gate:
+        raise ValueError(
+            "Absolute synthetic-logit gating must be enabled only for the "
+            "historical loss mode"
+        )
     if config["training"]["mixed_precision"] not in {"bf16", "none"}:
         raise ValueError("The first A100 experiment supports bf16 or none")
     return config

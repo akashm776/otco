@@ -45,6 +45,7 @@ scheduler:
 
 ot:
   enabled: true
+  loss_type: historical_absolute_sigmoid
   cost_space: raw_cosine
   top_k: 32
   ot_eps: 0.049
@@ -59,6 +60,7 @@ ot:
   gap_suppress_easy: 0.10
   gap_downweight_hard: -0.07
   hard_alpha_scale: 0.25
+  synthetic_logit_gate_enabled: true
   synthetic_logit_gate: -4.0
 
 evaluation:

@@ -27,6 +27,11 @@ GAP_GATE_STATES = {
     4: "inactive_scheduled_alpha",
 }
 
+OT_LOSS_TYPES = {
+    "historical_absolute_sigmoid",
+    "clip_relative_denominator",
+}
+
 
 @dataclass
 class CLIPLossOutput:
@@ -45,6 +50,31 @@ def native_clip_contrastive_loss(logits):
     text_to_image = F.cross_entropy(logits, targets)
     image_to_text = F.cross_entropy(logits.T, targets)
     return 0.5 * (text_to_image + image_to_text)
+
+
+def clip_relative_denominator_loss(base_logits, synthetic_logits):
+    """Additional row-denominator pressure from one synthetic image per text.
+
+    Both inputs must already use the same detached CLIP scale. Subtracting the
+    original row log-partition function makes this objective invariant to a
+    common additive shift of the ordinary and synthetic logits.
+    """
+    if base_logits.ndim != 2:
+        raise ValueError("Relative OT base logits must have shape [B, B]")
+    if synthetic_logits.ndim != 1:
+        raise ValueError("Relative OT synthetic logits must have shape [B]")
+    if base_logits.shape[0] != synthetic_logits.shape[0]:
+        raise ValueError("Relative OT base and synthetic batch sizes must match")
+    base_lse = torch.logsumexp(base_logits, dim=1)
+    augmented_lse = torch.logsumexp(
+        torch.cat((base_logits, synthetic_logits.unsqueeze(1)), dim=1),
+        dim=1,
+    )
+    # logaddexp(base_lse, synthetic) - base_lse is exactly
+    # softplus(synthetic - base_lse), but this form avoids cancellation after a
+    # large common logit shift.
+    loss = F.softplus(synthetic_logits - base_lse).mean()
+    return loss, base_lse, augmented_lse
 
 
 def scheduled_ot_alpha(step, *, alpha_max, warmup_steps, ramp_steps):
@@ -162,7 +192,19 @@ class FreshBatchRawCosineOTCO(nn.Module):
             raise ValueError("First CLIP treatment preserves historical_sparse_ot")
         if config["update_freq"] != 1:
             raise ValueError("First CLIP treatment requires update_freq=1")
+        loss_type = config.get("loss_type", "historical_absolute_sigmoid")
+        if loss_type not in OT_LOSS_TYPES:
+            raise ValueError(f"Unsupported CLIP OT loss_type: {loss_type}")
+        if (
+            loss_type == "clip_relative_denominator"
+            and config.get("synthetic_logit_gate_enabled", True)
+        ):
+            raise ValueError(
+                "clip_relative_denominator requires the absolute synthetic-logit "
+                "gate to be disabled"
+            )
         self.config = dict(config)
+        self.loss_type = loss_type
         self.plan_build_count = 0
         self.last_plan = None
 
@@ -221,14 +263,42 @@ class FreshBatchRawCosineOTCO(nn.Module):
         synthetic_features = F.normalize(live_weights @ image_features, dim=-1)
         synthetic_similarity = (text_features * synthetic_features).sum(1)
         # CLIP's learned scale remains trainable through the native contrastive
-        # logits, but OT must not update it merely to soften its auxiliary loss.
-        synthetic_logits = synthetic_similarity * logit_scale.detach()
-        gate_threshold = self.config.get("synthetic_logit_gate", -4.0)
-        synthetic_gate = synthetic_logits > gate_threshold
-        if synthetic_gate.any():
-            ot_loss = -F.logsigmoid(-synthetic_logits[synthetic_gate]).mean()
+        # logits, but neither OT loss may update it directly.
+        ot_scale = logit_scale.detach()
+        synthetic_logits = synthetic_similarity * ot_scale
+        relative_metrics = {}
+        if self.loss_type == "historical_absolute_sigmoid":
+            gate_threshold = self.config.get("synthetic_logit_gate", -4.0)
+            gate_enabled = self.config.get("synthetic_logit_gate_enabled", True)
+            synthetic_gate = (
+                synthetic_logits > gate_threshold
+                if gate_enabled
+                else torch.ones_like(synthetic_logits, dtype=torch.bool)
+            )
+            if synthetic_gate.any():
+                ot_loss = -F.logsigmoid(-synthetic_logits[synthetic_gate]).mean()
+            else:
+                ot_loss = synthetic_logits.mean() * 0
         else:
-            ot_loss = synthetic_logits.mean() * 0
+            # Add the synthetic image only to the text->image denominator. Both
+            # ordinary and synthetic OT logits share the same detached scale.
+            ot_base_logits = raw_similarity * ot_scale
+            ot_loss, base_lse, augmented_lse = clip_relative_denominator_loss(
+                ot_base_logits, synthetic_logits
+            )
+            synthetic_gate = torch.ones_like(synthetic_logits, dtype=torch.bool)
+            relative_metrics = {
+                "ot_relative_loss": float(ot_loss.detach().item()),
+                "base_row_logsumexp_mean": float(
+                    base_lse.detach().mean().item()
+                ),
+                "augmented_row_logsumexp_mean": float(
+                    augmented_lse.detach().mean().item()
+                ),
+                "synthetic_logit_minus_base_lse_mean": float(
+                    (synthetic_logits.detach() - base_lse.detach()).mean().item()
+                ),
+            }
 
         contributor_mask = plan > 0
         hardest_real_similarity = raw_float.masked_fill(
@@ -240,6 +310,14 @@ class FreshBatchRawCosineOTCO(nn.Module):
 
         species = torch.as_tensor(species_ids, device=plan.device)
         selected_same_species = species[selected] == species
+        diagonal_mask = torch.eye(
+            raw_similarity.shape[0],
+            dtype=torch.bool,
+            device=raw_similarity.device,
+        )
+        positive_cosine = raw_similarity.diagonal().detach().float()
+        offdiagonal_cosine = raw_similarity.detach().float()[~diagonal_mask]
+        synthetic_cosine = synthetic_similarity.detach().float()
         mean_entropy = float(entropy.mean().item())
         mean_gap = float(gap.mean().item())
         alpha_scheduled = scheduled_ot_alpha(
@@ -261,6 +339,7 @@ class FreshBatchRawCosineOTCO(nn.Module):
         mass = audit_transport_mass(transport)
         metrics = {
             "ot_loss": float(ot_loss.detach().item()),
+            "ot_loss_type": self.loss_type,
             "alpha_scheduled": alpha_scheduled,
             "alpha_effective": alpha_effective,
             "gate_state_id": gate_state_id,
@@ -295,6 +374,13 @@ class FreshBatchRawCosineOTCO(nn.Module):
             "synthetic_gate_active_fraction": float(
                 synthetic_gate.float().mean().item()
             ),
+            "mean_positive_cosine": float(positive_cosine.mean().item()),
+            "mean_offdiagonal_cosine": float(offdiagonal_cosine.mean().item()),
+            "mean_synthetic_cosine": float(synthetic_cosine.mean().item()),
+            "median_positive_cosine": float(positive_cosine.median().item()),
+            "median_offdiagonal_cosine": float(
+                offdiagonal_cosine.median().item()
+            ),
             "transport_total_mass": mass["total_mass_returned"],
             "transport_max_row_marginal_error": mass[
                 "max_row_marginal_error"
@@ -306,6 +392,7 @@ class FreshBatchRawCosineOTCO(nn.Module):
                 "fraction_mass_removed_by_final_mask"
             ],
             "plan_build_count": self.plan_build_count,
+            **relative_metrics,
         }
         return ot_loss, alpha_effective, metrics
 
@@ -350,6 +437,10 @@ class CLIPTrainingObjective(nn.Module):
             "ot_enabled": True,
             **ot_metrics,
         }
+        if self.otco.loss_type == "clip_relative_denominator":
+            metrics["weighted_ot_relative_loss"] = float(
+                weighted_ot.detach().item()
+            )
         return CLIPLossOutput(
             total_loss=total_loss,
             clip_loss=clip_loss,

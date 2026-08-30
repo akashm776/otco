@@ -1,4 +1,4 @@
-"""Run the controlled native-CLIP CUB baseline on an A100 Colab runtime."""
+"""Run the relative-denominator raw-cosine OTCO treatment on A100 Colab."""
 
 import importlib
 import os
@@ -10,8 +10,8 @@ import zipfile
 from google.colab import files, userdata
 
 
-EXPERIMENT_NAME = "cub200_clip_vit_b32_baseline"
-CONFIG_FILE = "configs/hf_cub200_clip_vit_b32_baseline.yaml"
+EXPERIMENT_NAME = "cub200_clip_vit_b32_otco_relative_denominator"
+CONFIG_FILE = "configs/hf_cub200_clip_vit_b32_otco_relative_denominator.yaml"
 PINNED_COMMIT = "__PIN_AFTER_REVIEW__"
 REPO_DIR = Path("/content/otco")
 OUTPUT_DIR = Path("/content/otco_outputs") / EXPERIMENT_NAME
@@ -31,7 +31,7 @@ def require_a100():
     name, total_mib = (part.strip() for part in line.split(","))
     print(f"Using GPU: {name} ({total_mib} MiB VRAM)")
     if "A100" not in name or int(total_mib) < 14000:
-        raise RuntimeError("This first controlled CLIP runner requires an A100")
+        raise RuntimeError("This controlled CLIP runner requires an A100")
 
 
 require_a100()

@@ -1,5 +1,5 @@
 experiment:
-  name: cub200_clip_vit_b32_baseline
+  name: cub200_clip_vit_b32_otco_relative_denominator
   mode: controlled_clip_finetuning
   seed: 42
 
@@ -44,8 +44,8 @@ scheduler:
   warmup_steps: 100
 
 ot:
-  enabled: false
-  loss_type: historical_absolute_sigmoid
+  enabled: true
+  loss_type: clip_relative_denominator
   cost_space: raw_cosine
   top_k: 32
   ot_eps: 0.049
@@ -60,7 +60,7 @@ ot:
   gap_suppress_easy: 0.10
   gap_downweight_hard: -0.07
   hard_alpha_scale: 0.25
-  synthetic_logit_gate_enabled: true
+  synthetic_logit_gate_enabled: false
   synthetic_logit_gate: -4.0
 
 evaluation:
