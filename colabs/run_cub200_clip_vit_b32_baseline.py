@@ -12,6 +12,7 @@ from google.colab import files, userdata
 
 EXPERIMENT_NAME = "cub200_clip_vit_b32_baseline"
 CONFIG_FILE = "configs/hf_cub200_clip_vit_b32_baseline.yaml"
+PINNED_COMMIT = "1e9306574c479f1c6d805be81f3db5e364c9a995"
 REPO_DIR = Path("/content/otco")
 OUTPUT_DIR = Path("/content/otco_outputs") / EXPERIMENT_NAME
 CHECKPOINT_DIR = Path("/content/otco_checkpoints") / EXPERIMENT_NAME
@@ -41,9 +42,13 @@ repo_url = (
     else "https://github.com/akashm776/otco.git"
 )
 if REPO_DIR.exists():
-    subprocess.run(["git", "-C", str(REPO_DIR), "pull", "--ff-only"], check=True)
+    subprocess.run(["git", "-C", str(REPO_DIR), "fetch", "origin"], check=True)
 else:
-    subprocess.run(["git", "clone", repo_url, str(REPO_DIR)], check=True)
+    subprocess.run(["git", "clone", "--no-checkout", repo_url, str(REPO_DIR)], check=True)
+subprocess.run(
+    ["git", "-C", str(REPO_DIR), "checkout", "--detach", PINNED_COMMIT],
+    check=True,
+)
 
 os.chdir(REPO_DIR)
 subprocess.run(
@@ -63,6 +68,8 @@ datasets = importlib.import_module("datasets")
 print(f"datasets version: {datasets.__version__}")
 commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
 print("Repository commit:", commit)
+if commit != PINNED_COMMIT:
+    raise RuntimeError(f"Expected pinned commit {PINNED_COMMIT}, got {commit}")
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
