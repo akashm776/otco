@@ -66,6 +66,7 @@ Several findings are now clear:
 - Mixed batching was the strongest ungated OT variant and finished second among ungated runs: **1.32% Avg R@1**, below the baseline's **1.38%**.
 - Mixed-gated OT-Mix reached **1.33% Avg R@1**, improving Text → Image to **1.24%** but reducing Image → Text to **1.42%**.
 - **Adaptive gated OT-Mix with random batching is the best batch-local result so far: 1.44% Avg R@1**, above the baseline's **1.38%**.
+- Recomputing the batch-local OT plan every step (`update_freq=1`) reached **1.41% Avg R@1**. It did not improve on the otherwise identical `update_freq=10` adaptive-gated run (1.44%), so stale-plan reuse was not the main bottleneck in this one-seed ablation.
 - **Cached-pool gated OT-Mix is the best observed CUB-200 result so far: 1.48% Avg R@1**, using a random epoch-cached pool of 128 detached image embeddings.
 - The main open issue is no longer whether OT can find hard negatives. It can. The issue is how to decide **when OT pressure should be applied**.
 
@@ -113,6 +114,7 @@ All CUB runs use:
 |---|---|---|---:|---:|---:|---:|---|
 | **OT-Mix cached-pool gated** | Random cached pool, N=128 | Adaptive OT + conditional alpha over B texts × 128 cached images | **1.48%** | **1.48% @ best checkpoint/final eval** | **1.36%** | 1.61% | Best observed run |
 | **OT-Mix adaptive gated** | Random batch | Adaptive OT + conditional alpha over B texts × B live batch images | **1.44%** | **1.44% @ best checkpoint/final eval** | **1.19%** | 1.69% | Best batch-local run |
+| OT-Mix adaptive gated, fresh plan | Random batch | Same as adaptive gated, but `update_freq=1` | 1.41% | 1.41% @ ep46/best-checkpoint eval | 1.19% | 1.62% | No gain from per-step recomputation |
 | Baseline | Random | None | 1.38% | 1.38% @ ep50 | 1.05% | **1.71%** | Strongest non-OT baseline |
 | OT-Mix adaptive | Random | Adaptive OT, α=0.05 | 1.35% best eval / 1.28% ep50 | 1.35% @ ep49 | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | Competitive, not a win |
 | OT-Mix mixed-gated | 25% stratified + 75% random | Adaptive OT + conditional alpha | 1.33% | 1.33% @ best checkpoint/final eval | **1.24%** | 1.42% | Best T→I, but lower Avg R@1 |
@@ -227,6 +229,22 @@ Adds per-step conditional alpha. OT loss is:
 | Final evaluation | **1.19%** | **1.69%** | **1.44%** | official best-checkpoint eval |
 
 > **Verdict:** Best batch-local CUB-200 run. Adaptive gated OT-Mix is the first OTCO variant to beat the baseline on canonical Avg R@1: 1.44% vs. 1.38%. The improvement is small and should be validated across seeds, but the intermediate logs show that the gate is doing the intended thing: suppressing diffuse and too-easy OT states while preserving useful near-boundary hard negatives.
+
+---
+
+#### OT-Mix Adaptive Gated, Fresh Plan (`update_freq=1`) — COMPLETE
+
+Clean one-seed ablation of plan freshness. This run is identical to `cub200_softmax_mix_adaptive_gated` except that the batch-local transport plan is recomputed every active batch (`update_freq=1` instead of 10); Colab used the intentional `num_workers=2` runtime override.
+
+| Metric | `update_freq=10` | `update_freq=1` | Delta |
+|---|---:|---:|---:|
+| Best-checkpoint canonical T→I R@1 | 1.19% | 1.19% | 0.00pp |
+| Best-checkpoint canonical I→T R@1 | 1.69% | 1.62% | -0.07pp |
+| Best-checkpoint canonical Avg R@1 | **1.44%** | 1.41% | -0.03pp |
+| Best epoch | 48 | 46 | -2 epochs |
+| Epoch-50 canonical Avg R@1 | 1.32% | 1.34% | +0.02pp |
+
+> **Verdict:** Recomputing OT every step showed no measurable benefit. The fresh-plan run remained slightly above the 1.38% baseline, but finished 0.03pp below the otherwise identical adaptive-gated run. With one seed and such a small delta, this is best treated as a null result: candidate-pool quality remains a more plausible bottleneck than stale batch-local plans.
 
 ---
 
@@ -353,6 +371,7 @@ Adaptive gated improves the average primarily by improving Text → Image while 
 |---|---:|---:|---:|
 | **OT-Mix cached-pool gated** | **1.36%** | 1.61% | **1.48%** |
 | **OT-Mix adaptive gated** | 1.19% | 1.69% | 1.44% |
+| OT-Mix adaptive gated, `update_freq=1` | 1.19% | 1.62% | 1.41% |
 | Baseline | 1.05% | **1.71%** | 1.38% |
 | OT-Mix mixed-gated | **1.24%** | 1.42% | 1.33% |
 | OT-Mix adaptive | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | 1.35% best eval / 1.28% ep50 |
@@ -408,6 +427,7 @@ Chronological research logs are in [`experiment_logs/`](experiment_logs/):
 | 2026-04-26 | [`26-4-26-logs.md`](experiment_logs/26-4-26-logs.md) | CUB-200 ungated analysis: baseline remained strongest; mixed batching was best ungated OT variant; OT found rank-1/rank-2 hard negatives but did not yet beat baseline |
 | 2026-04-27 | [`27-4-26-logs.md`](experiment_logs/27-4-26-logs.md) | Adaptive gated OT-Mix produced the best batch-local CUB-200 result so far: 1.44% Avg R@1. Gating suppressed diffuse and too-easy OT states while preserving useful rank-1/rank-2 synthetic negatives |
 | 2026-05-06 | cached-pool run | Cached-pool gated OT-Mix reached the best observed CUB-200 result so far: 1.48% Avg R@1 with random N=128 cached image pool |
+| 2026-08-30 | fresh-plan ablation | Adaptive-gated OT-Mix with `update_freq=1` reached 1.41% Avg R@1 versus 1.44% for `update_freq=10`; per-step batch-local plan recomputation showed no measurable benefit |
 
 ---
 

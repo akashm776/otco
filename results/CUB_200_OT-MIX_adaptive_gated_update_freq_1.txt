@@ -1,0 +1,5959 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+================================================================================
+EXPERIMENT: cub200_softmax_mix_adaptive_gated_update_freq_1
+================================================================================
+  config_file: /content/otco/configs/hf_cub200_softmax_mix_adaptive_gated_update_freq_1.yaml
+  experiments_file: /content/otco/configs/experiments.yaml
+  batch_size: 64
+  num_epochs: 50
+  unfreeze_strategy: both_last_layer
+  projection_lr: 0.001
+  encoder_lr: 5e-05
+  weight_decay: 0.01
+  grad_clip_norm: 1.0
+  seed: 42
+  model_vision: microsoft/resnet-50
+  model_text: distilbert-base-uncased
+  train_split: 0.9
+  num_workers: 2
+  drop_last: True
+  loss_type: softmax_mix
+  alpha: 0.05
+  warmup_steps: 0
+  top_k: 32
+  tau: 0.05
+  update_freq: 1
+  gate_sim: -4.0
+  ot_eps: 0.7
+  sinkhorn_iters: 30
+  adaptive_warmup: True
+  entropy_threshold: 3.0
+  entropy_check_freq: 100
+  gap_suppress_easy: 0.1
+  gap_downweight_hard: -0.07
+  hard_alpha_scale: 0.25
+  experiment_name: cub200_softmax_mix_adaptive_gated_update_freq_1
+  config_file: /content/otco/configs/hf_cub200_softmax_mix_adaptive_gated_update_freq_1.yaml
+  experiments_file: /content/otco/configs/experiments.yaml
+  dataset_backend: hf_cub200
+================================================================================
+
+Building dataset and dataloaders...
+
+Downloading builder script:   0%|          | 0.00/5.12k [00:00<?, ?B/s]
+Downloading builder script: 100%|██████████| 5.12k/5.12k [00:00<00:00, 60.1kB/s]
+
+Downloading readme:   0%|          | 0.00/11.0k [00:00<?, ?B/s]
+Downloading readme: 100%|██████████| 11.0k/11.0k [00:00<00:00, 102kB/s]
+Downloading readme: 100%|██████████| 11.0k/11.0k [00:00<00:00, 101kB/s]
+/root/.cache/huggingface/modules/datasets_modules/datasets/alkzar90--CC6204-Hackaton-Cub-Dataset/de850c9086bff0dd6d6eab90f79346241178f65e1a016a50eec240ae9cdf2064/CC6204-Hackaton-Cub-Dataset.py:38: SyntaxWarning: invalid escape sequence '\d'
+  _ID2LABEL[int(idx)] = re.search("[^\d\.\_+].+", label).group(0).replace("_", " ")
+
+Downloading data:   0%|          | 0.00/1.14G [00:00<?, ?B/s]
+Downloading data:   1%|          | 10.5M/1.14G [00:01<01:56, 9.70MB/s]
+Downloading data:   3%|▎         | 31.5M/1.14G [00:01<00:37, 29.8MB/s]
+Downloading data:   4%|▎         | 41.9M/1.14G [00:01<00:29, 37.9MB/s]
+Downloading data:   6%|▌         | 62.9M/1.14G [00:01<00:22, 47.4MB/s]
+Downloading data:   6%|▋         | 73.4M/1.14G [00:02<00:23, 45.2MB/s]
+Downloading data:   8%|▊         | 94.4M/1.14G [00:02<00:16, 64.2MB/s]
+Downloading data:   9%|▉         | 105M/1.14G [00:02<00:19, 54.4MB/s] 
+Downloading data:  10%|█         | 115M/1.14G [00:02<00:21, 46.8MB/s]
+Downloading data:  11%|█         | 126M/1.14G [00:03<00:22, 45.3MB/s]
+Downloading data:  12%|█▏        | 136M/1.14G [00:03<00:30, 33.1MB/s]
+Downloading data:  13%|█▎        | 147M/1.14G [00:03<00:26, 37.2MB/s]
+Downloading data:  14%|█▍        | 157M/1.14G [00:03<00:24, 40.1MB/s]
+Downloading data:  15%|█▍        | 168M/1.14G [00:04<00:20, 47.7MB/s]
+Downloading data:  16%|█▌        | 178M/1.14G [00:04<00:17, 55.2MB/s]
+Downloading data:  17%|█▋        | 189M/1.14G [00:04<00:17, 56.0MB/s]
+Downloading data:  17%|█▋        | 199M/1.14G [00:04<00:17, 54.1MB/s]
+Downloading data:  18%|█▊        | 210M/1.14G [00:04<00:19, 47.3MB/s]
+Downloading data:  19%|█▉        | 220M/1.14G [00:05<00:19, 46.7MB/s]
+Downloading data:  20%|██        | 231M/1.14G [00:05<00:33, 27.5MB/s]
+Downloading data:  21%|██        | 241M/1.14G [00:06<00:27, 32.3MB/s]
+Downloading data:  22%|██▏       | 252M/1.14G [00:06<00:26, 33.0MB/s]
+Downloading data:  23%|██▎       | 262M/1.14G [00:06<00:29, 29.6MB/s]
+Downloading data:  24%|██▍       | 273M/1.14G [00:07<00:27, 31.3MB/s]
+Downloading data:  25%|██▍       | 283M/1.14G [00:07<00:29, 28.8MB/s]
+Downloading data:  26%|██▌       | 294M/1.14G [00:07<00:23, 35.9MB/s]
+Downloading data:  27%|██▋       | 304M/1.14G [00:07<00:19, 42.8MB/s]
+Downloading data:  28%|██▊       | 325M/1.14G [00:07<00:12, 63.3MB/s]
+Downloading data:  29%|██▉       | 336M/1.14G [00:08<00:15, 50.8MB/s]
+Downloading data:  30%|███       | 346M/1.14G [00:08<00:14, 54.6MB/s]
+Downloading data:  31%|███▏      | 357M/1.14G [00:08<00:12, 62.1MB/s]
+Downloading data:  33%|███▎      | 377M/1.14G [00:08<00:09, 76.4MB/s]
+Downloading data:  34%|███▍      | 388M/1.14G [00:08<00:09, 75.6MB/s]
+Downloading data:  36%|███▌      | 409M/1.14G [00:09<00:13, 52.4MB/s]
+Downloading data:  37%|███▋      | 419M/1.14G [00:09<00:12, 58.6MB/s]
+Downloading data:  39%|███▊      | 440M/1.14G [00:09<00:09, 72.1MB/s]
+Downloading data:  40%|███▉      | 451M/1.14G [00:09<00:09, 76.5MB/s]
+Downloading data:  41%|████▏     | 472M/1.14G [00:10<00:11, 55.9MB/s]
+Downloading data:  43%|████▎     | 493M/1.14G [00:10<00:09, 67.2MB/s]
+Downloading data:  44%|████▍     | 503M/1.14G [00:10<00:09, 65.6MB/s]
+Downloading data:  46%|████▌     | 524M/1.14G [00:10<00:08, 73.0MB/s]
+Downloading data:  47%|████▋     | 535M/1.14G [00:11<00:08, 71.1MB/s]
+Downloading data:  48%|████▊     | 545M/1.14G [00:11<00:11, 50.9MB/s]
+Downloading data:  50%|████▉     | 566M/1.14G [00:11<00:09, 58.9MB/s]
+Downloading data:  51%|█████     | 577M/1.14G [00:11<00:08, 63.2MB/s]
+Downloading data:  52%|█████▏    | 598M/1.14G [00:12<00:11, 48.2MB/s]
+Downloading data:  53%|█████▎    | 608M/1.14G [00:13<00:14, 36.7MB/s]
+Downloading data:  55%|█████▌    | 629M/1.14G [00:13<00:09, 52.3MB/s]
+Downloading data:  57%|█████▋    | 650M/1.14G [00:13<00:07, 66.4MB/s]
+Downloading data:  58%|█████▊    | 661M/1.14G [00:13<00:06, 70.0MB/s]
+Downloading data:  59%|█████▉    | 671M/1.14G [00:13<00:10, 46.6MB/s]
+Downloading data:  60%|█████▉    | 682M/1.14G [00:14<00:08, 51.2MB/s]
+Downloading data:  62%|██████▏   | 703M/1.14G [00:14<00:06, 66.0MB/s]
+Downloading data:  63%|██████▎   | 713M/1.14G [00:15<00:15, 27.9MB/s]
+Downloading data:  64%|██████▍   | 734M/1.14G [00:15<00:10, 39.4MB/s]
+Downloading data:  65%|██████▌   | 744M/1.14G [00:15<00:11, 34.7MB/s]
+Downloading data:  66%|██████▌   | 755M/1.14G [00:16<00:09, 41.0MB/s]
+Downloading data:  68%|██████▊   | 776M/1.14G [00:16<00:06, 54.6MB/s]
+Downloading data:  69%|██████▉   | 786M/1.14G [00:16<00:05, 60.8MB/s]
+Downloading data:  70%|██████▉   | 797M/1.14G [00:16<00:06, 56.1MB/s]
+Downloading data:  71%|███████   | 807M/1.14G [00:17<00:08, 40.6MB/s]
+Downloading data:  72%|███████▏  | 818M/1.14G [00:17<00:06, 48.3MB/s]
+Downloading data:  74%|███████▎  | 839M/1.14G [00:17<00:04, 62.1MB/s]
+Downloading data:  75%|███████▌  | 860M/1.14G [00:17<00:03, 75.2MB/s]
+Downloading data:  76%|███████▋  | 870M/1.14G [00:18<00:06, 43.7MB/s]
+Downloading data:  77%|███████▋  | 881M/1.14G [00:18<00:07, 35.9MB/s]
+Downloading data:  80%|███████▉  | 912M/1.14G [00:18<00:03, 61.5MB/s]
+Downloading data:  82%|████████▏ | 933M/1.14G [00:19<00:02, 71.6MB/s]
+Downloading data:  83%|████████▎ | 944M/1.14G [00:19<00:03, 51.7MB/s]
+Downloading data:  85%|████████▍ | 965M/1.14G [00:19<00:02, 69.9MB/s]
+Downloading data:  86%|████████▋ | 986M/1.14G [00:19<00:01, 83.4MB/s]
+Downloading data:  88%|████████▊ | 1.01G/1.14G [00:20<00:02, 53.2MB/s]
+Downloading data:  90%|█████████ | 1.03G/1.14G [00:20<00:01, 67.4MB/s]
+Downloading data:  92%|█████████▏| 1.05G/1.14G [00:20<00:01, 75.0MB/s]
+Downloading data:  94%|█████████▍| 1.07G/1.14G [00:21<00:01, 65.2MB/s]
+Downloading data:  95%|█████████▍| 1.08G/1.14G [00:21<00:01, 44.9MB/s]
+Downloading data:  96%|█████████▌| 1.09G/1.14G [00:21<00:00, 50.5MB/s]
+Downloading data:  97%|█████████▋| 1.10G/1.14G [00:21<00:00, 57.0MB/s]
+Downloading data:  98%|█████████▊| 1.12G/1.14G [00:22<00:00, 70.6MB/s]
+Downloading data: 100%|██████████| 1.14G/1.14G [00:22<00:00, 58.2MB/s]
+Downloading data: 100%|██████████| 1.14G/1.14G [00:22<00:00, 49.8MB/s]
+
+Downloading data:   0%|          | 0.00/12.0M [00:00<?, ?B/s]
+Downloading data:  87%|████████▋ | 10.5M/12.0M [00:00<00:00, 12.2MB/s]
+Downloading data: 100%|██████████| 12.0M/12.0M [00:00<00:00, 13.8MB/s]
+
+Generating train split: 0 examples [00:00, ? examples/s]
+Generating train split: 972 examples [00:00, 9682.40 examples/s]
+Generating train split: 2000 examples [00:00, 7652.33 examples/s]
+Generating train split: 2975 examples [00:00, 8469.59 examples/s]
+Generating train split: 3904 examples [00:00, 8758.09 examples/s]
+Generating train split: 4826 examples [00:00, 8912.61 examples/s]
+Generating train split: 5743 examples [00:00, 8995.39 examples/s]
+Generating train split: 5994 examples [00:00, 8748.40 examples/s]
+
+Generating test split: 0 examples [00:00, ? examples/s]
+Generating test split: 974 examples [00:00, 9709.52 examples/s]
+Generating test split: 1975 examples [00:00, 4466.88 examples/s]
+Generating test split: 2903 examples [00:00, 5788.66 examples/s]
+Generating test split: 3826 examples [00:00, 6757.46 examples/s]
+Generating test split: 4752 examples [00:00, 7474.36 examples/s]
+Generating test split: 5676 examples [00:00, 7984.20 examples/s]
+Generating test split: 5794 examples [00:00, 7029.82 examples/s]
+
+================================================================================
+DATASET VERIFICATION
+================================================================================
+  dataset_backend: hf_cub200
+  dataset_name: alkzar90/CC6204-Hackaton-Cub-Dataset
+  hf_dataset_name: alkzar90/CC6204-Hackaton-Cub-Dataset
+  num_train_images: 5994
+  num_train_samples: 5994
+  num_val_all_samples: 57940
+  num_val_canonical_samples: 5794
+  num_val_images: 5794
+  steps_per_epoch: 93
+  total_steps: 4650
+  train_split_source: train
+  used_fallback_split: False
+  val_split_source: test
+================================================================================
+
+Initializing models...
+
+Loading weights:   0%|          | 0/318 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 318/318 [00:00<00:00, 4685.90it/s]
+[transformers] [1mResNetModel LOAD REPORT[0m from: microsoft/resnet-50
+Key                 | Status     |  | 
+--------------------+------------+--+-
+classifier.1.bias   | UNEXPECTED |  | 
+classifier.1.weight | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 100/100 [00:00<00:00, 4288.96it/s]
+[transformers] [1mDistilBertModel LOAD REPORT[0m from: distilbert-base-uncased
+Key                     | Status     |  | 
+------------------------+------------+--+-
+vocab_transform.weight  | UNEXPECTED |  | 
+vocab_projector.bias    | UNEXPECTED |  | 
+vocab_layer_norm.weight | UNEXPECTED |  | 
+vocab_layer_norm.bias   | UNEXPECTED |  | 
+vocab_transform.bias    | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+Using CUDA: NVIDIA A100-SXM4-40GB
+Gradient checkpointing enabled: DistilBertModel
+Strategy: Projection heads + both encoders' last layers
+Total parameters: 91,313,728
+Trainable parameters: 23,495,424 (25.73%)
+
+Initializing loss: softmax_mix
+
+Running sanity check on canonical validation data...
+
+================================================================================
+SANITY CHECK: Single Caption Retrieval
+================================================================================
+Caption: 'the medium sized bird has a dark grey color, a black downward curved beak, and long wings.'
+Correct image ID: 0
+Correct image path: hf://test/Black_Footed_Albatross_0001_796111.jpg
+
+Top-10 retrieved images:
+  1. Image ID: 4819 | Sim: 0.0680 | Hooded_Warbler_0122_164635.jpg 
+  2. Image ID:  853 | Sim: 0.0664 | Mangrove_Cuckoo_0053_26390.jpg 
+  3. Image ID:  214 | Sim: 0.0650 | Red_Winged_Blackbird_0007_3706.jpg 
+  4. Image ID: 4340 | Sim: 0.0638 | Black_Capped_Vireo_0045_797464.jpg 
+  5. Image ID: 1333 | Sim: 0.0624 | Boat_Tailed_Grackle_0019_33687.jpg 
+  6. Image ID: 1240 | Sim: 0.0599 | Gadwall_0007_31537.jpg 
+  7. Image ID: 1745 | Sim: 0.0553 | Herring_Gull_0145_46220.jpg 
+  8. Image ID: 5497 | Sim: 0.0517 | Red_Headed_Woodpecker_0027_183029.jpg 
+  9. Image ID: 2028 | Sim: 0.0513 | Pomarine_Jaeger_0058_795746.jpg 
+  10. Image ID: 3191 | Sim: 0.0509 | Great_Grey_Shrike_0065_797027.jpg 
+
+Actual rank of correct image: 3215
+Correct image in top-10: False
+================================================================================
+
+
+================================================================================
+EPOCH 1/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 0 (Epoch 1, Batch 1/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.6520
+  Base Loss: 0.6520
+
+  OT-MIX STATE
+    OT Step (loss counter): 0
+    Alpha:                  0.0000
+    OT Active:              False
+    OT Ready (adaptive):    True
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.0102 ± 0.0324
+    All negatives:  -0.0100
+    Hardest neg:    0.0608
+    Pos-Hard gap:   -0.0710
+
+  LOGIT STATISTICS
+    Diagonal mean: -0.1458 ± 0.4635
+    Off-diagonal mean: -0.1426
+    Gap (pos - neg): -0.0032
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 1.6%
+    Mean rank: 32.28
+
+  EMBEDDING HEALTH
+    Image variance: 0.033109
+    Text variance: 0.014418
+
+--------------------------------------------------------------------------------
+Step 92 (Epoch 1, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0805
+  Base Loss: 0.0805
+
+  OT-MIX STATE
+    OT Step (loss counter): 92
+    Alpha:                  0.0046
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         -0.000000
+    Num Gated (active/B):   0/B
+    Avg Synthetic Sim:      -0.2873
+    Avg Synthetic Logit:    -4.1048
+    Selected Neg Rank:      mean=31.70  median=32.00
+    Pos - Selected Gap:     -0.0001
+    Coupling Entropy:       3.3204
+    Coupling Peak Mass:     0.1008
+    Alpha Effective:        0.0000 (scheduled=0.0046)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2894 ± 0.0042
+    All negatives:  -0.2894
+    Hardest neg:    -0.2801
+    Pos-Hard gap:   -0.0093
+
+  LOGIT STATISTICS
+    Diagonal mean: -4.1343 ± 0.0594
+    Off-diagonal mean: -4.1349
+    Gap (pos - neg): 0.0005
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 1.6%
+    Mean rank: 32.50
+
+  EMBEDDING HEALTH
+    Image variance: 0.003852
+    Text variance: 0.002426
+
+================================================================================
+VALIDATION - Epoch 1
+================================================================================
+Average training loss: 0.0920
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.02%
+    R@5:  0.08%
+    R@10: 0.18%
+  Image → Text:
+    R@1:  0.02%
+    R@5:  0.10%
+    R@10: 0.16%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.02%
+    R@5:  0.09%
+    R@10: 0.19%
+  Image → Text:
+    R@1:  0.02%
+    R@5:  0.09%
+    R@10: 0.21%
+
+🎯 Average Recall@1 (canonical): 0.02%
+  Latest checkpoint saved (epoch 1)
+Checkpoint saved at step 93
+
+✓ New best model! Canonical Avg R@1 = 0.02%
+Current best canonical Avg R@1: 0.02%
+
+================================================================================
+EPOCH 2/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 100 (Epoch 2, Batch 8/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0805
+  Base Loss: 0.0805
+
+  OT-MIX STATE
+    OT Step (loss counter): 100
+    Alpha:                  0.0050
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         -0.000000
+    Num Gated (active/B):   0/B
+    Avg Synthetic Sim:      -0.2834
+    Avg Synthetic Logit:    -4.0485
+    Selected Neg Rank:      mean=30.89  median=31.00
+    Pos - Selected Gap:     0.0003
+    Coupling Entropy:       3.3545
+    Coupling Peak Mass:     0.0737
+    Alpha Effective:        0.0000 (scheduled=0.0050)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2856 ± 0.0046
+    All negatives:  -0.2856
+    Hardest neg:    -0.2763
+    Pos-Hard gap:   -0.0092
+
+  LOGIT STATISTICS
+    Diagonal mean: -4.0794 ± 0.0657
+    Off-diagonal mean: -4.0802
+    Gap (pos - neg): 0.0007
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 1.6%
+    Mean rank: 32.52
+
+  EMBEDDING HEALTH
+    Image variance: 0.003477
+    Text variance: 0.002336
+
+--------------------------------------------------------------------------------
+Step 185 (Epoch 2, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0805
+  Base Loss: 0.0805
+
+  OT-MIX STATE
+    OT Step (loss counter): 185
+    Alpha:                  0.0092
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         -0.000000
+    Num Gated (active/B):   0/B
+    Avg Synthetic Sim:      -0.2908
+    Avg Synthetic Logit:    -4.1542
+    Selected Neg Rank:      mean=31.53  median=32.00
+    Pos - Selected Gap:     0.0004
+    Coupling Entropy:       3.2190
+    Coupling Peak Mass:     0.1713
+    Alpha Effective:        0.0000 (scheduled=0.0092)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2914 ± 0.0031
+    All negatives:  -0.2916
+    Hardest neg:    -0.2842
+    Pos-Hard gap:   -0.0072
+
+  LOGIT STATISTICS
+    Diagonal mean: -4.1631 ± 0.0447
+    Off-diagonal mean: -4.1650
+    Gap (pos - neg): 0.0019
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 1.6%
+    Mean rank: 31.80
+
+  EMBEDDING HEALTH
+    Image variance: 0.003762
+    Text variance: 0.002368
+
+================================================================================
+VALIDATION - Epoch 2
+================================================================================
+Average training loss: 0.0805
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.02%
+    R@5:  0.11%
+    R@10: 0.21%
+  Image → Text:
+    R@1:  0.02%
+    R@5:  0.10%
+    R@10: 0.26%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.02%
+    R@5:  0.10%
+    R@10: 0.22%
+  Image → Text:
+    R@1:  0.02%
+    R@5:  0.09%
+    R@10: 0.22%
+
+🎯 Average Recall@1 (canonical): 0.02%
+  Latest checkpoint saved (epoch 2)
+Current best canonical Avg R@1: 0.02%
+
+================================================================================
+EPOCH 3/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 200 (Epoch 3, Batch 15/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0805
+  Base Loss: 0.0805
+
+  OT-MIX STATE
+    OT Step (loss counter): 200
+    Alpha:                  0.0100
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         -0.000000
+    Num Gated (active/B):   0/B
+    Avg Synthetic Sim:      -0.2896
+    Avg Synthetic Logit:    -4.1370
+    Selected Neg Rank:      mean=30.22  median=31.00
+    Pos - Selected Gap:     -0.0002
+    Coupling Entropy:       3.2502
+    Coupling Peak Mass:     0.1295
+    Alpha Effective:        0.0000 (scheduled=0.0100)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2906 ± 0.0032
+    All negatives:  -0.2906
+    Hardest neg:    -0.2808
+    Pos-Hard gap:   -0.0098
+
+  LOGIT STATISTICS
+    Diagonal mean: -4.1508 ± 0.0458
+    Off-diagonal mean: -4.1517
+    Gap (pos - neg): 0.0009
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 3.1%
+    Mean rank: 32.02
+
+  EMBEDDING HEALTH
+    Image variance: 0.003768
+    Text variance: 0.002503
+
+--------------------------------------------------------------------------------
+Step 278 (Epoch 3, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0804
+  Base Loss: 0.0804
+
+  OT-MIX STATE
+    OT Step (loss counter): 278
+    Alpha:                  0.0139
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         -0.000000
+    Num Gated (active/B):   0/B
+    Avg Synthetic Sim:      -0.2903
+    Avg Synthetic Logit:    -4.1468
+    Selected Neg Rank:      mean=30.77  median=31.00
+    Pos - Selected Gap:     0.0004
+    Coupling Entropy:       3.2639
+    Coupling Peak Mass:     0.1455
+    Alpha Effective:        0.0000 (scheduled=0.0139)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2904 ± 0.0027
+    All negatives:  -0.2908
+    Hardest neg:    -0.2861
+    Pos-Hard gap:   -0.0044
+
+  LOGIT STATISTICS
+    Diagonal mean: -4.1491 ± 0.0381
+    Off-diagonal mean: -4.1540
+    Gap (pos - neg): 0.0048
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 0.0%
+    Mean rank: 30.27
+
+  EMBEDDING HEALTH
+    Image variance: 0.003729
+    Text variance: 0.002393
+
+================================================================================
+VALIDATION - Epoch 3
+================================================================================
+Average training loss: 0.0805
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.02%
+    R@5:  0.11%
+    R@10: 0.22%
+  Image → Text:
+    R@1:  0.02%
+    R@5:  0.12%
+    R@10: 0.29%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.00%
+    R@5:  0.14%
+    R@10: 0.28%
+  Image → Text:
+    R@1:  0.03%
+    R@5:  0.14%
+    R@10: 0.35%
+
+🎯 Average Recall@1 (canonical): 0.02%
+  Latest checkpoint saved (epoch 3)
+Current best canonical Avg R@1: 0.02%
+
+================================================================================
+EPOCH 4/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 300 (Epoch 4, Batch 22/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0804
+  Base Loss: 0.0804
+
+  OT-MIX STATE
+    OT Step (loss counter): 300
+    Alpha:                  0.0150
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         -0.000000
+    Num Gated (active/B):   0/B
+    Avg Synthetic Sim:      -0.2863
+    Avg Synthetic Logit:    -4.0905
+    Selected Neg Rank:      mean=29.81  median=30.00
+    Pos - Selected Gap:     0.0002
+    Coupling Entropy:       2.9938
+    Coupling Peak Mass:     0.2172
+    Alpha Effective:        0.0150 (scheduled=0.0150)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2861 ± 0.0027
+    All negatives:  -0.2865
+    Hardest neg:    -0.2794
+    Pos-Hard gap:   -0.0067
+
+  LOGIT STATISTICS
+    Diagonal mean: -4.0876 ± 0.0384
+    Off-diagonal mean: -4.0927
+    Gap (pos - neg): 0.0051
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 3.1%
+    Mean rank: 29.95
+
+  EMBEDDING HEALTH
+    Image variance: 0.003992
+    Text variance: 0.002619
+
+--------------------------------------------------------------------------------
+Step 371 (Epoch 4, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0804
+  Base Loss: 0.0804
+
+  OT-MIX STATE
+    OT Step (loss counter): 371
+    Alpha:                  0.0186
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         -0.000000
+    Num Gated (active/B):   0/B
+    Avg Synthetic Sim:      -0.2911
+    Avg Synthetic Logit:    -4.1588
+    Selected Neg Rank:      mean=26.83  median=30.00
+    Pos - Selected Gap:     0.0001
+    Coupling Entropy:       3.0997
+    Coupling Peak Mass:     0.1529
+    Alpha Effective:        0.0000 (scheduled=0.0186)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2902 ± 0.0027
+    All negatives:  -0.2909
+    Hardest neg:    -0.2849
+    Pos-Hard gap:   -0.0054
+
+  LOGIT STATISTICS
+    Diagonal mean: -4.1463 ± 0.0391
+    Off-diagonal mean: -4.1558
+    Gap (pos - neg): 0.0096
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 1.6%
+    Mean rank: 28.41
+
+  EMBEDDING HEALTH
+    Image variance: 0.004473
+    Text variance: 0.002778
+
+================================================================================
+VALIDATION - Epoch 4
+================================================================================
+Average training loss: 0.0804
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.03%
+    R@5:  0.16%
+    R@10: 0.32%
+  Image → Text:
+    R@1:  0.05%
+    R@5:  0.22%
+    R@10: 0.47%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.02%
+    R@5:  0.16%
+    R@10: 0.26%
+  Image → Text:
+    R@1:  0.07%
+    R@5:  0.31%
+    R@10: 0.48%
+
+🎯 Average Recall@1 (canonical): 0.04%
+  Latest checkpoint saved (epoch 4)
+Checkpoint saved at step 372
+
+✓ New best model! Canonical Avg R@1 = 0.04%
+Current best canonical Avg R@1: 0.04%
+
+================================================================================
+EPOCH 5/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 400 (Epoch 5, Batch 29/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0803
+  Base Loss: 0.0803
+
+  OT-MIX STATE
+    OT Step (loss counter): 400
+    Alpha:                  0.0200
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         -0.000000
+    Num Gated (active/B):   0/B
+    Avg Synthetic Sim:      -0.2912
+    Avg Synthetic Logit:    -4.1597
+    Selected Neg Rank:      mean=27.50  median=29.00
+    Pos - Selected Gap:     0.0004
+    Coupling Entropy:       2.8713
+    Coupling Peak Mass:     0.2211
+    Alpha Effective:        0.0200 (scheduled=0.0200)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2904 ± 0.0027
+    All negatives:  -0.2911
+    Hardest neg:    -0.2845
+    Pos-Hard gap:   -0.0059
+
+  LOGIT STATISTICS
+    Diagonal mean: -4.1483 ± 0.0382
+    Off-diagonal mean: -4.1582
+    Gap (pos - neg): 0.0099
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 1.6%
+    Mean rank: 28.36
+
+  EMBEDDING HEALTH
+    Image variance: 0.004480
+    Text variance: 0.003075
+
+--------------------------------------------------------------------------------
+Step 464 (Epoch 5, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0781
+  Base Loss: 0.0781
+
+  OT-MIX STATE
+    OT Step (loss counter): 464
+    Alpha:                  0.0232
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.025700
+    Num Gated (active/B):   32/32
+    Avg Synthetic Sim:      -0.2745
+    Avg Synthetic Logit:    -3.9219
+    Selected Neg Rank:      mean=25.86  median=30.00
+    Pos - Selected Gap:     0.0066
+    Coupling Entropy:       3.3766
+    Coupling Peak Mass:     0.0759
+    Alpha Effective:        0.0000 (scheduled=0.0232)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2758 ± 0.0342
+    All negatives:  -0.2941
+    Hardest neg:    -0.2438
+    Pos-Hard gap:   -0.0320
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.9399 ± 0.4880
+    Off-diagonal mean: -4.2010
+    Gap (pos - neg): 0.2612
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 3.1%
+    Mean rank: 22.42
+
+  EMBEDDING HEALTH
+    Image variance: 0.005768
+    Text variance: 0.008823
+
+================================================================================
+VALIDATION - Epoch 5
+================================================================================
+Average training loss: 0.0799
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.05%
+    R@5:  0.23%
+    R@10: 0.43%
+  Image → Text:
+    R@1:  0.02%
+    R@5:  0.14%
+    R@10: 0.36%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.03%
+    R@5:  0.14%
+    R@10: 0.36%
+  Image → Text:
+    R@1:  0.05%
+    R@5:  0.16%
+    R@10: 0.43%
+
+🎯 Average Recall@1 (canonical): 0.04%
+  Latest checkpoint saved (epoch 5)
+Current best canonical Avg R@1: 0.04%
+
+================================================================================
+EPOCH 6/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 500 (Epoch 6, Batch 36/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0781
+  Base Loss: 0.0781
+
+  OT-MIX STATE
+    OT Step (loss counter): 500
+    Alpha:                  0.0250
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.030682
+    Num Gated (active/B):   55/55
+    Avg Synthetic Sim:      -0.2521
+    Avg Synthetic Logit:    -3.6019
+    Selected Neg Rank:      mean=12.84  median=7.00
+    Pos - Selected Gap:     -0.0346
+    Coupling Entropy:       3.3734
+    Coupling Peak Mass:     0.0633
+    Alpha Effective:        0.0000 (scheduled=0.0250)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2593 ± 0.0402
+    All negatives:  -0.2872
+    Hardest neg:    -0.1946
+    Pos-Hard gap:   -0.0646
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.7038 ± 0.5737
+    Off-diagonal mean: -4.1025
+    Gap (pos - neg): 0.3987
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 4.7%
+    Mean rank: 20.28
+
+  EMBEDDING HEALTH
+    Image variance: 0.006645
+    Text variance: 0.013516
+
+--------------------------------------------------------------------------------
+Step 557 (Epoch 6, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0736
+  Base Loss: 0.0736
+
+  OT-MIX STATE
+    OT Step (loss counter): 557
+    Alpha:                  0.0279
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.032764
+    Num Gated (active/B):   47/47
+    Avg Synthetic Sim:      -0.2579
+    Avg Synthetic Logit:    -3.6850
+    Selected Neg Rank:      mean=10.33  median=6.00
+    Pos - Selected Gap:     -0.0252
+    Coupling Entropy:       3.2709
+    Coupling Peak Mass:     0.0796
+    Alpha Effective:        0.0000 (scheduled=0.0279)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2552 ± 0.0567
+    All negatives:  -0.3202
+    Hardest neg:    -0.1921
+    Pos-Hard gap:   -0.0631
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.6457 ± 0.8098
+    Off-diagonal mean: -4.5741
+    Gap (pos - neg): 0.9284
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 6.2%
+    Mean rank: 15.72
+
+  EMBEDDING HEALTH
+    Image variance: 0.010287
+    Text variance: 0.012602
+
+================================================================================
+VALIDATION - Epoch 6
+================================================================================
+Average training loss: 0.0763
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.11%
+    R@5:  0.52%
+    R@10: 0.99%
+  Image → Text:
+    R@1:  0.17%
+    R@5:  0.55%
+    R@10: 1.04%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.14%
+    R@5:  0.62%
+    R@10: 1.14%
+  Image → Text:
+    R@1:  0.10%
+    R@5:  0.54%
+    R@10: 1.12%
+
+🎯 Average Recall@1 (canonical): 0.12%
+  Latest checkpoint saved (epoch 6)
+Checkpoint saved at step 558
+
+✓ New best model! Canonical Avg R@1 = 0.12%
+Current best canonical Avg R@1: 0.12%
+
+================================================================================
+EPOCH 7/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 600 (Epoch 7, Batch 43/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0741
+  Base Loss: 0.0741
+
+  OT-MIX STATE
+    OT Step (loss counter): 600
+    Alpha:                  0.0300
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.039286
+    Num Gated (active/B):   27/27
+    Avg Synthetic Sim:      -0.2882
+    Avg Synthetic Logit:    -4.1173
+    Selected Neg Rank:      mean=3.58  median=2.00
+    Pos - Selected Gap:     -0.0462
+    Coupling Entropy:       3.2209
+    Coupling Peak Mass:     0.0973
+    Alpha Effective:        0.0000 (scheduled=0.0300)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2815 ± 0.0804
+    All negatives:  -0.3595
+    Hardest neg:    -0.2219
+    Pos-Hard gap:   -0.0596
+
+  LOGIT STATISTICS
+    Diagonal mean: -4.0215 ± 1.1491
+    Off-diagonal mean: -5.1356
+    Gap (pos - neg): 1.1141
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 7.8%
+    Mean rank: 14.25
+
+  EMBEDDING HEALTH
+    Image variance: 0.011419
+    Text variance: 0.014855
+
+--------------------------------------------------------------------------------
+Step 650 (Epoch 7, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0694
+  Base Loss: 0.0694
+
+  OT-MIX STATE
+    OT Step (loss counter): 650
+    Alpha:                  0.0325
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.044242
+    Num Gated (active/B):   57/57
+    Avg Synthetic Sim:      -0.2327
+    Avg Synthetic Logit:    -3.3244
+    Selected Neg Rank:      mean=3.92  median=2.00
+    Pos - Selected Gap:     -0.0411
+    Coupling Entropy:       3.0805
+    Coupling Peak Mass:     0.1186
+    Alpha Effective:        0.0000 (scheduled=0.0325)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2196 ± 0.0745
+    All negatives:  -0.3278
+    Hardest neg:    -0.1540
+    Pos-Hard gap:   -0.0656
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.1369 ± 1.0644
+    Off-diagonal mean: -4.6822
+    Gap (pos - neg): 1.5453
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 12.5%
+    Mean rank: 11.09
+
+  EMBEDDING HEALTH
+    Image variance: 0.013263
+    Text variance: 0.017438
+
+================================================================================
+VALIDATION - Epoch 7
+================================================================================
+Average training loss: 0.0722
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.18%
+    R@5:  0.92%
+    R@10: 1.72%
+  Image → Text:
+    R@1:  0.22%
+    R@5:  1.26%
+    R@10: 2.23%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.19%
+    R@5:  0.97%
+    R@10: 1.74%
+  Image → Text:
+    R@1:  0.24%
+    R@5:  0.93%
+    R@10: 1.93%
+
+🎯 Average Recall@1 (canonical): 0.22%
+  Latest checkpoint saved (epoch 7)
+Checkpoint saved at step 651
+
+✓ New best model! Canonical Avg R@1 = 0.22%
+Current best canonical Avg R@1: 0.22%
+
+================================================================================
+EPOCH 8/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 700 (Epoch 8, Batch 50/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0699
+  Base Loss: 0.0699
+
+  OT-MIX STATE
+    OT Step (loss counter): 700
+    Alpha:                  0.0350
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.040692
+    Num Gated (active/B):   53/53
+    Avg Synthetic Sim:      -0.2404
+    Avg Synthetic Logit:    -3.4338
+    Selected Neg Rank:      mean=5.69  median=3.00
+    Pos - Selected Gap:     -0.0463
+    Coupling Entropy:       3.0025
+    Coupling Peak Mass:     0.1292
+    Alpha Effective:        0.0000 (scheduled=0.0350)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2274 ± 0.0823
+    All negatives:  -0.3372
+    Hardest neg:    -0.1464
+    Pos-Hard gap:   -0.0811
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.2487 ± 1.1764
+    Off-diagonal mean: -4.8168
+    Gap (pos - neg): 1.5681
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 12.5%
+    Mean rank: 11.94
+
+  EMBEDDING HEALTH
+    Image variance: 0.015491
+    Text variance: 0.016506
+
+--------------------------------------------------------------------------------
+Step 743 (Epoch 8, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0706
+  Base Loss: 0.0706
+
+  OT-MIX STATE
+    OT Step (loss counter): 743
+    Alpha:                  0.0372
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.044752
+    Num Gated (active/B):   42/42
+    Avg Synthetic Sim:      -0.2555
+    Avg Synthetic Logit:    -3.6500
+    Selected Neg Rank:      mean=5.27  median=3.00
+    Pos - Selected Gap:     -0.0497
+    Coupling Entropy:       3.0076
+    Coupling Peak Mass:     0.1341
+    Alpha Effective:        0.0000 (scheduled=0.0372)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2426 ± 0.0774
+    All negatives:  -0.3504
+    Hardest neg:    -0.1627
+    Pos-Hard gap:   -0.0799
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.4656 ± 1.1053
+    Off-diagonal mean: -5.0061
+    Gap (pos - neg): 1.5405
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 6.2%
+    Mean rank: 13.27
+
+  EMBEDDING HEALTH
+    Image variance: 0.015112
+    Text variance: 0.016038
+
+================================================================================
+VALIDATION - Epoch 8
+================================================================================
+Average training loss: 0.0702
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.25%
+    R@5:  1.20%
+    R@10: 2.32%
+  Image → Text:
+    R@1:  0.35%
+    R@5:  1.33%
+    R@10: 2.55%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.31%
+    R@5:  1.19%
+    R@10: 2.43%
+  Image → Text:
+    R@1:  0.40%
+    R@5:  1.19%
+    R@10: 2.36%
+
+🎯 Average Recall@1 (canonical): 0.35%
+  Latest checkpoint saved (epoch 8)
+Checkpoint saved at step 744
+
+✓ New best model! Canonical Avg R@1 = 0.35%
+Current best canonical Avg R@1: 0.35%
+
+================================================================================
+EPOCH 9/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 800 (Epoch 9, Batch 57/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0699
+  Base Loss: 0.0699
+
+  OT-MIX STATE
+    OT Step (loss counter): 800
+    Alpha:                  0.0400
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.033624
+    Num Gated (active/B):   22/22
+    Avg Synthetic Sim:      -0.2878
+    Avg Synthetic Logit:    -4.1113
+    Selected Neg Rank:      mean=4.05  median=2.00
+    Pos - Selected Gap:     -0.0456
+    Coupling Entropy:       3.0337
+    Coupling Peak Mass:     0.1354
+    Alpha Effective:        0.0000 (scheduled=0.0400)  [suppressed: diffuse plan]
+    Gap Bucket:             diffuse
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2661 ± 0.0743
+    All negatives:  -0.3767
+    Hardest neg:    -0.1966
+    Pos-Hard gap:   -0.0696
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.8021 ± 1.0611
+    Off-diagonal mean: -5.3819
+    Gap (pos - neg): 1.5798
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 14.1%
+    Mean rank: 12.47
+
+  EMBEDDING HEALTH
+    Image variance: 0.017007
+    Text variance: 0.016144
+
+--------------------------------------------------------------------------------
+Step 836 (Epoch 9, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0682
+  Base Loss: 0.0662
+
+  OT-MIX STATE
+    OT Step (loss counter): 836
+    Alpha:                  0.0418
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.045730
+    Num Gated (active/B):   44/44
+    Avg Synthetic Sim:      -0.2515
+    Avg Synthetic Logit:    -3.5933
+    Selected Neg Rank:      mean=3.25  median=2.00
+    Pos - Selected Gap:     -0.0512
+    Coupling Entropy:       2.8418
+    Coupling Peak Mass:     0.1832
+    Alpha Effective:        0.0418 (scheduled=0.0418)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2311 ± 0.0944
+    All negatives:  -0.3673
+    Hardest neg:    -0.1567
+    Pos-Hard gap:   -0.0744
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.3015 ± 1.3489
+    Off-diagonal mean: -5.2473
+    Gap (pos - neg): 1.9458
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 15.6%
+    Mean rank: 11.41
+
+  EMBEDDING HEALTH
+    Image variance: 0.018659
+    Text variance: 0.017816
+
+================================================================================
+VALIDATION - Epoch 9
+================================================================================
+Average training loss: 0.0686
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.34%
+    R@5:  1.45%
+    R@10: 2.71%
+  Image → Text:
+    R@1:  0.47%
+    R@5:  1.92%
+    R@10: 3.54%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.31%
+    R@5:  1.62%
+    R@10: 2.99%
+  Image → Text:
+    R@1:  0.38%
+    R@5:  1.83%
+    R@10: 3.47%
+
+🎯 Average Recall@1 (canonical): 0.35%
+  Latest checkpoint saved (epoch 9)
+Current best canonical Avg R@1: 0.35%
+
+================================================================================
+EPOCH 10/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 900 (Epoch 10, Batch 64/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0648
+  Base Loss: 0.0620
+
+  OT-MIX STATE
+    OT Step (loss counter): 900
+    Alpha:                  0.0450
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.062157
+    Num Gated (active/B):   58/58
+    Avg Synthetic Sim:      -0.2294
+    Avg Synthetic Logit:    -3.2778
+    Selected Neg Rank:      mean=2.33  median=1.00
+    Pos - Selected Gap:     -0.0493
+    Coupling Entropy:       2.7207
+    Coupling Peak Mass:     0.2086
+    Alpha Effective:        0.0450 (scheduled=0.0450)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1980 ± 0.0839
+    All negatives:  -0.3700
+    Hardest neg:    -0.1322
+    Pos-Hard gap:   -0.0658
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.8284 ± 1.1984
+    Off-diagonal mean: -5.2864
+    Gap (pos - neg): 2.4580
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 15.6%
+    Mean rank: 8.73
+
+  EMBEDDING HEALTH
+    Image variance: 0.021502
+    Text variance: 0.018190
+
+--------------------------------------------------------------------------------
+Step 929 (Epoch 10, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0694
+  Base Loss: 0.0671
+
+  OT-MIX STATE
+    OT Step (loss counter): 929
+    Alpha:                  0.0465
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.050633
+    Num Gated (active/B):   37/37
+    Avg Synthetic Sim:      -0.2631
+    Avg Synthetic Logit:    -3.7584
+    Selected Neg Rank:      mean=3.22  median=2.00
+    Pos - Selected Gap:     -0.0511
+    Coupling Entropy:       2.8411
+    Coupling Peak Mass:     0.1811
+    Alpha Effective:        0.0465 (scheduled=0.0465)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2354 ± 0.0954
+    All negatives:  -0.3783
+    Hardest neg:    -0.1568
+    Pos-Hard gap:   -0.0786
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.3625 ± 1.3624
+    Off-diagonal mean: -5.4049
+    Gap (pos - neg): 2.0423
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 14.1%
+    Mean rank: 11.78
+
+  EMBEDDING HEALTH
+    Image variance: 0.020823
+    Text variance: 0.017582
+
+================================================================================
+VALIDATION - Epoch 10
+================================================================================
+Average training loss: 0.0670
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.31%
+    R@5:  1.57%
+    R@10: 2.98%
+  Image → Text:
+    R@1:  0.50%
+    R@5:  2.31%
+    R@10: 4.69%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.31%
+    R@5:  1.66%
+    R@10: 3.28%
+  Image → Text:
+    R@1:  0.41%
+    R@5:  2.42%
+    R@10: 4.33%
+
+🎯 Average Recall@1 (canonical): 0.36%
+  Latest checkpoint saved (epoch 10)
+Checkpoint saved at step 930
+
+✓ New best model! Canonical Avg R@1 = 0.36%
+Current best canonical Avg R@1: 0.36%
+
+================================================================================
+EPOCH 11/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 1000 (Epoch 11, Batch 71/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0663
+  Base Loss: 0.0640
+
+  OT-MIX STATE
+    OT Step (loss counter): 1000
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.045532
+    Num Gated (active/B):   32/32
+    Avg Synthetic Sim:      -0.2718
+    Avg Synthetic Logit:    -3.8826
+    Selected Neg Rank:      mean=3.78  median=2.00
+    Pos - Selected Gap:     -0.0454
+    Coupling Entropy:       2.7178
+    Coupling Peak Mass:     0.2005
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2287 ± 0.0906
+    All negatives:  -0.4030
+    Hardest neg:    -0.1521
+    Pos-Hard gap:   -0.0766
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.2676 ± 1.2937
+    Off-diagonal mean: -5.7578
+    Gap (pos - neg): 2.4902
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 20.3%
+    Mean rank: 9.02
+
+  EMBEDDING HEALTH
+    Image variance: 0.023840
+    Text variance: 0.018246
+
+--------------------------------------------------------------------------------
+Step 1022 (Epoch 11, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0716
+  Base Loss: 0.0711
+
+  OT-MIX STATE
+    OT Step (loss counter): 1022
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.046666
+    Num Gated (active/B):   29/29
+    Avg Synthetic Sim:      -0.2843
+    Avg Synthetic Logit:    -4.0621
+    Selected Neg Rank:      mean=2.53  median=2.00
+    Pos - Selected Gap:     -0.0821
+    Coupling Entropy:       2.7014
+    Coupling Peak Mass:     0.2066
+    Alpha Effective:        0.0125 (scheduled=0.0500)  [downweighted: too hard]
+    Gap Bucket:             too_hard
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2674 ± 0.1042
+    All negatives:  -0.4014
+    Hardest neg:    -0.1631
+    Pos-Hard gap:   -0.1043
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.8202 ± 1.4890
+    Off-diagonal mean: -5.7350
+    Gap (pos - neg): 1.9148
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 15.6%
+    Mean rank: 14.33
+
+  EMBEDDING HEALTH
+    Image variance: 0.024064
+    Text variance: 0.018243
+
+================================================================================
+VALIDATION - Epoch 11
+================================================================================
+Average training loss: 0.0662
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.42%
+    R@5:  1.93%
+    R@10: 3.55%
+  Image → Text:
+    R@1:  0.64%
+    R@5:  2.68%
+    R@10: 5.32%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.52%
+    R@5:  2.05%
+    R@10: 3.85%
+  Image → Text:
+    R@1:  0.55%
+    R@5:  2.43%
+    R@10: 4.69%
+
+🎯 Average Recall@1 (canonical): 0.54%
+  Latest checkpoint saved (epoch 11)
+Checkpoint saved at step 1023
+
+✓ New best model! Canonical Avg R@1 = 0.54%
+Current best canonical Avg R@1: 0.54%
+
+================================================================================
+EPOCH 12/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 1100 (Epoch 12, Batch 78/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0631
+  Base Loss: 0.0612
+
+  OT-MIX STATE
+    OT Step (loss counter): 1100
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.038658
+    Num Gated (active/B):   49/49
+    Avg Synthetic Sim:      -0.2474
+    Avg Synthetic Logit:    -3.5342
+    Selected Neg Rank:      mean=2.02  median=1.00
+    Pos - Selected Gap:     -0.0574
+    Coupling Entropy:       2.6461
+    Coupling Peak Mass:     0.2257
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2050 ± 0.0778
+    All negatives:  -0.3862
+    Hardest neg:    -0.1341
+    Pos-Hard gap:   -0.0709
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.9287 ± 1.1121
+    Off-diagonal mean: -5.5173
+    Gap (pos - neg): 2.5886
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 17.2%
+    Mean rank: 8.16
+
+  EMBEDDING HEALTH
+    Image variance: 0.025254
+    Text variance: 0.017947
+
+--------------------------------------------------------------------------------
+Step 1115 (Epoch 12, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0621
+  Base Loss: 0.0598
+
+  OT-MIX STATE
+    OT Step (loss counter): 1115
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.045923
+    Num Gated (active/B):   37/37
+    Avg Synthetic Sim:      -0.2691
+    Avg Synthetic Logit:    -3.8448
+    Selected Neg Rank:      mean=2.86  median=2.00
+    Pos - Selected Gap:     -0.0336
+    Coupling Entropy:       2.6925
+    Coupling Peak Mass:     0.2045
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2055 ± 0.0949
+    All negatives:  -0.3974
+    Hardest neg:    -0.1482
+    Pos-Hard gap:   -0.0573
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.9362 ± 1.3561
+    Off-diagonal mean: -5.6776
+    Gap (pos - neg): 2.7413
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 18.8%
+    Mean rank: 8.12
+
+  EMBEDDING HEALTH
+    Image variance: 0.025330
+    Text variance: 0.018654
+
+================================================================================
+VALIDATION - Epoch 12
+================================================================================
+Average training loss: 0.0653
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.46%
+    R@5:  2.10%
+    R@10: 3.88%
+  Image → Text:
+    R@1:  0.71%
+    R@5:  3.33%
+    R@10: 5.99%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.55%
+    R@5:  2.38%
+    R@10: 4.44%
+  Image → Text:
+    R@1:  0.50%
+    R@5:  3.02%
+    R@10: 4.97%
+
+🎯 Average Recall@1 (canonical): 0.53%
+  Latest checkpoint saved (epoch 12)
+Current best canonical Avg R@1: 0.54%
+
+================================================================================
+EPOCH 13/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 1200 (Epoch 13, Batch 85/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0657
+  Base Loss: 0.0632
+
+  OT-MIX STATE
+    OT Step (loss counter): 1200
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.050253
+    Num Gated (active/B):   38/38
+    Avg Synthetic Sim:      -0.2624
+    Avg Synthetic Logit:    -3.7484
+    Selected Neg Rank:      mean=2.50  median=2.00
+    Pos - Selected Gap:     -0.0535
+    Coupling Entropy:       2.6919
+    Coupling Peak Mass:     0.2116
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2058 ± 0.0947
+    All negatives:  -0.3767
+    Hardest neg:    -0.1321
+    Pos-Hard gap:   -0.0737
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.9395 ± 1.3524
+    Off-diagonal mean: -5.3817
+    Gap (pos - neg): 2.4422
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 21.9%
+    Mean rank: 10.00
+
+  EMBEDDING HEALTH
+    Image variance: 0.026455
+    Text variance: 0.018044
+
+--------------------------------------------------------------------------------
+Step 1208 (Epoch 13, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0636
+  Base Loss: 0.0613
+
+  OT-MIX STATE
+    OT Step (loss counter): 1208
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.044585
+    Num Gated (active/B):   42/42
+    Avg Synthetic Sim:      -0.2561
+    Avg Synthetic Logit:    -3.6580
+    Selected Neg Rank:      mean=2.38  median=1.00
+    Pos - Selected Gap:     -0.0525
+    Coupling Entropy:       2.5840
+    Coupling Peak Mass:     0.2333
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2053 ± 0.0805
+    All negatives:  -0.3897
+    Hardest neg:    -0.1371
+    Pos-Hard gap:   -0.0682
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.9328 ± 1.1495
+    Off-diagonal mean: -5.5676
+    Gap (pos - neg): 2.6349
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 21.9%
+    Mean rank: 7.41
+
+  EMBEDDING HEALTH
+    Image variance: 0.026774
+    Text variance: 0.017931
+
+================================================================================
+VALIDATION - Epoch 13
+================================================================================
+Average training loss: 0.0651
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.47%
+    R@5:  2.24%
+    R@10: 4.23%
+  Image → Text:
+    R@1:  0.72%
+    R@5:  3.66%
+    R@10: 6.27%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.40%
+    R@5:  2.26%
+    R@10: 4.56%
+  Image → Text:
+    R@1:  0.67%
+    R@5:  2.78%
+    R@10: 4.99%
+
+🎯 Average Recall@1 (canonical): 0.54%
+  Latest checkpoint saved (epoch 13)
+Current best canonical Avg R@1: 0.54%
+
+================================================================================
+EPOCH 14/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 1300 (Epoch 14, Batch 92/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0680
+  Base Loss: 0.0658
+
+  OT-MIX STATE
+    OT Step (loss counter): 1300
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.044606
+    Num Gated (active/B):   28/28
+    Avg Synthetic Sim:      -0.2851
+    Avg Synthetic Logit:    -4.0726
+    Selected Neg Rank:      mean=2.30  median=2.00
+    Pos - Selected Gap:     -0.0647
+    Coupling Entropy:       2.6847
+    Coupling Peak Mass:     0.2224
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2331 ± 0.0813
+    All negatives:  -0.3933
+    Hardest neg:    -0.1514
+    Pos-Hard gap:   -0.0816
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.3298 ± 1.1619
+    Off-diagonal mean: -5.6181
+    Gap (pos - neg): 2.2883
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 14.1%
+    Mean rank: 9.72
+
+  EMBEDDING HEALTH
+    Image variance: 0.028424
+    Text variance: 0.017874
+
+--------------------------------------------------------------------------------
+Step 1301 (Epoch 14, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0612
+  Base Loss: 0.0590
+
+  OT-MIX STATE
+    OT Step (loss counter): 1301
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.044108
+    Num Gated (active/B):   36/36
+    Avg Synthetic Sim:      -0.2688
+    Avg Synthetic Logit:    -3.8401
+    Selected Neg Rank:      mean=2.28  median=2.00
+    Pos - Selected Gap:     -0.0362
+    Coupling Entropy:       2.6206
+    Coupling Peak Mass:     0.2204
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1949 ± 0.0776
+    All negatives:  -0.4013
+    Hardest neg:    -0.1384
+    Pos-Hard gap:   -0.0565
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.7844 ± 1.1086
+    Off-diagonal mean: -5.7324
+    Gap (pos - neg): 2.9480
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 28.1%
+    Mean rank: 6.47
+
+  EMBEDDING HEALTH
+    Image variance: 0.028201
+    Text variance: 0.018482
+
+================================================================================
+VALIDATION - Epoch 14
+================================================================================
+Average training loss: 0.0638
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.46%
+    R@5:  2.14%
+    R@10: 4.08%
+  Image → Text:
+    R@1:  0.64%
+    R@5:  3.45%
+    R@10: 6.28%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.40%
+    R@5:  2.26%
+    R@10: 4.50%
+  Image → Text:
+    R@1:  0.69%
+    R@5:  3.21%
+    R@10: 5.59%
+
+🎯 Average Recall@1 (canonical): 0.54%
+  Latest checkpoint saved (epoch 14)
+Checkpoint saved at step 1302
+
+✓ New best model! Canonical Avg R@1 = 0.54%
+Current best canonical Avg R@1: 0.54%
+
+================================================================================
+EPOCH 15/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 1394 (Epoch 15, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0661
+  Base Loss: 0.0638
+
+  OT-MIX STATE
+    OT Step (loss counter): 1394
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.044784
+    Num Gated (active/B):   37/37
+    Avg Synthetic Sim:      -0.2704
+    Avg Synthetic Logit:    -3.8636
+    Selected Neg Rank:      mean=2.34  median=1.00
+    Pos - Selected Gap:     -0.0628
+    Coupling Entropy:       2.6011
+    Coupling Peak Mass:     0.2333
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2175 ± 0.0946
+    All negatives:  -0.4001
+    Hardest neg:    -0.1349
+    Pos-Hard gap:   -0.0826
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.1075 ± 1.3520
+    Off-diagonal mean: -5.7158
+    Gap (pos - neg): 2.6083
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 15.6%
+    Mean rank: 9.75
+
+  EMBEDDING HEALTH
+    Image variance: 0.028049
+    Text variance: 0.018204
+
+================================================================================
+VALIDATION - Epoch 15
+================================================================================
+Average training loss: 0.0632
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.50%
+    R@5:  2.31%
+    R@10: 4.28%
+  Image → Text:
+    R@1:  0.86%
+    R@5:  3.75%
+    R@10: 6.68%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.40%
+    R@5:  2.61%
+    R@10: 4.94%
+  Image → Text:
+    R@1:  0.88%
+    R@5:  2.99%
+    R@10: 5.70%
+
+🎯 Average Recall@1 (canonical): 0.64%
+  Latest checkpoint saved (epoch 15)
+Checkpoint saved at step 1395
+
+✓ New best model! Canonical Avg R@1 = 0.64%
+Current best canonical Avg R@1: 0.64%
+
+================================================================================
+EPOCH 16/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 1400 (Epoch 16, Batch 6/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0680
+  Base Loss: 0.0654
+
+  OT-MIX STATE
+    OT Step (loss counter): 1400
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.051810
+    Num Gated (active/B):   16/16
+    Avg Synthetic Sim:      -0.3173
+    Avg Synthetic Logit:    -4.5327
+    Selected Neg Rank:      mean=4.44  median=1.00
+    Pos - Selected Gap:     -0.0489
+    Coupling Entropy:       2.6492
+    Coupling Peak Mass:     0.2229
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2477 ± 0.0927
+    All negatives:  -0.4127
+    Hardest neg:    -0.1669
+    Pos-Hard gap:   -0.0807
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.5380 ± 1.3248
+    Off-diagonal mean: -5.8961
+    Gap (pos - neg): 2.3581
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 15.6%
+    Mean rank: 9.98
+
+  EMBEDDING HEALTH
+    Image variance: 0.027692
+    Text variance: 0.018361
+
+--------------------------------------------------------------------------------
+Step 1487 (Epoch 16, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0581
+  Base Loss: 0.0558
+
+  OT-MIX STATE
+    OT Step (loss counter): 1487
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.046697
+    Num Gated (active/B):   40/40
+    Avg Synthetic Sim:      -0.2650
+    Avg Synthetic Logit:    -3.7860
+    Selected Neg Rank:      mean=2.36  median=1.00
+    Pos - Selected Gap:     -0.0325
+    Coupling Entropy:       2.4824
+    Coupling Peak Mass:     0.2394
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1798 ± 0.0841
+    All negatives:  -0.4108
+    Hardest neg:    -0.1234
+    Pos-Hard gap:   -0.0564
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5679 ± 1.2015
+    Off-diagonal mean: -5.8686
+    Gap (pos - neg): 3.3006
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 28.1%
+    Mean rank: 5.75
+
+  EMBEDDING HEALTH
+    Image variance: 0.029635
+    Text variance: 0.018740
+
+================================================================================
+VALIDATION - Epoch 16
+================================================================================
+Average training loss: 0.0631
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.48%
+    R@5:  2.40%
+    R@10: 4.55%
+  Image → Text:
+    R@1:  0.91%
+    R@5:  4.02%
+    R@10: 7.47%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.40%
+    R@5:  2.57%
+    R@10: 5.16%
+  Image → Text:
+    R@1:  0.88%
+    R@5:  3.28%
+    R@10: 6.18%
+
+🎯 Average Recall@1 (canonical): 0.64%
+  Latest checkpoint saved (epoch 16)
+Current best canonical Avg R@1: 0.64%
+
+================================================================================
+EPOCH 17/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 1500 (Epoch 17, Batch 13/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0640
+  Base Loss: 0.0622
+
+  OT-MIX STATE
+    OT Step (loss counter): 1500
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.036504
+    Num Gated (active/B):   16/16
+    Avg Synthetic Sim:      -0.3240
+    Avg Synthetic Logit:    -4.6280
+    Selected Neg Rank:      mean=2.94  median=2.00
+    Pos - Selected Gap:     -0.0411
+    Coupling Entropy:       2.6625
+    Coupling Peak Mass:     0.2223
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2345 ± 0.0956
+    All negatives:  -0.4180
+    Hardest neg:    -0.1763
+    Pos-Hard gap:   -0.0582
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.3504 ± 1.3651
+    Off-diagonal mean: -5.9716
+    Gap (pos - neg): 2.6212
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 17.2%
+    Mean rank: 8.92
+
+  EMBEDDING HEALTH
+    Image variance: 0.028450
+    Text variance: 0.018032
+
+--------------------------------------------------------------------------------
+Step 1580 (Epoch 17, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0671
+  Base Loss: 0.0645
+
+  OT-MIX STATE
+    OT Step (loss counter): 1580
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.050815
+    Num Gated (active/B):   31/31
+    Avg Synthetic Sim:      -0.2787
+    Avg Synthetic Logit:    -3.9812
+    Selected Neg Rank:      mean=2.92  median=2.00
+    Pos - Selected Gap:     -0.0631
+    Coupling Entropy:       2.5487
+    Coupling Peak Mass:     0.2442
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2260 ± 0.0958
+    All negatives:  -0.4038
+    Hardest neg:    -0.1340
+    Pos-Hard gap:   -0.0920
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.2281 ± 1.3679
+    Off-diagonal mean: -5.7680
+    Gap (pos - neg): 2.5399
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 14.1%
+    Mean rank: 10.20
+
+  EMBEDDING HEALTH
+    Image variance: 0.029497
+    Text variance: 0.019256
+
+================================================================================
+VALIDATION - Epoch 17
+================================================================================
+Average training loss: 0.0624
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.35%
+    R@5:  2.29%
+    R@10: 4.44%
+  Image → Text:
+    R@1:  0.79%
+    R@5:  4.00%
+    R@10: 7.59%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.29%
+    R@5:  2.52%
+    R@10: 4.87%
+  Image → Text:
+    R@1:  1.04%
+    R@5:  4.02%
+    R@10: 6.44%
+
+🎯 Average Recall@1 (canonical): 0.66%
+  Latest checkpoint saved (epoch 17)
+Checkpoint saved at step 1581
+
+✓ New best model! Canonical Avg R@1 = 0.66%
+Current best canonical Avg R@1: 0.66%
+
+================================================================================
+EPOCH 18/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 1600 (Epoch 18, Batch 20/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0682
+  Base Loss: 0.0661
+
+  OT-MIX STATE
+    OT Step (loss counter): 1600
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.043499
+    Num Gated (active/B):   22/22
+    Avg Synthetic Sim:      -0.3030
+    Avg Synthetic Logit:    -4.3288
+    Selected Neg Rank:      mean=2.86  median=2.00
+    Pos - Selected Gap:     -0.0631
+    Coupling Entropy:       2.6152
+    Coupling Peak Mass:     0.2384
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2421 ± 0.1027
+    All negatives:  -0.4088
+    Hardest neg:    -0.1584
+    Pos-Hard gap:   -0.0837
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.4587 ± 1.4671
+    Off-diagonal mean: -5.8398
+    Gap (pos - neg): 2.3811
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 14.1%
+    Mean rank: 11.42
+
+  EMBEDDING HEALTH
+    Image variance: 0.029273
+    Text variance: 0.019695
+
+--------------------------------------------------------------------------------
+Step 1673 (Epoch 18, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0598
+  Base Loss: 0.0574
+
+  OT-MIX STATE
+    OT Step (loss counter): 1673
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.048408
+    Num Gated (active/B):   36/36
+    Avg Synthetic Sim:      -0.2698
+    Avg Synthetic Logit:    -3.8540
+    Selected Neg Rank:      mean=2.38  median=1.00
+    Pos - Selected Gap:     -0.0370
+    Coupling Entropy:       2.5385
+    Coupling Peak Mass:     0.2413
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1849 ± 0.0705
+    All negatives:  -0.3994
+    Hardest neg:    -0.1354
+    Pos-Hard gap:   -0.0495
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.6418 ± 1.0069
+    Off-diagonal mean: -5.7051
+    Gap (pos - neg): 3.0633
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 23.4%
+    Mean rank: 6.17
+
+  EMBEDDING HEALTH
+    Image variance: 0.030009
+    Text variance: 0.019221
+
+================================================================================
+VALIDATION - Epoch 18
+================================================================================
+Average training loss: 0.0622
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.53%
+    R@5:  2.63%
+    R@10: 4.85%
+  Image → Text:
+    R@1:  1.07%
+    R@5:  4.50%
+    R@10: 7.90%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.57%
+    R@5:  2.93%
+    R@10: 5.14%
+  Image → Text:
+    R@1:  0.97%
+    R@5:  3.80%
+    R@10: 6.59%
+
+🎯 Average Recall@1 (canonical): 0.77%
+  Latest checkpoint saved (epoch 18)
+Checkpoint saved at step 1674
+
+✓ New best model! Canonical Avg R@1 = 0.77%
+Current best canonical Avg R@1: 0.77%
+
+================================================================================
+EPOCH 19/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 1700 (Epoch 19, Batch 27/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0631
+  Base Loss: 0.0603
+
+  OT-MIX STATE
+    OT Step (loss counter): 1700
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.054915
+    Num Gated (active/B):   32/32
+    Avg Synthetic Sim:      -0.2732
+    Avg Synthetic Logit:    -3.9036
+    Selected Neg Rank:      mean=1.77  median=1.00
+    Pos - Selected Gap:     -0.0572
+    Coupling Entropy:       2.4964
+    Coupling Peak Mass:     0.2500
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2026 ± 0.0897
+    All negatives:  -0.4051
+    Hardest neg:    -0.1318
+    Pos-Hard gap:   -0.0707
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.8936 ± 1.2815
+    Off-diagonal mean: -5.7869
+    Gap (pos - neg): 2.8933
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 28.1%
+    Mean rank: 7.45
+
+  EMBEDDING HEALTH
+    Image variance: 0.029750
+    Text variance: 0.019725
+
+--------------------------------------------------------------------------------
+Step 1766 (Epoch 19, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0597
+  Base Loss: 0.0567
+
+  OT-MIX STATE
+    OT Step (loss counter): 1766
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.058636
+    Num Gated (active/B):   39/39
+    Avg Synthetic Sim:      -0.2624
+    Avg Synthetic Logit:    -3.7483
+    Selected Neg Rank:      mean=1.92  median=1.00
+    Pos - Selected Gap:     -0.0462
+    Coupling Entropy:       2.4654
+    Coupling Peak Mass:     0.2702
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1729 ± 0.0774
+    All negatives:  -0.3885
+    Hardest neg:    -0.1138
+    Pos-Hard gap:   -0.0592
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4705 ± 1.1063
+    Off-diagonal mean: -5.5500
+    Gap (pos - neg): 3.0795
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 18.8%
+    Mean rank: 5.84
+
+  EMBEDDING HEALTH
+    Image variance: 0.031069
+    Text variance: 0.020645
+
+================================================================================
+VALIDATION - Epoch 19
+================================================================================
+Average training loss: 0.0617
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.30%
+    R@5:  2.15%
+    R@10: 4.50%
+  Image → Text:
+    R@1:  1.00%
+    R@5:  4.19%
+    R@10: 7.87%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.28%
+    R@5:  2.26%
+    R@10: 5.07%
+  Image → Text:
+    R@1:  0.88%
+    R@5:  3.68%
+    R@10: 6.77%
+
+🎯 Average Recall@1 (canonical): 0.58%
+  Latest checkpoint saved (epoch 19)
+Current best canonical Avg R@1: 0.77%
+
+================================================================================
+EPOCH 20/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 1800 (Epoch 20, Batch 34/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0589
+  Base Loss: 0.0568
+
+  OT-MIX STATE
+    OT Step (loss counter): 1800
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.041264
+    Num Gated (active/B):   29/29
+    Avg Synthetic Sim:      -0.2858
+    Avg Synthetic Logit:    -4.0824
+    Selected Neg Rank:      mean=3.44  median=2.00
+    Pos - Selected Gap:     -0.0258
+    Coupling Entropy:       2.5487
+    Coupling Peak Mass:     0.2314
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1847 ± 0.0737
+    All negatives:  -0.4028
+    Hardest neg:    -0.1254
+    Pos-Hard gap:   -0.0593
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.6391 ± 1.0535
+    Off-diagonal mean: -5.7545
+    Gap (pos - neg): 3.1154
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 20.3%
+    Mean rank: 6.12
+
+  EMBEDDING HEALTH
+    Image variance: 0.030334
+    Text variance: 0.019618
+
+--------------------------------------------------------------------------------
+Step 1859 (Epoch 20, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0651
+  Base Loss: 0.0627
+
+  OT-MIX STATE
+    OT Step (loss counter): 1859
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.047708
+    Num Gated (active/B):   34/34
+    Avg Synthetic Sim:      -0.2763
+    Avg Synthetic Logit:    -3.9471
+    Selected Neg Rank:      mean=2.52  median=1.00
+    Pos - Selected Gap:     -0.0564
+    Coupling Entropy:       2.6065
+    Coupling Peak Mass:     0.2275
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2028 ± 0.0892
+    All negatives:  -0.3959
+    Hardest neg:    -0.1288
+    Pos-Hard gap:   -0.0740
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.8968 ± 1.2743
+    Off-diagonal mean: -5.6562
+    Gap (pos - neg): 2.7595
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 21.9%
+    Mean rank: 9.66
+
+  EMBEDDING HEALTH
+    Image variance: 0.029569
+    Text variance: 0.019689
+
+================================================================================
+VALIDATION - Epoch 20
+================================================================================
+Average training loss: 0.0612
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.59%
+    R@5:  2.90%
+    R@10: 5.35%
+  Image → Text:
+    R@1:  1.05%
+    R@5:  4.64%
+    R@10: 8.18%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.57%
+    R@5:  2.99%
+    R@10: 5.64%
+  Image → Text:
+    R@1:  1.09%
+    R@5:  3.97%
+    R@10: 7.23%
+
+🎯 Average Recall@1 (canonical): 0.83%
+  Latest checkpoint saved (epoch 20)
+Checkpoint saved at step 1860
+
+✓ New best model! Canonical Avg R@1 = 0.83%
+Current best canonical Avg R@1: 0.83%
+
+================================================================================
+EPOCH 21/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 1900 (Epoch 21, Batch 41/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0608
+  Base Loss: 0.0584
+
+  OT-MIX STATE
+    OT Step (loss counter): 1900
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.047939
+    Num Gated (active/B):   19/19
+    Avg Synthetic Sim:      -0.3104
+    Avg Synthetic Logit:    -4.4348
+    Selected Neg Rank:      mean=1.86  median=1.00
+    Pos - Selected Gap:     -0.0417
+    Coupling Entropy:       2.5711
+    Coupling Peak Mass:     0.2442
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2076 ± 0.0878
+    All negatives:  -0.4162
+    Hardest neg:    -0.1532
+    Pos-Hard gap:   -0.0545
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.9662 ± 1.2541
+    Off-diagonal mean: -5.9452
+    Gap (pos - neg): 2.9790
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 28.1%
+    Mean rank: 6.88
+
+  EMBEDDING HEALTH
+    Image variance: 0.030234
+    Text variance: 0.020395
+
+--------------------------------------------------------------------------------
+Step 1952 (Epoch 21, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0641
+  Base Loss: 0.0617
+
+  OT-MIX STATE
+    OT Step (loss counter): 1952
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.047499
+    Num Gated (active/B):   20/20
+    Avg Synthetic Sim:      -0.3096
+    Avg Synthetic Logit:    -4.4228
+    Selected Neg Rank:      mean=1.86  median=1.00
+    Pos - Selected Gap:     -0.0596
+    Coupling Entropy:       2.5711
+    Coupling Peak Mass:     0.2472
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2265 ± 0.0901
+    All negatives:  -0.4193
+    Hardest neg:    -0.1519
+    Pos-Hard gap:   -0.0746
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.2354 ± 1.2865
+    Off-diagonal mean: -5.9906
+    Gap (pos - neg): 2.7551
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 18.8%
+    Mean rank: 8.45
+
+  EMBEDDING HEALTH
+    Image variance: 0.029710
+    Text variance: 0.020594
+
+================================================================================
+VALIDATION - Epoch 21
+================================================================================
+Average training loss: 0.0609
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.63%
+    R@5:  2.82%
+    R@10: 5.22%
+  Image → Text:
+    R@1:  1.00%
+    R@5:  4.66%
+    R@10: 8.63%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.54%
+    R@5:  3.11%
+    R@10: 5.59%
+  Image → Text:
+    R@1:  1.10%
+    R@5:  4.49%
+    R@10: 7.32%
+
+🎯 Average Recall@1 (canonical): 0.82%
+  Latest checkpoint saved (epoch 21)
+Current best canonical Avg R@1: 0.83%
+
+================================================================================
+EPOCH 22/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 2000 (Epoch 22, Batch 48/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0591
+  Base Loss: 0.0573
+
+  OT-MIX STATE
+    OT Step (loss counter): 2000
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.034813
+    Num Gated (active/B):   21/21
+    Avg Synthetic Sim:      -0.3073
+    Avg Synthetic Logit:    -4.3895
+    Selected Neg Rank:      mean=2.66  median=2.00
+    Pos - Selected Gap:     -0.0323
+    Coupling Entropy:       2.5636
+    Coupling Peak Mass:     0.2419
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1994 ± 0.0884
+    All negatives:  -0.4144
+    Hardest neg:    -0.1463
+    Pos-Hard gap:   -0.0531
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.8484 ± 1.2633
+    Off-diagonal mean: -5.9202
+    Gap (pos - neg): 3.0718
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 31.2%
+    Mean rank: 5.98
+
+  EMBEDDING HEALTH
+    Image variance: 0.030439
+    Text variance: 0.020149
+
+--------------------------------------------------------------------------------
+Step 2045 (Epoch 22, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0590
+  Base Loss: 0.0563
+
+  OT-MIX STATE
+    OT Step (loss counter): 2045
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.052393
+    Num Gated (active/B):   40/40
+    Avg Synthetic Sim:      -0.2631
+    Avg Synthetic Logit:    -3.7592
+    Selected Neg Rank:      mean=2.02  median=1.00
+    Pos - Selected Gap:     -0.0406
+    Coupling Entropy:       2.3939
+    Coupling Peak Mass:     0.2756
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1834 ± 0.0881
+    All negatives:  -0.4159
+    Hardest neg:    -0.1244
+    Pos-Hard gap:   -0.0591
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.6203 ± 1.2590
+    Off-diagonal mean: -5.9410
+    Gap (pos - neg): 3.3207
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 26.6%
+    Mean rank: 6.12
+
+  EMBEDDING HEALTH
+    Image variance: 0.030402
+    Text variance: 0.020823
+
+================================================================================
+VALIDATION - Epoch 22
+================================================================================
+Average training loss: 0.0601
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.62%
+    R@5:  2.88%
+    R@10: 5.37%
+  Image → Text:
+    R@1:  1.17%
+    R@5:  5.02%
+    R@10: 9.41%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.55%
+    R@5:  3.11%
+    R@10: 5.92%
+  Image → Text:
+    R@1:  1.16%
+    R@5:  4.49%
+    R@10: 7.53%
+
+🎯 Average Recall@1 (canonical): 0.85%
+  Latest checkpoint saved (epoch 22)
+Checkpoint saved at step 2046
+
+✓ New best model! Canonical Avg R@1 = 0.85%
+Current best canonical Avg R@1: 0.85%
+
+================================================================================
+EPOCH 23/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 2100 (Epoch 23, Batch 55/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0611
+  Base Loss: 0.0589
+
+  OT-MIX STATE
+    OT Step (loss counter): 2100
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.044307
+    Num Gated (active/B):   30/30
+    Avg Synthetic Sim:      -0.2874
+    Avg Synthetic Logit:    -4.1059
+    Selected Neg Rank:      mean=2.23  median=1.00
+    Pos - Selected Gap:     -0.0479
+    Coupling Entropy:       2.4987
+    Coupling Peak Mass:     0.2543
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2019 ± 0.0855
+    All negatives:  -0.4126
+    Hardest neg:    -0.1373
+    Pos-Hard gap:   -0.0647
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.8844 ± 1.2212
+    Off-diagonal mean: -5.8939
+    Gap (pos - neg): 3.0094
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 29.7%
+    Mean rank: 7.72
+
+  EMBEDDING HEALTH
+    Image variance: 0.030400
+    Text variance: 0.021568
+
+--------------------------------------------------------------------------------
+Step 2138 (Epoch 23, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0629
+  Base Loss: 0.0607
+
+  OT-MIX STATE
+    OT Step (loss counter): 2138
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.043853
+    Num Gated (active/B):   24/24
+    Avg Synthetic Sim:      -0.2991
+    Avg Synthetic Logit:    -4.2723
+    Selected Neg Rank:      mean=2.09  median=1.00
+    Pos - Selected Gap:     -0.0520
+    Coupling Entropy:       2.5367
+    Coupling Peak Mass:     0.2575
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2153 ± 0.0989
+    All negatives:  -0.4129
+    Hardest neg:    -0.1462
+    Pos-Hard gap:   -0.0691
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.0756 ± 1.4134
+    Off-diagonal mean: -5.8991
+    Gap (pos - neg): 2.8235
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 28.1%
+    Mean rank: 8.30
+
+  EMBEDDING HEALTH
+    Image variance: 0.030084
+    Text variance: 0.020698
+
+================================================================================
+VALIDATION - Epoch 23
+================================================================================
+Average training loss: 0.0604
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.64%
+    R@5:  3.08%
+    R@10: 5.77%
+  Image → Text:
+    R@1:  1.04%
+    R@5:  5.25%
+    R@10: 9.27%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.64%
+    R@5:  3.42%
+    R@10: 6.18%
+  Image → Text:
+    R@1:  0.95%
+    R@5:  4.61%
+    R@10: 7.96%
+
+🎯 Average Recall@1 (canonical): 0.79%
+  Latest checkpoint saved (epoch 23)
+Current best canonical Avg R@1: 0.85%
+
+================================================================================
+EPOCH 24/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 2200 (Epoch 24, Batch 62/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0562
+  Base Loss: 0.0542
+
+  OT-MIX STATE
+    OT Step (loss counter): 2200
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.039659
+    Num Gated (active/B):   33/33
+    Avg Synthetic Sim:      -0.2787
+    Avg Synthetic Logit:    -3.9820
+    Selected Neg Rank:      mean=2.14  median=1.00
+    Pos - Selected Gap:     -0.0267
+    Coupling Entropy:       2.4437
+    Coupling Peak Mass:     0.2650
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1795 ± 0.0763
+    All negatives:  -0.4194
+    Hardest neg:    -0.1339
+    Pos-Hard gap:   -0.0456
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5648 ± 1.0905
+    Off-diagonal mean: -5.9916
+    Gap (pos - neg): 3.4269
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 31.2%
+    Mean rank: 5.36
+
+  EMBEDDING HEALTH
+    Image variance: 0.030776
+    Text variance: 0.020663
+
+--------------------------------------------------------------------------------
+Step 2231 (Epoch 24, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0603
+  Base Loss: 0.0582
+
+  OT-MIX STATE
+    OT Step (loss counter): 2231
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.040897
+    Num Gated (active/B):   32/32
+    Avg Synthetic Sim:      -0.2833
+    Avg Synthetic Logit:    -4.0469
+    Selected Neg Rank:      mean=2.02  median=1.00
+    Pos - Selected Gap:     -0.0403
+    Coupling Entropy:       2.4866
+    Coupling Peak Mass:     0.2477
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1965 ± 0.0875
+    All negatives:  -0.4118
+    Hardest neg:    -0.1379
+    Pos-Hard gap:   -0.0586
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.8068 ± 1.2497
+    Off-diagonal mean: -5.8826
+    Gap (pos - neg): 3.0758
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 29.7%
+    Mean rank: 7.11
+
+  EMBEDDING HEALTH
+    Image variance: 0.030574
+    Text variance: 0.021054
+
+================================================================================
+VALIDATION - Epoch 24
+================================================================================
+Average training loss: 0.0598
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.55%
+    R@5:  3.05%
+    R@10: 5.73%
+  Image → Text:
+    R@1:  1.04%
+    R@5:  5.70%
+    R@10: 9.46%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.64%
+    R@5:  3.56%
+    R@10: 6.61%
+  Image → Text:
+    R@1:  1.07%
+    R@5:  4.71%
+    R@10: 7.65%
+
+🎯 Average Recall@1 (canonical): 0.85%
+  Latest checkpoint saved (epoch 24)
+Current best canonical Avg R@1: 0.85%
+
+================================================================================
+EPOCH 25/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 2300 (Epoch 25, Batch 69/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0603
+  Base Loss: 0.0585
+
+  OT-MIX STATE
+    OT Step (loss counter): 2300
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.035552
+    Num Gated (active/B):   23/23
+    Avg Synthetic Sim:      -0.3013
+    Avg Synthetic Logit:    -4.3039
+    Selected Neg Rank:      mean=2.09  median=1.00
+    Pos - Selected Gap:     -0.0433
+    Coupling Entropy:       2.5576
+    Coupling Peak Mass:     0.2518
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2049 ± 0.0733
+    All negatives:  -0.4135
+    Hardest neg:    -0.1479
+    Pos-Hard gap:   -0.0570
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.9267 ± 1.0472
+    Off-diagonal mean: -5.9078
+    Gap (pos - neg): 2.9811
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 25.0%
+    Mean rank: 6.48
+
+  EMBEDDING HEALTH
+    Image variance: 0.030809
+    Text variance: 0.020189
+
+--------------------------------------------------------------------------------
+Step 2324 (Epoch 25, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0637
+  Base Loss: 0.0611
+
+  OT-MIX STATE
+    OT Step (loss counter): 2324
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.052104
+    Num Gated (active/B):   37/37
+    Avg Synthetic Sim:      -0.2677
+    Avg Synthetic Logit:    -3.8240
+    Selected Neg Rank:      mean=2.64  median=2.00
+    Pos - Selected Gap:     -0.0499
+    Coupling Entropy:       2.5553
+    Coupling Peak Mass:     0.2347
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1784 ± 0.0818
+    All negatives:  -0.3852
+    Hardest neg:    -0.1008
+    Pos-Hard gap:   -0.0776
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5483 ± 1.1688
+    Off-diagonal mean: -5.5033
+    Gap (pos - neg): 2.9551
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 23.4%
+    Mean rank: 7.36
+
+  EMBEDDING HEALTH
+    Image variance: 0.031017
+    Text variance: 0.020975
+
+================================================================================
+VALIDATION - Epoch 25
+================================================================================
+Average training loss: 0.0597
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.61%
+    R@5:  3.10%
+    R@10: 5.89%
+  Image → Text:
+    R@1:  1.23%
+    R@5:  4.97%
+    R@10: 9.23%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.78%
+    R@5:  3.69%
+    R@10: 6.54%
+  Image → Text:
+    R@1:  0.83%
+    R@5:  4.25%
+    R@10: 7.65%
+
+🎯 Average Recall@1 (canonical): 0.80%
+  Latest checkpoint saved (epoch 25)
+Current best canonical Avg R@1: 0.85%
+
+================================================================================
+EPOCH 26/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 2400 (Epoch 26, Batch 76/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0585
+  Base Loss: 0.0558
+
+  OT-MIX STATE
+    OT Step (loss counter): 2400
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.055419
+    Num Gated (active/B):   37/37
+    Avg Synthetic Sim:      -0.2743
+    Avg Synthetic Logit:    -3.9190
+    Selected Neg Rank:      mean=1.83  median=1.00
+    Pos - Selected Gap:     -0.0384
+    Coupling Entropy:       2.4110
+    Coupling Peak Mass:     0.2728
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1831 ± 0.0932
+    All negatives:  -0.4211
+    Hardest neg:    -0.1305
+    Pos-Hard gap:   -0.0526
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.6159 ± 1.3309
+    Off-diagonal mean: -6.0160
+    Gap (pos - neg): 3.4001
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 32.8%
+    Mean rank: 5.94
+
+  EMBEDDING HEALTH
+    Image variance: 0.030530
+    Text variance: 0.021328
+
+--------------------------------------------------------------------------------
+Step 2417 (Epoch 26, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0564
+  Base Loss: 0.0540
+
+  OT-MIX STATE
+    OT Step (loss counter): 2417
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.049646
+    Num Gated (active/B):   33/33
+    Avg Synthetic Sim:      -0.2775
+    Avg Synthetic Logit:    -3.9638
+    Selected Neg Rank:      mean=2.56  median=1.00
+    Pos - Selected Gap:     -0.0258
+    Coupling Entropy:       2.4317
+    Coupling Peak Mass:     0.2680
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1750 ± 0.0843
+    All negatives:  -0.4186
+    Hardest neg:    -0.1281
+    Pos-Hard gap:   -0.0469
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4993 ± 1.2047
+    Off-diagonal mean: -5.9804
+    Gap (pos - neg): 3.4811
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 34.4%
+    Mean rank: 6.06
+
+  EMBEDDING HEALTH
+    Image variance: 0.030793
+    Text variance: 0.021089
+
+================================================================================
+VALIDATION - Epoch 26
+================================================================================
+Average training loss: 0.0594
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.70%
+    R@5:  3.24%
+    R@10: 6.07%
+  Image → Text:
+    R@1:  1.43%
+    R@5:  5.56%
+    R@10: 10.04%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.81%
+    R@5:  3.66%
+    R@10: 6.56%
+  Image → Text:
+    R@1:  1.05%
+    R@5:  4.68%
+    R@10: 8.49%
+
+🎯 Average Recall@1 (canonical): 0.93%
+  Latest checkpoint saved (epoch 26)
+Checkpoint saved at step 2418
+
+✓ New best model! Canonical Avg R@1 = 0.93%
+Current best canonical Avg R@1: 0.93%
+
+================================================================================
+EPOCH 27/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 2500 (Epoch 27, Batch 83/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0578
+  Base Loss: 0.0542
+
+  OT-MIX STATE
+    OT Step (loss counter): 2500
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.072638
+    Num Gated (active/B):   32/32
+    Avg Synthetic Sim:      -0.2673
+    Avg Synthetic Logit:    -3.8183
+    Selected Neg Rank:      mean=2.05  median=2.00
+    Pos - Selected Gap:     -0.0231
+    Coupling Entropy:       2.4088
+    Coupling Peak Mass:     0.2578
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1711 ± 0.0842
+    All negatives:  -0.4127
+    Hardest neg:    -0.1322
+    Pos-Hard gap:   -0.0389
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4439 ± 1.2025
+    Off-diagonal mean: -5.8951
+    Gap (pos - neg): 3.4512
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 34.4%
+    Mean rank: 5.70
+
+  EMBEDDING HEALTH
+    Image variance: 0.030853
+    Text variance: 0.021483
+
+--------------------------------------------------------------------------------
+Step 2510 (Epoch 27, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0582
+  Base Loss: 0.0553
+
+  OT-MIX STATE
+    OT Step (loss counter): 2510
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.058241
+    Num Gated (active/B):   38/38
+    Avg Synthetic Sim:      -0.2557
+    Avg Synthetic Logit:    -3.6529
+    Selected Neg Rank:      mean=1.91  median=1.00
+    Pos - Selected Gap:     -0.0420
+    Coupling Entropy:       2.3191
+    Coupling Peak Mass:     0.3033
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1778 ± 0.0896
+    All negatives:  -0.4127
+    Hardest neg:    -0.1206
+    Pos-Hard gap:   -0.0572
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5401 ± 1.2801
+    Off-diagonal mean: -5.8951
+    Gap (pos - neg): 3.3550
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 23.4%
+    Mean rank: 5.80
+
+  EMBEDDING HEALTH
+    Image variance: 0.030710
+    Text variance: 0.022549
+
+================================================================================
+VALIDATION - Epoch 27
+================================================================================
+Average training loss: 0.0592
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.72%
+    R@5:  3.49%
+    R@10: 6.39%
+  Image → Text:
+    R@1:  1.24%
+    R@5:  5.75%
+    R@10: 10.11%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.86%
+    R@5:  3.76%
+    R@10: 6.87%
+  Image → Text:
+    R@1:  1.26%
+    R@5:  4.68%
+    R@10: 8.42%
+
+🎯 Average Recall@1 (canonical): 1.06%
+  Latest checkpoint saved (epoch 27)
+Checkpoint saved at step 2511
+
+✓ New best model! Canonical Avg R@1 = 1.06%
+Current best canonical Avg R@1: 1.06%
+
+================================================================================
+EPOCH 28/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 2600 (Epoch 28, Batch 90/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0575
+  Base Loss: 0.0551
+
+  OT-MIX STATE
+    OT Step (loss counter): 2600
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.048499
+    Num Gated (active/B):   36/36
+    Avg Synthetic Sim:      -0.2736
+    Avg Synthetic Logit:    -3.9087
+    Selected Neg Rank:      mean=1.80  median=1.00
+    Pos - Selected Gap:     -0.0458
+    Coupling Entropy:       2.3416
+    Coupling Peak Mass:     0.2971
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1866 ± 0.0859
+    All negatives:  -0.4179
+    Hardest neg:    -0.1290
+    Pos-Hard gap:   -0.0576
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.6658 ± 1.2277
+    Off-diagonal mean: -5.9702
+    Gap (pos - neg): 3.3044
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 26.6%
+    Mean rank: 5.72
+
+  EMBEDDING HEALTH
+    Image variance: 0.031140
+    Text variance: 0.022188
+
+--------------------------------------------------------------------------------
+Step 2603 (Epoch 28, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0576
+  Base Loss: 0.0549
+
+  OT-MIX STATE
+    OT Step (loss counter): 2603
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.054488
+    Num Gated (active/B):   37/37
+    Avg Synthetic Sim:      -0.2638
+    Avg Synthetic Logit:    -3.7680
+    Selected Neg Rank:      mean=2.34  median=1.00
+    Pos - Selected Gap:     -0.0350
+    Coupling Entropy:       2.3498
+    Coupling Peak Mass:     0.2878
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1793 ± 0.0794
+    All negatives:  -0.4225
+    Hardest neg:    -0.1232
+    Pos-Hard gap:   -0.0560
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5610 ± 1.1348
+    Off-diagonal mean: -6.0354
+    Gap (pos - neg): 3.4745
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 25.0%
+    Mean rank: 5.58
+
+  EMBEDDING HEALTH
+    Image variance: 0.030723
+    Text variance: 0.022310
+
+================================================================================
+VALIDATION - Epoch 28
+================================================================================
+Average training loss: 0.0587
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.74%
+    R@5:  3.38%
+    R@10: 6.06%
+  Image → Text:
+    R@1:  1.38%
+    R@5:  6.01%
+    R@10: 10.80%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.69%
+    R@5:  3.76%
+    R@10: 6.66%
+  Image → Text:
+    R@1:  1.16%
+    R@5:  5.23%
+    R@10: 8.77%
+
+🎯 Average Recall@1 (canonical): 0.92%
+  Latest checkpoint saved (epoch 28)
+Current best canonical Avg R@1: 1.06%
+
+================================================================================
+EPOCH 29/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 2696 (Epoch 29, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0573
+  Base Loss: 0.0548
+
+  OT-MIX STATE
+    OT Step (loss counter): 2696
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.048933
+    Num Gated (active/B):   28/28
+    Avg Synthetic Sim:      -0.2899
+    Avg Synthetic Logit:    -4.1412
+    Selected Neg Rank:      mean=2.00  median=1.00
+    Pos - Selected Gap:     -0.0334
+    Coupling Entropy:       2.4393
+    Coupling Peak Mass:     0.2603
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1873 ± 0.0845
+    All negatives:  -0.4257
+    Hardest neg:    -0.1372
+    Pos-Hard gap:   -0.0500
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.6755 ± 1.2065
+    Off-diagonal mean: -6.0816
+    Gap (pos - neg): 3.4060
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 28.1%
+    Mean rank: 5.44
+
+  EMBEDDING HEALTH
+    Image variance: 0.031029
+    Text variance: 0.021862
+
+================================================================================
+VALIDATION - Epoch 29
+================================================================================
+Average training loss: 0.0587
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.78%
+    R@5:  3.42%
+    R@10: 6.20%
+  Image → Text:
+    R@1:  1.33%
+    R@5:  6.73%
+    R@10: 11.53%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.74%
+    R@5:  3.87%
+    R@10: 6.96%
+  Image → Text:
+    R@1:  1.23%
+    R@5:  5.25%
+    R@10: 8.77%
+
+🎯 Average Recall@1 (canonical): 0.98%
+  Latest checkpoint saved (epoch 29)
+Current best canonical Avg R@1: 1.06%
+
+================================================================================
+EPOCH 30/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 2700 (Epoch 30, Batch 4/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0578
+  Base Loss: 0.0544
+
+  OT-MIX STATE
+    OT Step (loss counter): 2700
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.066163
+    Num Gated (active/B):   29/29
+    Avg Synthetic Sim:      -0.2779
+    Avg Synthetic Logit:    -3.9693
+    Selected Neg Rank:      mean=2.12  median=1.00
+    Pos - Selected Gap:     -0.0313
+    Coupling Entropy:       2.4498
+    Coupling Peak Mass:     0.2657
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1713 ± 0.0854
+    All negatives:  -0.4126
+    Hardest neg:    -0.1264
+    Pos-Hard gap:   -0.0449
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4472 ± 1.2206
+    Off-diagonal mean: -5.8936
+    Gap (pos - neg): 3.4464
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 32.8%
+    Mean rank: 5.62
+
+  EMBEDDING HEALTH
+    Image variance: 0.030563
+    Text variance: 0.022155
+
+--------------------------------------------------------------------------------
+Step 2789 (Epoch 30, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0557
+  Base Loss: 0.0530
+
+  OT-MIX STATE
+    OT Step (loss counter): 2789
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.053460
+    Num Gated (active/B):   40/40
+    Avg Synthetic Sim:      -0.2642
+    Avg Synthetic Logit:    -3.7739
+    Selected Neg Rank:      mean=1.62  median=1.00
+    Pos - Selected Gap:     -0.0324
+    Coupling Entropy:       2.3560
+    Coupling Peak Mass:     0.2851
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1742 ± 0.0606
+    All negatives:  -0.4302
+    Hardest neg:    -0.1248
+    Pos-Hard gap:   -0.0494
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4890 ± 0.8654
+    Off-diagonal mean: -6.1455
+    Gap (pos - neg): 3.6565
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 23.4%
+    Mean rank: 4.06
+
+  EMBEDDING HEALTH
+    Image variance: 0.030425
+    Text variance: 0.021660
+
+================================================================================
+VALIDATION - Epoch 30
+================================================================================
+Average training loss: 0.0578
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.77%
+    R@5:  3.56%
+    R@10: 6.42%
+  Image → Text:
+    R@1:  1.62%
+    R@5:  5.85%
+    R@10: 10.93%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.71%
+    R@5:  3.87%
+    R@10: 7.18%
+  Image → Text:
+    R@1:  1.35%
+    R@5:  4.95%
+    R@10: 8.96%
+
+🎯 Average Recall@1 (canonical): 1.03%
+  Latest checkpoint saved (epoch 30)
+Current best canonical Avg R@1: 1.06%
+
+================================================================================
+EPOCH 31/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 2800 (Epoch 31, Batch 11/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0593
+  Base Loss: 0.0576
+
+  OT-MIX STATE
+    OT Step (loss counter): 2800
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.034197
+    Num Gated (active/B):   11/11
+    Avg Synthetic Sim:      -0.3343
+    Avg Synthetic Logit:    -4.7752
+    Selected Neg Rank:      mean=2.03  median=1.00
+    Pos - Selected Gap:     -0.0262
+    Coupling Entropy:       2.5541
+    Coupling Peak Mass:     0.2497
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2157 ± 0.0898
+    All negatives:  -0.4347
+    Hardest neg:    -0.1769
+    Pos-Hard gap:   -0.0388
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.0814 ± 1.2825
+    Off-diagonal mean: -6.2094
+    Gap (pos - neg): 3.1280
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 35.9%
+    Mean rank: 6.69
+
+  EMBEDDING HEALTH
+    Image variance: 0.029667
+    Text variance: 0.021387
+
+--------------------------------------------------------------------------------
+Step 2882 (Epoch 31, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0597
+  Base Loss: 0.0566
+
+  OT-MIX STATE
+    OT Step (loss counter): 2882
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.061467
+    Num Gated (active/B):   26/26
+    Avg Synthetic Sim:      -0.2845
+    Avg Synthetic Logit:    -4.0644
+    Selected Neg Rank:      mean=1.89  median=1.00
+    Pos - Selected Gap:     -0.0472
+    Coupling Entropy:       2.3919
+    Coupling Peak Mass:     0.2993
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1940 ± 0.0887
+    All negatives:  -0.4132
+    Hardest neg:    -0.1342
+    Pos-Hard gap:   -0.0598
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.7713 ± 1.2673
+    Off-diagonal mean: -5.9030
+    Gap (pos - neg): 3.1318
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 29.7%
+    Mean rank: 6.91
+
+  EMBEDDING HEALTH
+    Image variance: 0.031045
+    Text variance: 0.022512
+
+================================================================================
+VALIDATION - Epoch 31
+================================================================================
+Average training loss: 0.0581
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.79%
+    R@5:  3.61%
+    R@10: 6.66%
+  Image → Text:
+    R@1:  1.36%
+    R@5:  6.02%
+    R@10: 10.84%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.85%
+    R@5:  3.83%
+    R@10: 7.53%
+  Image → Text:
+    R@1:  1.28%
+    R@5:  5.06%
+    R@10: 8.80%
+
+🎯 Average Recall@1 (canonical): 1.06%
+  Latest checkpoint saved (epoch 31)
+Current best canonical Avg R@1: 1.06%
+
+================================================================================
+EPOCH 32/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 2900 (Epoch 32, Batch 18/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0574
+  Base Loss: 0.0553
+
+  OT-MIX STATE
+    OT Step (loss counter): 2900
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.041885
+    Num Gated (active/B):   31/31
+    Avg Synthetic Sim:      -0.2909
+    Avg Synthetic Logit:    -4.1559
+    Selected Neg Rank:      mean=2.42  median=2.00
+    Pos - Selected Gap:     -0.0295
+    Coupling Entropy:       2.4194
+    Coupling Peak Mass:     0.2776
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1798 ± 0.0887
+    All negatives:  -0.4119
+    Hardest neg:    -0.1205
+    Pos-Hard gap:   -0.0593
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5681 ± 1.2677
+    Off-diagonal mean: -5.8841
+    Gap (pos - neg): 3.3161
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 31.2%
+    Mean rank: 5.75
+
+  EMBEDDING HEALTH
+    Image variance: 0.030765
+    Text variance: 0.023044
+
+--------------------------------------------------------------------------------
+Step 2975 (Epoch 32, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0606
+  Base Loss: 0.0572
+
+  OT-MIX STATE
+    OT Step (loss counter): 2975
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.068133
+    Num Gated (active/B):   37/37
+    Avg Synthetic Sim:      -0.2580
+    Avg Synthetic Logit:    -3.6859
+    Selected Neg Rank:      mean=1.83  median=1.00
+    Pos - Selected Gap:     -0.0446
+    Coupling Entropy:       2.3683
+    Coupling Peak Mass:     0.2905
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1771 ± 0.0960
+    All negatives:  -0.4050
+    Hardest neg:    -0.1165
+    Pos-Hard gap:   -0.0607
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5306 ± 1.3716
+    Off-diagonal mean: -5.7853
+    Gap (pos - neg): 3.2547
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 23.4%
+    Mean rank: 7.00
+
+  EMBEDDING HEALTH
+    Image variance: 0.031032
+    Text variance: 0.022279
+
+================================================================================
+VALIDATION - Epoch 32
+================================================================================
+Average training loss: 0.0576
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.75%
+    R@5:  3.55%
+    R@10: 6.69%
+  Image → Text:
+    R@1:  1.36%
+    R@5:  6.64%
+    R@10: 11.18%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.79%
+    R@5:  4.09%
+    R@10: 7.59%
+  Image → Text:
+    R@1:  1.28%
+    R@5:  5.09%
+    R@10: 9.16%
+
+🎯 Average Recall@1 (canonical): 1.04%
+  Latest checkpoint saved (epoch 32)
+Current best canonical Avg R@1: 1.06%
+
+================================================================================
+EPOCH 33/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 3000 (Epoch 33, Batch 25/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0629
+  Base Loss: 0.0605
+
+  OT-MIX STATE
+    OT Step (loss counter): 3000
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.048424
+    Num Gated (active/B):   24/24
+    Avg Synthetic Sim:      -0.3047
+    Avg Synthetic Logit:    -4.3523
+    Selected Neg Rank:      mean=2.20  median=1.00
+    Pos - Selected Gap:     -0.0486
+    Coupling Entropy:       2.5192
+    Coupling Peak Mass:     0.2511
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2148 ± 0.0961
+    All negatives:  -0.4159
+    Hardest neg:    -0.1476
+    Pos-Hard gap:   -0.0672
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.0688 ± 1.3722
+    Off-diagonal mean: -5.9412
+    Gap (pos - neg): 2.8724
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 21.9%
+    Mean rank: 7.84
+
+  EMBEDDING HEALTH
+    Image variance: 0.030818
+    Text variance: 0.022025
+
+--------------------------------------------------------------------------------
+Step 3068 (Epoch 33, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0592
+  Base Loss: 0.0566
+
+  OT-MIX STATE
+    OT Step (loss counter): 3068
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.050856
+    Num Gated (active/B):   25/25
+    Avg Synthetic Sim:      -0.2916
+    Avg Synthetic Logit:    -4.1657
+    Selected Neg Rank:      mean=1.92  median=1.00
+    Pos - Selected Gap:     -0.0406
+    Coupling Entropy:       2.4373
+    Coupling Peak Mass:     0.2653
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1930 ± 0.0929
+    All negatives:  -0.4171
+    Hardest neg:    -0.1390
+    Pos-Hard gap:   -0.0540
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.7566 ± 1.3268
+    Off-diagonal mean: -5.9585
+    Gap (pos - neg): 3.2019
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 28.1%
+    Mean rank: 6.83
+
+  EMBEDDING HEALTH
+    Image variance: 0.030972
+    Text variance: 0.023132
+
+================================================================================
+VALIDATION - Epoch 33
+================================================================================
+Average training loss: 0.0575
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.84%
+    R@5:  3.84%
+    R@10: 6.93%
+  Image → Text:
+    R@1:  1.55%
+    R@5:  6.70%
+    R@10: 11.17%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  1.14%
+    R@5:  4.45%
+    R@10: 7.78%
+  Image → Text:
+    R@1:  1.43%
+    R@5:  5.30%
+    R@10: 9.25%
+
+🎯 Average Recall@1 (canonical): 1.29%
+  Latest checkpoint saved (epoch 33)
+Checkpoint saved at step 3069
+
+✓ New best model! Canonical Avg R@1 = 1.29%
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 34/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 3100 (Epoch 34, Batch 32/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0610
+  Base Loss: 0.0584
+
+  OT-MIX STATE
+    OT Step (loss counter): 3100
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.052073
+    Num Gated (active/B):   30/30
+    Avg Synthetic Sim:      -0.2970
+    Avg Synthetic Logit:    -4.2427
+    Selected Neg Rank:      mean=2.12  median=1.00
+    Pos - Selected Gap:     -0.0470
+    Coupling Entropy:       2.4509
+    Coupling Peak Mass:     0.2614
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2101 ± 0.0880
+    All negatives:  -0.4368
+    Hardest neg:    -0.1456
+    Pos-Hard gap:   -0.0645
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.0008 ± 1.2566
+    Off-diagonal mean: -6.2399
+    Gap (pos - neg): 3.2391
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 23.4%
+    Mean rank: 6.05
+
+  EMBEDDING HEALTH
+    Image variance: 0.030278
+    Text variance: 0.022000
+
+--------------------------------------------------------------------------------
+Step 3161 (Epoch 34, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0517
+  Base Loss: 0.0488
+
+  OT-MIX STATE
+    OT Step (loss counter): 3161
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.056824
+    Num Gated (active/B):   39/39
+    Avg Synthetic Sim:      -0.2678
+    Avg Synthetic Logit:    -3.8261
+    Selected Neg Rank:      mean=2.08  median=1.00
+    Pos - Selected Gap:     -0.0098
+    Coupling Entropy:       2.2754
+    Coupling Peak Mass:     0.3102
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1532 ± 0.0766
+    All negatives:  -0.4160
+    Hardest neg:    -0.1263
+    Pos-Hard gap:   -0.0268
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.1882 ± 1.0949
+    Off-diagonal mean: -5.9423
+    Gap (pos - neg): 3.7541
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 37.5%
+    Mean rank: 4.02
+
+  EMBEDDING HEALTH
+    Image variance: 0.031056
+    Text variance: 0.023562
+
+================================================================================
+VALIDATION - Epoch 34
+================================================================================
+Average training loss: 0.0569
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.82%
+    R@5:  3.76%
+    R@10: 6.87%
+  Image → Text:
+    R@1:  1.31%
+    R@5:  6.23%
+    R@10: 11.43%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.86%
+    R@5:  4.26%
+    R@10: 7.84%
+  Image → Text:
+    R@1:  1.23%
+    R@5:  5.33%
+    R@10: 9.29%
+
+🎯 Average Recall@1 (canonical): 1.04%
+  Latest checkpoint saved (epoch 34)
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 35/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 3200 (Epoch 35, Batch 39/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0548
+  Base Loss: 0.0522
+
+  OT-MIX STATE
+    OT Step (loss counter): 3200
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.051801
+    Num Gated (active/B):   39/39
+    Avg Synthetic Sim:      -0.2650
+    Avg Synthetic Logit:    -3.7853
+    Selected Neg Rank:      mean=3.19  median=2.00
+    Pos - Selected Gap:     -0.0141
+    Coupling Entropy:       2.3105
+    Coupling Peak Mass:     0.2891
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1665 ± 0.0874
+    All negatives:  -0.4213
+    Hardest neg:    -0.1243
+    Pos-Hard gap:   -0.0422
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.3780 ± 1.2486
+    Off-diagonal mean: -6.0185
+    Gap (pos - neg): 3.6405
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 34.4%
+    Mean rank: 5.14
+
+  EMBEDDING HEALTH
+    Image variance: 0.030618
+    Text variance: 0.022820
+
+--------------------------------------------------------------------------------
+Step 3254 (Epoch 35, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0543
+  Base Loss: 0.0519
+
+  OT-MIX STATE
+    OT Step (loss counter): 3254
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.049920
+    Num Gated (active/B):   30/30
+    Avg Synthetic Sim:      -0.2885
+    Avg Synthetic Logit:    -4.1212
+    Selected Neg Rank:      mean=1.92  median=1.00
+    Pos - Selected Gap:     -0.0230
+    Coupling Entropy:       2.3741
+    Coupling Peak Mass:     0.2789
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1761 ± 0.0801
+    All negatives:  -0.4288
+    Hardest neg:    -0.1371
+    Pos-Hard gap:   -0.0390
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5158 ± 1.1441
+    Off-diagonal mean: -6.1259
+    Gap (pos - neg): 3.6101
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 25.0%
+    Mean rank: 4.19
+
+  EMBEDDING HEALTH
+    Image variance: 0.031045
+    Text variance: 0.023143
+
+================================================================================
+VALIDATION - Epoch 35
+================================================================================
+Average training loss: 0.0570
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.82%
+    R@5:  3.84%
+    R@10: 7.00%
+  Image → Text:
+    R@1:  1.52%
+    R@5:  6.49%
+    R@10: 11.34%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.97%
+    R@5:  4.25%
+    R@10: 7.75%
+  Image → Text:
+    R@1:  1.52%
+    R@5:  5.64%
+    R@10: 9.30%
+
+🎯 Average Recall@1 (canonical): 1.24%
+  Latest checkpoint saved (epoch 35)
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 36/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 3300 (Epoch 36, Batch 46/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0541
+  Base Loss: 0.0512
+
+  OT-MIX STATE
+    OT Step (loss counter): 3300
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.057328
+    Num Gated (active/B):   34/34
+    Avg Synthetic Sim:      -0.2731
+    Avg Synthetic Logit:    -3.9009
+    Selected Neg Rank:      mean=2.05  median=1.00
+    Pos - Selected Gap:     -0.0223
+    Coupling Entropy:       2.3141
+    Coupling Peak Mass:     0.3075
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1626 ± 0.1006
+    All negatives:  -0.4136
+    Hardest neg:    -0.1272
+    Pos-Hard gap:   -0.0354
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.3235 ± 1.4368
+    Off-diagonal mean: -5.9093
+    Gap (pos - neg): 3.5858
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 40.6%
+    Mean rank: 5.25
+
+  EMBEDDING HEALTH
+    Image variance: 0.031311
+    Text variance: 0.023240
+
+--------------------------------------------------------------------------------
+Step 3347 (Epoch 36, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0547
+  Base Loss: 0.0524
+
+  OT-MIX STATE
+    OT Step (loss counter): 3347
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.046990
+    Num Gated (active/B):   35/35
+    Avg Synthetic Sim:      -0.2747
+    Avg Synthetic Logit:    -3.9239
+    Selected Neg Rank:      mean=2.08  median=1.00
+    Pos - Selected Gap:     -0.0167
+    Coupling Entropy:       2.4499
+    Coupling Peak Mass:     0.2853
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1569 ± 0.0853
+    All negatives:  -0.4006
+    Hardest neg:    -0.1285
+    Pos-Hard gap:   -0.0285
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.2418 ± 1.2190
+    Off-diagonal mean: -5.7225
+    Gap (pos - neg): 3.4807
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 42.2%
+    Mean rank: 4.73
+
+  EMBEDDING HEALTH
+    Image variance: 0.031417
+    Text variance: 0.023167
+
+================================================================================
+VALIDATION - Epoch 36
+================================================================================
+Average training loss: 0.0571
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.86%
+    R@5:  4.06%
+    R@10: 7.28%
+  Image → Text:
+    R@1:  1.55%
+    R@5:  6.61%
+    R@10: 11.68%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  1.07%
+    R@5:  4.52%
+    R@10: 8.22%
+  Image → Text:
+    R@1:  1.21%
+    R@5:  5.37%
+    R@10: 9.08%
+
+🎯 Average Recall@1 (canonical): 1.14%
+  Latest checkpoint saved (epoch 36)
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 37/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 3400 (Epoch 37, Batch 53/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0587
+  Base Loss: 0.0550
+
+  OT-MIX STATE
+    OT Step (loss counter): 3400
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.074012
+    Num Gated (active/B):   21/21
+    Avg Synthetic Sim:      -0.3042
+    Avg Synthetic Logit:    -4.3455
+    Selected Neg Rank:      mean=1.89  median=1.00
+    Pos - Selected Gap:     -0.0332
+    Coupling Entropy:       2.4262
+    Coupling Peak Mass:     0.2870
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1901 ± 0.0983
+    All negatives:  -0.4216
+    Hardest neg:    -0.1387
+    Pos-Hard gap:   -0.0514
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.7154 ± 1.4038
+    Off-diagonal mean: -6.0232
+    Gap (pos - neg): 3.3078
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 26.6%
+    Mean rank: 6.12
+
+  EMBEDDING HEALTH
+    Image variance: 0.031266
+    Text variance: 0.022920
+
+--------------------------------------------------------------------------------
+Step 3440 (Epoch 37, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0588
+  Base Loss: 0.0554
+
+  OT-MIX STATE
+    OT Step (loss counter): 3440
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.068213
+    Num Gated (active/B):   44/44
+    Avg Synthetic Sim:      -0.2504
+    Avg Synthetic Logit:    -3.5768
+    Selected Neg Rank:      mean=1.66  median=1.00
+    Pos - Selected Gap:     -0.0499
+    Coupling Entropy:       2.2696
+    Coupling Peak Mass:     0.3244
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1722 ± 0.0997
+    All negatives:  -0.4103
+    Hardest neg:    -0.1096
+    Pos-Hard gap:   -0.0625
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4596 ± 1.4238
+    Off-diagonal mean: -5.8614
+    Gap (pos - neg): 3.4018
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 26.6%
+    Mean rank: 6.28
+
+  EMBEDDING HEALTH
+    Image variance: 0.031175
+    Text variance: 0.023957
+
+================================================================================
+VALIDATION - Epoch 37
+================================================================================
+Average training loss: 0.0565
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.92%
+    R@5:  4.04%
+    R@10: 7.37%
+  Image → Text:
+    R@1:  1.64%
+    R@5:  6.99%
+    R@10: 11.77%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  1.04%
+    R@5:  4.61%
+    R@10: 8.27%
+  Image → Text:
+    R@1:  1.43%
+    R@5:  5.59%
+    R@10: 9.65%
+
+🎯 Average Recall@1 (canonical): 1.23%
+  Latest checkpoint saved (epoch 37)
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 38/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 3500 (Epoch 38, Batch 60/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0571
+  Base Loss: 0.0538
+
+  OT-MIX STATE
+    OT Step (loss counter): 3500
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.065335
+    Num Gated (active/B):   29/29
+    Avg Synthetic Sim:      -0.2930
+    Avg Synthetic Logit:    -4.1861
+    Selected Neg Rank:      mean=1.42  median=1.00
+    Pos - Selected Gap:     -0.0333
+    Coupling Entropy:       2.4012
+    Coupling Peak Mass:     0.3032
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1843 ± 0.0802
+    All negatives:  -0.4281
+    Hardest neg:    -0.1455
+    Pos-Hard gap:   -0.0388
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.6331 ± 1.1454
+    Off-diagonal mean: -6.1164
+    Gap (pos - neg): 3.4833
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 32.8%
+    Mean rank: 4.97
+
+  EMBEDDING HEALTH
+    Image variance: 0.030662
+    Text variance: 0.023439
+
+--------------------------------------------------------------------------------
+Step 3533 (Epoch 38, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0567
+  Base Loss: 0.0537
+
+  OT-MIX STATE
+    OT Step (loss counter): 3533
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.060742
+    Num Gated (active/B):   26/26
+    Avg Synthetic Sim:      -0.2985
+    Avg Synthetic Logit:    -4.2649
+    Selected Neg Rank:      mean=1.67  median=1.00
+    Pos - Selected Gap:     -0.0304
+    Coupling Entropy:       2.4382
+    Coupling Peak Mass:     0.2860
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1823 ± 0.0868
+    All negatives:  -0.4186
+    Hardest neg:    -0.1406
+    Pos-Hard gap:   -0.0417
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.6050 ± 1.2401
+    Off-diagonal mean: -5.9797
+    Gap (pos - neg): 3.3747
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 23.4%
+    Mean rank: 5.50
+
+  EMBEDDING HEALTH
+    Image variance: 0.031301
+    Text variance: 0.023782
+
+================================================================================
+VALIDATION - Epoch 38
+================================================================================
+Average training loss: 0.0563
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.80%
+    R@5:  3.98%
+    R@10: 7.25%
+  Image → Text:
+    R@1:  1.69%
+    R@5:  6.87%
+    R@10: 11.87%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.93%
+    R@5:  4.37%
+    R@10: 8.15%
+  Image → Text:
+    R@1:  1.29%
+    R@5:  5.47%
+    R@10: 9.34%
+
+🎯 Average Recall@1 (canonical): 1.11%
+  Latest checkpoint saved (epoch 38)
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 39/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 3600 (Epoch 39, Batch 67/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0536
+  Base Loss: 0.0512
+
+  OT-MIX STATE
+    OT Step (loss counter): 3600
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.049588
+    Num Gated (active/B):   33/33
+    Avg Synthetic Sim:      -0.2816
+    Avg Synthetic Logit:    -4.0234
+    Selected Neg Rank:      mean=2.02  median=1.00
+    Pos - Selected Gap:     -0.0174
+    Coupling Entropy:       2.3453
+    Coupling Peak Mass:     0.2934
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1684 ± 0.0866
+    All negatives:  -0.4236
+    Hardest neg:    -0.1318
+    Pos-Hard gap:   -0.0366
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4061 ± 1.2375
+    Off-diagonal mean: -6.0513
+    Gap (pos - neg): 3.6452
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 39.1%
+    Mean rank: 4.62
+
+  EMBEDDING HEALTH
+    Image variance: 0.031012
+    Text variance: 0.023299
+
+--------------------------------------------------------------------------------
+Step 3626 (Epoch 39, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0561
+  Base Loss: 0.0528
+
+  OT-MIX STATE
+    OT Step (loss counter): 3626
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.066946
+    Num Gated (active/B):   24/24
+    Avg Synthetic Sim:      -0.2977
+    Avg Synthetic Logit:    -4.2532
+    Selected Neg Rank:      mean=2.75  median=1.00
+    Pos - Selected Gap:     -0.0196
+    Coupling Entropy:       2.3810
+    Coupling Peak Mass:     0.2794
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1811 ± 0.0960
+    All negatives:  -0.4225
+    Hardest neg:    -0.1421
+    Pos-Hard gap:   -0.0390
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5867 ± 1.3708
+    Off-diagonal mean: -6.0360
+    Gap (pos - neg): 3.4493
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 32.8%
+    Mean rank: 5.53
+
+  EMBEDDING HEALTH
+    Image variance: 0.031375
+    Text variance: 0.023105
+
+================================================================================
+VALIDATION - Epoch 39
+================================================================================
+Average training loss: 0.0563
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.90%
+    R@5:  4.18%
+    R@10: 7.49%
+  Image → Text:
+    R@1:  1.67%
+    R@5:  7.11%
+    R@10: 12.82%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.95%
+    R@5:  4.50%
+    R@10: 8.32%
+  Image → Text:
+    R@1:  1.47%
+    R@5:  5.73%
+    R@10: 9.96%
+
+🎯 Average Recall@1 (canonical): 1.21%
+  Latest checkpoint saved (epoch 39)
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 40/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 3700 (Epoch 40, Batch 74/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0617
+  Base Loss: 0.0587
+
+  OT-MIX STATE
+    OT Step (loss counter): 3700
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.060935
+    Num Gated (active/B):   18/18
+    Avg Synthetic Sim:      -0.3175
+    Avg Synthetic Logit:    -4.5358
+    Selected Neg Rank:      mean=2.08  median=1.00
+    Pos - Selected Gap:     -0.0451
+    Coupling Entropy:       2.4070
+    Coupling Peak Mass:     0.2946
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2170 ± 0.1004
+    All negatives:  -0.4341
+    Hardest neg:    -0.1565
+    Pos-Hard gap:   -0.0605
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.0995 ± 1.4339
+    Off-diagonal mean: -6.2019
+    Gap (pos - neg): 3.1024
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 26.6%
+    Mean rank: 6.89
+
+  EMBEDDING HEALTH
+    Image variance: 0.030596
+    Text variance: 0.023186
+
+--------------------------------------------------------------------------------
+Step 3719 (Epoch 40, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0572
+  Base Loss: 0.0543
+
+  OT-MIX STATE
+    OT Step (loss counter): 3719
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.058100
+    Num Gated (active/B):   20/20
+    Avg Synthetic Sim:      -0.3118
+    Avg Synthetic Logit:    -4.4549
+    Selected Neg Rank:      mean=2.00  median=1.00
+    Pos - Selected Gap:     -0.0213
+    Coupling Entropy:       2.4773
+    Coupling Peak Mass:     0.2543
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1880 ± 0.1033
+    All negatives:  -0.4242
+    Hardest neg:    -0.1483
+    Pos-Hard gap:   -0.0397
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.6853 ± 1.4763
+    Off-diagonal mean: -6.0606
+    Gap (pos - neg): 3.3753
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 42.2%
+    Mean rank: 6.25
+
+  EMBEDDING HEALTH
+    Image variance: 0.030932
+    Text variance: 0.023556
+
+================================================================================
+VALIDATION - Epoch 40
+================================================================================
+Average training loss: 0.0563
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.98%
+    R@5:  4.11%
+    R@10: 7.37%
+  Image → Text:
+    R@1:  1.71%
+    R@5:  7.08%
+    R@10: 11.96%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  1.04%
+    R@5:  4.75%
+    R@10: 8.54%
+  Image → Text:
+    R@1:  1.52%
+    R@5:  5.28%
+    R@10: 9.53%
+
+🎯 Average Recall@1 (canonical): 1.28%
+  Latest checkpoint saved (epoch 40)
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 41/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 3800 (Epoch 41, Batch 81/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0565
+  Base Loss: 0.0539
+
+  OT-MIX STATE
+    OT Step (loss counter): 3800
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.051844
+    Num Gated (active/B):   33/33
+    Avg Synthetic Sim:      -0.2743
+    Avg Synthetic Logit:    -3.9182
+    Selected Neg Rank:      mean=2.17  median=1.00
+    Pos - Selected Gap:     -0.0219
+    Coupling Entropy:       2.3319
+    Coupling Peak Mass:     0.3067
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1762 ± 0.0969
+    All negatives:  -0.4167
+    Hardest neg:    -0.1329
+    Pos-Hard gap:   -0.0433
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5169 ± 1.3848
+    Off-diagonal mean: -5.9535
+    Gap (pos - neg): 3.4366
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 31.2%
+    Mean rank: 5.81
+
+  EMBEDDING HEALTH
+    Image variance: 0.030751
+    Text variance: 0.024105
+
+--------------------------------------------------------------------------------
+Step 3812 (Epoch 41, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0544
+  Base Loss: 0.0515
+
+  OT-MIX STATE
+    OT Step (loss counter): 3812
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.058222
+    Num Gated (active/B):   28/28
+    Avg Synthetic Sim:      -0.2897
+    Avg Synthetic Logit:    -4.1380
+    Selected Neg Rank:      mean=1.83  median=1.00
+    Pos - Selected Gap:     -0.0177
+    Coupling Entropy:       2.3639
+    Coupling Peak Mass:     0.2913
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1712 ± 0.1011
+    All negatives:  -0.4201
+    Hardest neg:    -0.1405
+    Pos-Hard gap:   -0.0306
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4450 ± 1.4444
+    Off-diagonal mean: -6.0017
+    Gap (pos - neg): 3.5566
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 40.6%
+    Mean rank: 5.16
+
+  EMBEDDING HEALTH
+    Image variance: 0.031249
+    Text variance: 0.024034
+
+================================================================================
+VALIDATION - Epoch 41
+================================================================================
+Average training loss: 0.0557
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.92%
+    R@5:  4.18%
+    R@10: 7.68%
+  Image → Text:
+    R@1:  1.93%
+    R@5:  7.37%
+    R@10: 12.39%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.91%
+    R@5:  5.02%
+    R@10: 8.66%
+  Image → Text:
+    R@1:  1.52%
+    R@5:  6.11%
+    R@10: 10.01%
+
+🎯 Average Recall@1 (canonical): 1.22%
+  Latest checkpoint saved (epoch 41)
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 42/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 3900 (Epoch 42, Batch 88/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0563
+  Base Loss: 0.0534
+
+  OT-MIX STATE
+    OT Step (loss counter): 3900
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.057501
+    Num Gated (active/B):   26/26
+    Avg Synthetic Sim:      -0.2951
+    Avg Synthetic Logit:    -4.2163
+    Selected Neg Rank:      mean=1.55  median=1.00
+    Pos - Selected Gap:     -0.0329
+    Coupling Entropy:       2.3912
+    Coupling Peak Mass:     0.2917
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1786 ± 0.0989
+    All negatives:  -0.4152
+    Hardest neg:    -0.1396
+    Pos-Hard gap:   -0.0390
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5518 ± 1.4125
+    Off-diagonal mean: -5.9318
+    Gap (pos - neg): 3.3800
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 35.9%
+    Mean rank: 5.86
+
+  EMBEDDING HEALTH
+    Image variance: 0.031288
+    Text variance: 0.024052
+
+--------------------------------------------------------------------------------
+Step 3905 (Epoch 42, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0538
+  Base Loss: 0.0509
+
+  OT-MIX STATE
+    OT Step (loss counter): 3905
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.056668
+    Num Gated (active/B):   33/33
+    Avg Synthetic Sim:      -0.2728
+    Avg Synthetic Logit:    -3.8976
+    Selected Neg Rank:      mean=2.25  median=1.00
+    Pos - Selected Gap:     -0.0105
+    Coupling Entropy:       2.3157
+    Coupling Peak Mass:     0.3113
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1568 ± 0.1013
+    All negatives:  -0.4122
+    Hardest neg:    -0.1303
+    Pos-Hard gap:   -0.0265
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.2395 ± 1.4470
+    Off-diagonal mean: -5.8888
+    Gap (pos - neg): 3.6493
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 39.1%
+    Mean rank: 4.94
+
+  EMBEDDING HEALTH
+    Image variance: 0.031591
+    Text variance: 0.023868
+
+================================================================================
+VALIDATION - Epoch 42
+================================================================================
+Average training loss: 0.0557
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.93%
+    R@5:  4.18%
+    R@10: 7.66%
+  Image → Text:
+    R@1:  1.61%
+    R@5:  6.94%
+    R@10: 12.17%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  1.04%
+    R@5:  4.83%
+    R@10: 8.73%
+  Image → Text:
+    R@1:  1.29%
+    R@5:  5.57%
+    R@10: 9.73%
+
+🎯 Average Recall@1 (canonical): 1.16%
+  Latest checkpoint saved (epoch 42)
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 43/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 3998 (Epoch 43, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0553
+  Base Loss: 0.0499
+
+  OT-MIX STATE
+    OT Step (loss counter): 3998
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.106951
+    Num Gated (active/B):   28/28
+    Avg Synthetic Sim:      -0.2798
+    Avg Synthetic Logit:    -3.9972
+    Selected Neg Rank:      mean=2.08  median=1.00
+    Pos - Selected Gap:     -0.0168
+    Coupling Entropy:       2.2595
+    Coupling Peak Mass:     0.3258
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1634 ± 0.0967
+    All negatives:  -0.4324
+    Hardest neg:    -0.1307
+    Pos-Hard gap:   -0.0326
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.3340 ± 1.3821
+    Off-diagonal mean: -6.1766
+    Gap (pos - neg): 3.8425
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 39.1%
+    Mean rank: 4.33
+
+  EMBEDDING HEALTH
+    Image variance: 0.031495
+    Text variance: 0.023846
+
+================================================================================
+VALIDATION - Epoch 43
+================================================================================
+Average training loss: 0.0556
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.86%
+    R@5:  4.07%
+    R@10: 7.51%
+  Image → Text:
+    R@1:  1.59%
+    R@5:  7.21%
+    R@10: 12.31%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.88%
+    R@5:  4.71%
+    R@10: 8.44%
+  Image → Text:
+    R@1:  1.38%
+    R@5:  6.02%
+    R@10: 10.53%
+
+🎯 Average Recall@1 (canonical): 1.13%
+  Latest checkpoint saved (epoch 43)
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 44/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 4000 (Epoch 44, Batch 2/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0582
+  Base Loss: 0.0531
+
+  OT-MIX STATE
+    OT Step (loss counter): 4000
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.102183
+    Num Gated (active/B):   41/41
+    Avg Synthetic Sim:      -0.2455
+    Avg Synthetic Logit:    -3.5075
+    Selected Neg Rank:      mean=1.48  median=1.00
+    Pos - Selected Gap:     -0.0396
+    Coupling Entropy:       2.1807
+    Coupling Peak Mass:     0.3445
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1656 ± 0.1053
+    All negatives:  -0.4138
+    Hardest neg:    -0.1170
+    Pos-Hard gap:   -0.0485
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.3651 ± 1.5042
+    Off-diagonal mean: -5.9114
+    Gap (pos - neg): 3.5463
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 29.7%
+    Mean rank: 6.08
+
+  EMBEDDING HEALTH
+    Image variance: 0.031615
+    Text variance: 0.024254
+
+--------------------------------------------------------------------------------
+Step 4091 (Epoch 44, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0609
+  Base Loss: 0.0581
+
+  OT-MIX STATE
+    OT Step (loss counter): 4091
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.055845
+    Num Gated (active/B):   11/11
+    Avg Synthetic Sim:      -0.3292
+    Avg Synthetic Logit:    -4.7024
+    Selected Neg Rank:      mean=1.84  median=1.00
+    Pos - Selected Gap:     -0.0328
+    Coupling Entropy:       2.5507
+    Coupling Peak Mass:     0.2540
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2148 ± 0.0892
+    All negatives:  -0.4273
+    Hardest neg:    -0.1651
+    Pos-Hard gap:   -0.0496
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.0680 ± 1.2737
+    Off-diagonal mean: -6.1036
+    Gap (pos - neg): 3.0356
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 29.7%
+    Mean rank: 6.55
+
+  EMBEDDING HEALTH
+    Image variance: 0.031011
+    Text variance: 0.023152
+
+================================================================================
+VALIDATION - Epoch 44
+================================================================================
+Average training loss: 0.0553
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.87%
+    R@5:  3.93%
+    R@10: 7.26%
+  Image → Text:
+    R@1:  1.55%
+    R@5:  7.02%
+    R@10: 11.96%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  0.93%
+    R@5:  4.30%
+    R@10: 7.77%
+  Image → Text:
+    R@1:  1.38%
+    R@5:  5.64%
+    R@10: 9.77%
+
+🎯 Average Recall@1 (canonical): 1.16%
+  Latest checkpoint saved (epoch 44)
+Current best canonical Avg R@1: 1.29%
+
+================================================================================
+EPOCH 45/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 4100 (Epoch 45, Batch 9/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0540
+  Base Loss: 0.0516
+
+  OT-MIX STATE
+    OT Step (loss counter): 4100
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.048313
+    Num Gated (active/B):   28/28
+    Avg Synthetic Sim:      -0.2983
+    Avg Synthetic Logit:    -4.2617
+    Selected Neg Rank:      mean=1.73  median=1.00
+    Pos - Selected Gap:     -0.0219
+    Coupling Entropy:       2.3133
+    Coupling Peak Mass:     0.3138
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1812 ± 0.0992
+    All negatives:  -0.4430
+    Hardest neg:    -0.1451
+    Pos-Hard gap:   -0.0361
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5879 ± 1.4172
+    Off-diagonal mean: -6.3286
+    Gap (pos - neg): 3.7407
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 32.8%
+    Mean rank: 5.00
+
+  EMBEDDING HEALTH
+    Image variance: 0.030722
+    Text variance: 0.023733
+
+--------------------------------------------------------------------------------
+Step 4184 (Epoch 45, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0519
+  Base Loss: 0.0484
+
+  OT-MIX STATE
+    OT Step (loss counter): 4184
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.071151
+    Num Gated (active/B):   29/29
+    Avg Synthetic Sim:      -0.2697
+    Avg Synthetic Logit:    -3.8531
+    Selected Neg Rank:      mean=1.59  median=1.00
+    Pos - Selected Gap:     -0.0144
+    Coupling Entropy:       2.2401
+    Coupling Peak Mass:     0.3237
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1579 ± 0.0839
+    All negatives:  -0.4311
+    Hardest neg:    -0.1358
+    Pos-Hard gap:   -0.0221
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.2556 ± 1.1979
+    Off-diagonal mean: -6.1592
+    Gap (pos - neg): 3.9036
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 43.8%
+    Mean rank: 3.61
+
+  EMBEDDING HEALTH
+    Image variance: 0.030831
+    Text variance: 0.024571
+
+================================================================================
+VALIDATION - Epoch 45
+================================================================================
+Average training loss: 0.0553
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.98%
+    R@5:  4.30%
+    R@10: 7.82%
+  Image → Text:
+    R@1:  1.95%
+    R@5:  7.51%
+    R@10: 13.01%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  1.09%
+    R@5:  4.66%
+    R@10: 8.28%
+  Image → Text:
+    R@1:  1.52%
+    R@5:  6.08%
+    R@10: 10.37%
+
+🎯 Average Recall@1 (canonical): 1.30%
+  Latest checkpoint saved (epoch 45)
+Checkpoint saved at step 4185
+
+✓ New best model! Canonical Avg R@1 = 1.30%
+Current best canonical Avg R@1: 1.30%
+
+================================================================================
+EPOCH 46/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 4200 (Epoch 46, Batch 16/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0549
+  Base Loss: 0.0510
+
+  OT-MIX STATE
+    OT Step (loss counter): 4200
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.079070
+    Num Gated (active/B):   39/39
+    Avg Synthetic Sim:      -0.2544
+    Avg Synthetic Logit:    -3.6340
+    Selected Neg Rank:      mean=1.94  median=1.00
+    Pos - Selected Gap:     -0.0303
+    Coupling Entropy:       2.2657
+    Coupling Peak Mass:     0.3243
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1527 ± 0.0883
+    All negatives:  -0.4120
+    Hardest neg:    -0.1107
+    Pos-Hard gap:   -0.0421
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.1821 ± 1.2614
+    Off-diagonal mean: -5.8864
+    Gap (pos - neg): 3.7043
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 39.1%
+    Mean rank: 4.72
+
+  EMBEDDING HEALTH
+    Image variance: 0.031459
+    Text variance: 0.024484
+
+--------------------------------------------------------------------------------
+Step 4277 (Epoch 46, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0539
+  Base Loss: 0.0507
+
+  OT-MIX STATE
+    OT Step (loss counter): 4277
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.063394
+    Num Gated (active/B):   30/30
+    Avg Synthetic Sim:      -0.2777
+    Avg Synthetic Logit:    -3.9664
+    Selected Neg Rank:      mean=1.83  median=1.00
+    Pos - Selected Gap:     -0.0197
+    Coupling Entropy:       2.2836
+    Coupling Peak Mass:     0.3155
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1692 ± 0.0833
+    All negatives:  -0.4204
+    Hardest neg:    -0.1357
+    Pos-Hard gap:   -0.0335
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4175 ± 1.1900
+    Off-diagonal mean: -6.0052
+    Gap (pos - neg): 3.5878
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 39.1%
+    Mean rank: 4.80
+
+  EMBEDDING HEALTH
+    Image variance: 0.031337
+    Text variance: 0.024031
+
+================================================================================
+VALIDATION - Epoch 46
+================================================================================
+Average training loss: 0.0554
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.98%
+    R@5:  4.29%
+    R@10: 7.69%
+  Image → Text:
+    R@1:  1.98%
+    R@5:  8.16%
+    R@10: 13.86%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  1.19%
+    R@5:  4.63%
+    R@10: 8.65%
+  Image → Text:
+    R@1:  1.62%
+    R@5:  6.16%
+    R@10: 10.65%
+
+🎯 Average Recall@1 (canonical): 1.41%
+  Latest checkpoint saved (epoch 46)
+Checkpoint saved at step 4278
+
+✓ New best model! Canonical Avg R@1 = 1.41%
+Current best canonical Avg R@1: 1.41%
+
+================================================================================
+EPOCH 47/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 4300 (Epoch 47, Batch 23/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0579
+  Base Loss: 0.0559
+
+  OT-MIX STATE
+    OT Step (loss counter): 4300
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.040327
+    Num Gated (active/B):   16/16
+    Avg Synthetic Sim:      -0.3293
+    Avg Synthetic Logit:    -4.7042
+    Selected Neg Rank:      mean=2.30  median=1.00
+    Pos - Selected Gap:     -0.0260
+    Coupling Entropy:       2.4454
+    Coupling Peak Mass:     0.2689
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.2101 ± 0.0835
+    All negatives:  -0.4367
+    Hardest neg:    -0.1699
+    Pos-Hard gap:   -0.0402
+
+  LOGIT STATISTICS
+    Diagonal mean: -3.0020 ± 1.1922
+    Off-diagonal mean: -6.2383
+    Gap (pos - neg): 3.2363
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 28.1%
+    Mean rank: 5.25
+
+  EMBEDDING HEALTH
+    Image variance: 0.030895
+    Text variance: 0.023898
+
+--------------------------------------------------------------------------------
+Step 4370 (Epoch 47, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0544
+  Base Loss: 0.0516
+
+  OT-MIX STATE
+    OT Step (loss counter): 4370
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.054999
+    Num Gated (active/B):   26/26
+    Avg Synthetic Sim:      -0.2922
+    Avg Synthetic Logit:    -4.1746
+    Selected Neg Rank:      mean=1.73  median=1.00
+    Pos - Selected Gap:     -0.0224
+    Coupling Entropy:       2.3272
+    Coupling Peak Mass:     0.3124
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1772 ± 0.0909
+    All negatives:  -0.4224
+    Hardest neg:    -0.1465
+    Pos-Hard gap:   -0.0307
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5316 ± 1.2984
+    Off-diagonal mean: -6.0339
+    Gap (pos - neg): 3.5023
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 35.9%
+    Mean rank: 5.00
+
+  EMBEDDING HEALTH
+    Image variance: 0.031344
+    Text variance: 0.023563
+
+================================================================================
+VALIDATION - Epoch 47
+================================================================================
+Average training loss: 0.0550
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.98%
+    R@5:  4.37%
+    R@10: 7.88%
+  Image → Text:
+    R@1:  1.78%
+    R@5:  7.85%
+    R@10: 12.84%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  1.17%
+    R@5:  5.01%
+    R@10: 8.99%
+  Image → Text:
+    R@1:  1.31%
+    R@5:  6.20%
+    R@10: 10.37%
+
+🎯 Average Recall@1 (canonical): 1.24%
+  Latest checkpoint saved (epoch 47)
+Current best canonical Avg R@1: 1.41%
+
+================================================================================
+EPOCH 48/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 4400 (Epoch 48, Batch 30/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0522
+  Base Loss: 0.0499
+
+  OT-MIX STATE
+    OT Step (loss counter): 4400
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.045655
+    Num Gated (active/B):   29/29
+    Avg Synthetic Sim:      -0.2947
+    Avg Synthetic Logit:    -4.2098
+    Selected Neg Rank:      mean=2.22  median=1.00
+    Pos - Selected Gap:     -0.0074
+    Coupling Entropy:       2.4081
+    Coupling Peak Mass:     0.2919
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1617 ± 0.0772
+    All negatives:  -0.4208
+    Hardest neg:    -0.1303
+    Pos-Hard gap:   -0.0315
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.3105 ± 1.1028
+    Off-diagonal mean: -6.0119
+    Gap (pos - neg): 3.7014
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 40.6%
+    Mean rank: 4.12
+
+  EMBEDDING HEALTH
+    Image variance: 0.031831
+    Text variance: 0.024100
+
+--------------------------------------------------------------------------------
+Step 4463 (Epoch 48, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0567
+  Base Loss: 0.0535
+
+  OT-MIX STATE
+    OT Step (loss counter): 4463
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.065193
+    Num Gated (active/B):   33/33
+    Avg Synthetic Sim:      -0.2634
+    Avg Synthetic Logit:    -3.7634
+    Selected Neg Rank:      mean=2.11  median=1.00
+    Pos - Selected Gap:     -0.0340
+    Coupling Entropy:       2.2793
+    Coupling Peak Mass:     0.3371
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1690 ± 0.1055
+    All negatives:  -0.4090
+    Hardest neg:    -0.1139
+    Pos-Hard gap:   -0.0551
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4146 ± 1.5066
+    Off-diagonal mean: -5.8433
+    Gap (pos - neg): 3.4287
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 26.6%
+    Mean rank: 6.00
+
+  EMBEDDING HEALTH
+    Image variance: 0.031769
+    Text variance: 0.024395
+
+================================================================================
+VALIDATION - Epoch 48
+================================================================================
+Average training loss: 0.0546
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  1.11%
+    R@5:  4.64%
+    R@10: 8.26%
+  Image → Text:
+    R@1:  1.95%
+    R@5:  8.06%
+    R@10: 13.36%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  1.29%
+    R@5:  5.25%
+    R@10: 9.41%
+  Image → Text:
+    R@1:  1.47%
+    R@5:  6.28%
+    R@10: 11.05%
+
+🎯 Average Recall@1 (canonical): 1.38%
+  Latest checkpoint saved (epoch 48)
+Current best canonical Avg R@1: 1.41%
+
+================================================================================
+EPOCH 49/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 4500 (Epoch 49, Batch 37/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0554
+  Base Loss: 0.0520
+
+  OT-MIX STATE
+    OT Step (loss counter): 4500
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.069069
+    Num Gated (active/B):   27/27
+    Avg Synthetic Sim:      -0.2814
+    Avg Synthetic Logit:    -4.0196
+    Selected Neg Rank:      mean=2.17  median=1.00
+    Pos - Selected Gap:     -0.0194
+    Coupling Entropy:       2.3649
+    Coupling Peak Mass:     0.2922
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1708 ± 0.0881
+    All negatives:  -0.4236
+    Hardest neg:    -0.1340
+    Pos-Hard gap:   -0.0367
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4394 ± 1.2583
+    Off-diagonal mean: -6.0512
+    Gap (pos - neg): 3.6119
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 32.8%
+    Mean rank: 4.89
+
+  EMBEDDING HEALTH
+    Image variance: 0.030623
+    Text variance: 0.023917
+
+--------------------------------------------------------------------------------
+Step 4556 (Epoch 49, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0536
+  Base Loss: 0.0514
+
+  OT-MIX STATE
+    OT Step (loss counter): 4556
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.044274
+    Num Gated (active/B):   37/37
+    Avg Synthetic Sim:      -0.2809
+    Avg Synthetic Logit:    -4.0124
+    Selected Neg Rank:      mean=1.78  median=1.00
+    Pos - Selected Gap:     -0.0201
+    Coupling Entropy:       2.2804
+    Coupling Peak Mass:     0.3128
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1774 ± 0.0857
+    All negatives:  -0.4297
+    Hardest neg:    -0.1436
+    Pos-Hard gap:   -0.0338
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.5341 ± 1.2241
+    Off-diagonal mean: -6.1382
+    Gap (pos - neg): 3.6041
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 31.2%
+    Mean rank: 5.09
+
+  EMBEDDING HEALTH
+    Image variance: 0.030798
+    Text variance: 0.023810
+
+================================================================================
+VALIDATION - Epoch 49
+================================================================================
+Average training loss: 0.0543
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  1.02%
+    R@5:  4.51%
+    R@10: 8.18%
+  Image → Text:
+    R@1:  1.92%
+    R@5:  7.99%
+    R@10: 13.67%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  1.12%
+    R@5:  5.01%
+    R@10: 9.41%
+  Image → Text:
+    R@1:  1.67%
+    R@5:  6.90%
+    R@10: 11.18%
+
+🎯 Average Recall@1 (canonical): 1.40%
+  Latest checkpoint saved (epoch 49)
+Current best canonical Avg R@1: 1.41%
+
+================================================================================
+EPOCH 50/50
+================================================================================
+
+--------------------------------------------------------------------------------
+Step 4600 (Epoch 50, Batch 44/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0544
+  Base Loss: 0.0503
+
+  OT-MIX STATE
+    OT Step (loss counter): 4600
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.081365
+    Num Gated (active/B):   30/30
+    Avg Synthetic Sim:      -0.2787
+    Avg Synthetic Logit:    -3.9819
+    Selected Neg Rank:      mean=1.81  median=1.00
+    Pos - Selected Gap:     -0.0227
+    Coupling Entropy:       2.2232
+    Coupling Peak Mass:     0.3276
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1710 ± 0.0851
+    All negatives:  -0.4305
+    Hardest neg:    -0.1343
+    Pos-Hard gap:   -0.0367
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4429 ± 1.2156
+    Off-diagonal mean: -6.1495
+    Gap (pos - neg): 3.7066
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 42.2%
+    Mean rank: 4.59
+
+  EMBEDDING HEALTH
+    Image variance: 0.031354
+    Text variance: 0.024538
+
+--------------------------------------------------------------------------------
+Step 4649 (Epoch 50, Batch 93/93)
+--------------------------------------------------------------------------------
+  Total Loss: 0.0528
+  Base Loss: 0.0502
+
+  OT-MIX STATE
+    OT Step (loss counter): 4649
+    Alpha:                  0.0500
+    OT Active:              True
+    OT Ready (adaptive):    True
+    Synthetic Loss:         0.051495
+    Num Gated (active/B):   32/32
+    Avg Synthetic Sim:      -0.2844
+    Avg Synthetic Logit:    -4.0635
+    Selected Neg Rank:      mean=1.97  median=1.00
+    Pos - Selected Gap:     -0.0143
+    Coupling Entropy:       2.2521
+    Coupling Peak Mass:     0.3165
+    Alpha Effective:        0.0500 (scheduled=0.0500)
+    Gap Bucket:             useful
+
+  RAW COSINE SIMILARITY
+    Positive pairs: -0.1694 ± 0.1016
+    All negatives:  -0.4333
+    Hardest neg:    -0.1398
+    Pos-Hard gap:   -0.0296
+
+  LOGIT STATISTICS
+    Diagonal mean: -2.4204 ± 1.4513
+    Off-diagonal mean: -6.1896
+    Gap (pos - neg): 3.7691
+
+  BATCH RETRIEVAL (training proxy)
+    Recall@1: 40.6%
+    Mean rank: 4.97
+
+  EMBEDDING HEALTH
+    Image variance: 0.031129
+    Text variance: 0.024859
+
+================================================================================
+VALIDATION - Epoch 50
+================================================================================
+Average training loss: 0.0545
+
+📊 ALL CAPTIONS (57940 captions, 5794 images)
+  Text → Image:
+    R@1:  0.93%
+    R@5:  4.37%
+    R@10: 7.97%
+  Image → Text:
+    R@1:  1.78%
+    R@5:  7.92%
+    R@10: 13.60%
+
+📌 CANONICAL (first caption only, 5794 samples)
+  Text → Image:
+    R@1:  1.05%
+    R@5:  4.92%
+    R@10: 9.08%
+  Image → Text:
+    R@1:  1.62%
+    R@5:  6.54%
+    R@10: 10.80%
+
+🎯 Average Recall@1 (canonical): 1.34%
+  Latest checkpoint saved (epoch 50)
+Current best canonical Avg R@1: 1.41%
+
+================================================================================
+TRAINING COMPLETE - FINAL EVALUATION
+================================================================================
+
+📊 FINAL RESULTS - ALL CAPTIONS
+  Text → Image: R@1=0.98%, R@5=4.29%, R@10=7.69%
+  Image → Text: R@1=1.98%, R@5=8.16%, R@10=13.86%
+
+📌 FINAL RESULTS - CANONICAL (OFFICIAL METRIC)
+  Text → Image: R@1=1.19%, R@5=4.63%, R@10=8.65%
+  Image → Text: R@1=1.62%, R@5=6.16%, R@10=10.65%
+  Average R@1: 1.41%
+Experiment logged to: experiments/exp_20260830_084949.json
+
+================================================================================
+Checkpoints saved to: /content/otco_checkpoints/cub200_softmax_mix_adaptive_gated_update_freq_1/
+================================================================================
+
+
+========================================================================================================================
+EXPERIMENT COMPARISON (sorted by canonical Avg R@1)
+========================================================================================================================
+Experiment                Loss Type       Alpha    Top-K    Tau      T2I R@1    I2T R@1    Avg R@1   
+------------------------------------------------------------------------------------------------------------------------
+ot_select                 ot_select       0.10     32       0.050    20.49      24.69      22.59     
+baseline                  baseline        N/A      N/A      N/A      20.86      24.32      22.59     
+baseline                  baseline        N/A      N/A      N/A      20.86      24.32      22.59     
+unknown                   unknown         N/A      N/A      N/A      20.86      24.32      22.59     
+softmax_mix_k32           softmax_mix     0.10     32       0.050    19.51      24.20      21.85     
+hard_negative_a025        hard_negative   0.25     N/A      N/A      20.00      23.21      21.60     
+softmax_mix_k32           softmax_mix     0.10     32       0.050    14.07      17.41      15.74     
+softmax_mix_k32           softmax_mix     0.10     32       0.050    14.07      17.04      15.56     
+baseline                  baseline        N/A      N/A      N/A      8.10       9.80       8.95      
+cub200_softmax_mix_adaptive_gated_update_freq_1 softmax_mix     0.05     32       0.050    1.19       1.62       1.41      
+========================================================================================================================
+
+
+📊 BEST PER LOSS TYPE:
+--------------------------------------------------------------------------------
+  ot_select           : 22.59% (ot_select) [alpha=0.1, top_k=32, tau=0.05]
+  baseline            : 22.59% (baseline)
+  unknown             : 22.59% (unknown)
+  softmax_mix         : 21.85% (softmax_mix_k32) [alpha=0.1, top_k=32, tau=0.05]
+  hard_negative       : 21.60% (hard_negative_a025) [alpha=0.25]
+
+📈 IMPROVEMENT OVER BASELINE (22.59%):
+--------------------------------------------------------------------------------
+  ❌ ot_select           : 0.00%
+  ❌ unknown             : 0.00%
+  ❌ softmax_mix         : -0.74%
+  ❌ hard_negative       : -0.99%
+
+================================================================================
+
