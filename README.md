@@ -513,7 +513,7 @@ python -m src.analyze_log
 
 ### Frozen CLIP geometry diagnostic
 
-Before training CLIP with OTCO, run the no-training diagnostic:
+Before training CLIP with OTCO, run the no-training historical diagnostic:
 
 ```bash
 python -m src.clip_geometry_diagnostic \
@@ -526,12 +526,24 @@ both images and captions, embeddings are L2-normalized, raw cosine similarity
 is kept separate from CLIP's learned logit scale, and same-image positives are
 excluded from every OT candidate set.
 
+This V1 condition is named `historical_scaled_logit_ot`. It intentionally uses
+CLIP-scaled logits, `ot_eps=0.7`, and the historical sparse OT solver so it
+remains exactly comparable to `SoftmaxMixLoss._make_plan()`. Do not interpret
+its entropy as scale-independent evidence about CLIP geometry: at CLIP logit
+scale 100, its effective cosine-space epsilon is only about 0.007.
+
 The report includes frozen retrieval, coupling entropy (raw and normalized),
 peak mass, positive-to-selected gap, OT-selected rank/percentile, wrong-class
 margin, synthetic similarity/logit, species identity of selected negatives,
 and a comparison with strict hardest-negative selection. Historical OTCO gate
 thresholds are shown only as observational overlays; they do not gate a loss or
 change any CLIP parameters.
+
+The reported selected rank is measured against the full candidate pool, but
+OT can only select from the top-k candidates. A high hardness percentile is
+therefore partly guaranteed by preprocessing. The strict-hardest agreement is
+the more informative comparison for distinguishing the transport assignment
+from ordinary hard-negative mining.
 
 Outputs are written to:
 
@@ -547,6 +559,55 @@ thresholds, those image IDs must remain outside the fine-tuning data. This
 phase determines whether CLIP exposes plausible, structured OT neighborhoods;
 only a subsequent controlled baseline-vs-OTCO training pair can establish that
 OT actually improves the model.
+
+### Scale-controlled frozen CLIP diagnostic (V2)
+
+Run the additive V2 diagnostic without changing or overwriting V1:
+
+```bash
+python -m src.clip_geometry_diagnostic_v2 \
+  --config configs/hf_cub200_clip_geometry_v2.yaml
+```
+
+V2 reuses the same deterministic holdout procedure and frozen CLIP checkpoint.
+It evaluates three training-relevant conditions:
+
+- historical CLIP-scaled-logit OT with `ot_eps=0.7`;
+- CLIP-scaled-logit OT with matched `ot_eps=4.9`;
+- raw-cosine OT with `ot_eps=0.049`.
+
+The latter two should be approximately equivalent when CLIP's logit scale is
+100. Their explicit plan, selected-index, and entropy differences are recorded
+so a disagreement is visible rather than tuned away.
+
+V2 also emulates deterministic batches of 64 and applies the real
+`compute_alpha_effective()` decision to each batch's mean entropy and mean
+positive-selected gap. Its gate-state fractions describe training-like batches,
+unlike the clearly named `per_query_historical_threshold_overlay`, which is
+observational and does not estimate the fraction of samples receiving an OT
+gradient.
+
+The historical solver remains unchanged and is audited for total mass, row and
+column marginal errors, and mass removed by its final sparse mask. A separate
+diagnostic-only support-preserving solver is included for mathematical
+comparison; it is not connected to training. V2 additionally reports fixed-
+prompt zero-shot species top-1/top-5 accuracy, species margin, same-species
+neighborhood enrichment, and the fractions for which selected or synthetic
+similarity exceeds the paired-positive similarity.
+
+Outputs are written separately to:
+
+```text
+outputs/cub200_frozen_clip_vit_b32_geometry_v2/
+├── clip_geometry_v2_report.json
+├── clip_geometry_v2_per_query.csv
+├── clip_geometry_v2_batch_emulation.csv
+└── diagnostic_holdout_indices.json
+```
+
+No CLIP parameters are updated and no training loss is introduced in either
+diagnostic. Preserve the emitted holdout indices and exclude them from later
+fine-tuning if V1 or V2 informs CLIP-specific OT parameters or thresholds.
 
 Switch experiments by editing:
 

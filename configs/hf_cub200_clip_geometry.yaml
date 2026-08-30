@@ -1,6 +1,7 @@
 experiment:
   name: cub200_frozen_clip_vit_b32_geometry
   mode: frozen_geometry_diagnostic
+  condition: historical_scaled_logit_ot
   purpose: determine whether pretrained CLIP contains structured CUB neighborhoods worth testing with OTCO
 
 dataset:
@@ -33,6 +34,7 @@ runtime:
 # These are the current OTCO transport settings, not tuned CLIP values. A fresh
 # full-pool plan is built once; there is no cached/stale training plan here.
 ot:
+  solver: historical_sparse_ot
   cost_space: clip_scaled_logits
   top_k: 32
   ot_eps: 0.7
