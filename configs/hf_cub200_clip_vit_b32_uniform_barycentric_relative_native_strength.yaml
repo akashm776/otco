@@ -1,5 +1,5 @@
 experiment:
-  name: cub200_clip_vit_b32_otco_relative_native_strength
+  name: cub200_clip_vit_b32_uniform_barycentric_relative_native_strength
   mode: controlled_clip_finetuning
   seed: 42
 
@@ -46,7 +46,7 @@ scheduler:
 ot:
   enabled: true
   loss_type: clip_relative_denominator
-  synthetic_weighting: ot
+  synthetic_weighting: uniform_topk
   cost_space: raw_cosine
   top_k: 32
   ot_eps: 0.049

@@ -31,6 +31,7 @@ OT_LOSS_TYPES = {
     "historical_absolute_sigmoid",
     "clip_relative_denominator",
 }
+SYNTHETIC_WEIGHTING_MODES = {"ot", "uniform_topk"}
 
 
 @dataclass
@@ -75,6 +76,19 @@ def clip_relative_denominator_loss(base_logits, synthetic_logits):
     # large common logit shift.
     loss = F.softplus(synthetic_logits - base_lse).mean()
     return loss, base_lse, augmented_lse
+
+
+def synthetic_barycentric_weights(plan, support_mask, mode="ot"):
+    """Return OT or exact-uniform coefficients on one unchanged support."""
+    if mode not in SYNTHETIC_WEIGHTING_MODES:
+        raise ValueError(f"Unsupported synthetic weighting mode: {mode}")
+    if plan.shape != support_mask.shape or support_mask.dtype != torch.bool:
+        raise ValueError("plan and Boolean support_mask must have the same shape")
+    if mode == "ot":
+        # Preserve the historical training expression exactly.
+        return plan / plan.sum(1, keepdim=True).clamp_min(1e-8)
+    weights = support_mask.to(plan.dtype)
+    return weights / weights.sum(1, keepdim=True).clamp_min(1)
 
 
 def scheduled_ot_alpha(step, *, alpha_max, warmup_steps, ramp_steps):
@@ -203,8 +217,14 @@ class FreshBatchRawCosineOTCO(nn.Module):
                 "clip_relative_denominator requires the absolute synthetic-logit "
                 "gate to be disabled"
             )
+        synthetic_weighting = config.get("synthetic_weighting", "ot")
+        if synthetic_weighting not in SYNTHETIC_WEIGHTING_MODES:
+            raise ValueError(
+                f"Unsupported synthetic weighting mode: {synthetic_weighting}"
+            )
         self.config = dict(config)
         self.loss_type = loss_type
+        self.synthetic_weighting = synthetic_weighting
         self.plan_build_count = 0
         self.last_plan = None
 
@@ -238,7 +258,9 @@ class FreshBatchRawCosineOTCO(nn.Module):
     ):
         transport = self._make_fresh_plan(raw_similarity)
         plan = transport.plan
-        weights = plan / plan.sum(1, keepdim=True).clamp_min(1e-8)
+        weights = synthetic_barycentric_weights(
+            plan, transport.support_mask, mode="ot"
+        )
         selected = plan.argmax(1)
         row = torch.arange(plan.shape[0], device=plan.device)
 
@@ -259,9 +281,32 @@ class FreshBatchRawCosineOTCO(nn.Module):
         normalized_entropy = entropy / support_size.log().clamp_min(1e-12)
         peak_mass = weights.max(1).values
 
-        live_weights = weights.to(image_features.dtype)
+        active_weights = synthetic_barycentric_weights(
+            plan,
+            transport.support_mask,
+            mode=self.synthetic_weighting,
+        )
+        live_weights = active_weights.to(image_features.dtype)
         synthetic_features = F.normalize(live_weights @ image_features, dim=-1)
         synthetic_similarity = (text_features * synthetic_features).sum(1)
+
+        counterfactual_metrics = {}
+        if self.synthetic_weighting == "uniform_topk":
+            # The OT plan is already required for gating. Use its row weights
+            # only for a detached observational comparison; this path cannot
+            # affect the active uniform synthetic or its gradients.
+            with torch.no_grad():
+                counterfactual_ot_features = F.normalize(
+                    weights.to(image_features.dtype) @ image_features.detach(),
+                    dim=-1,
+                )
+                counterfactual_ot_similarity = (
+                    text_features.detach() * counterfactual_ot_features
+                ).sum(1).float()
+            active_uniform_similarity = synthetic_similarity.detach().float()
+            uniform_minus_ot = (
+                active_uniform_similarity - counterfactual_ot_similarity
+            )
         # CLIP's learned scale remains trainable through the native contrastive
         # logits, but neither OT loss may update it directly.
         ot_scale = logit_scale.detach()
@@ -300,13 +345,47 @@ class FreshBatchRawCosineOTCO(nn.Module):
                 ),
             }
 
-        contributor_mask = plan > 0
+        contributor_mask = (
+            transport.support_mask
+            if self.synthetic_weighting == "uniform_topk"
+            else plan > 0
+        )
         hardest_real_similarity = raw_float.masked_fill(
             ~contributor_mask, float("-inf")
         ).max(1).values
         synthetic_delta = (
             synthetic_similarity.detach().float() - hardest_real_similarity
         )
+        if self.synthetic_weighting == "uniform_topk":
+            counterfactual_ot_delta = (
+                counterfactual_ot_similarity - hardest_real_similarity
+            )
+            counterfactual_metrics = {
+                "active_uniform_synthetic_similarity": float(
+                    active_uniform_similarity.mean().item()
+                ),
+                "counterfactual_ot_synthetic_similarity": float(
+                    counterfactual_ot_similarity.mean().item()
+                ),
+                "uniform_minus_ot_synthetic_similarity": float(
+                    uniform_minus_ot.mean().item()
+                ),
+                "fraction_uniform_gt_ot_synthetic": float(
+                    (uniform_minus_ot > 0).float().mean().item()
+                ),
+                "uniform_synthetic_vs_hardest_real_delta": float(
+                    synthetic_delta.mean().item()
+                ),
+                "ot_synthetic_vs_hardest_real_delta": float(
+                    counterfactual_ot_delta.mean().item()
+                ),
+                "fraction_uniform_synthetic_gt_hardest_real": float(
+                    (synthetic_delta > 0).float().mean().item()
+                ),
+                "fraction_ot_synthetic_gt_hardest_real": float(
+                    (counterfactual_ot_delta > 0).float().mean().item()
+                ),
+            }
 
         species = torch.as_tensor(species_ids, device=plan.device)
         selected_same_species = species[selected] == species
@@ -340,6 +419,7 @@ class FreshBatchRawCosineOTCO(nn.Module):
         metrics = {
             "ot_loss": float(ot_loss.detach().item()),
             "ot_loss_type": self.loss_type,
+            "synthetic_weighting_mode": self.synthetic_weighting,
             "alpha_scheduled": alpha_scheduled,
             "alpha_effective": alpha_effective,
             "gate_state_id": gate_state_id,
@@ -393,6 +473,7 @@ class FreshBatchRawCosineOTCO(nn.Module):
             ],
             "plan_build_count": self.plan_build_count,
             **relative_metrics,
+            **counterfactual_metrics,
         }
         return ot_loss, alpha_effective, metrics
 
@@ -439,6 +520,9 @@ class CLIPTrainingObjective(nn.Module):
         }
         if self.otco.loss_type == "clip_relative_denominator":
             metrics["weighted_ot_relative_loss"] = float(
+                weighted_ot.detach().item()
+            )
+            metrics["weighted_synthetic_relative_loss"] = float(
                 weighted_ot.detach().item()
             )
         return CLIPLossOutput(

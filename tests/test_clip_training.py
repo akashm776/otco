@@ -16,6 +16,7 @@ from model.clip_training import (
     compute_clip_alpha_effective,
     configure_clip_trainable_parameters,
     native_clip_contrastive_loss,
+    synthetic_barycentric_weights,
 )
 from src.clip_training_data import (
     exclude_diagnostic_indices,
@@ -63,6 +64,10 @@ def relative_ot_config(**overrides):
         synthetic_logit_gate_enabled=False,
         **overrides,
     )
+
+
+def uniform_relative_config(**overrides):
+    return relative_ot_config(synthetic_weighting="uniform_topk", **overrides)
 
 
 def feature_output(seed=0, count=8, dimension=6, logit_scale=25.0):
@@ -118,6 +123,75 @@ def test_relative_denominator_loss_tracks_synthetic_competitiveness():
     middle = clip_relative_denominator_loss(base_logits, synthetic_logits)[0]
     higher = clip_relative_denominator_loss(base_logits, synthetic_logits + 2.0)[0]
     assert lower < middle < higher
+
+
+def test_uniform_weights_use_exact_existing_support_and_exclude_positive():
+    support = torch.tensor(
+        [
+            [False, True, True, False],
+            [True, False, True, True],
+        ]
+    )
+    plan = support.float() * torch.tensor(
+        [[0.0, 0.7, 0.3, 0.0], [0.2, 0.0, 0.3, 0.5]]
+    )
+    weights = synthetic_barycentric_weights(plan, support, mode="uniform_topk")
+
+    assert torch.equal(weights != 0, support)
+    assert torch.equal(weights[0], torch.tensor([0.0, 0.5, 0.5, 0.0]))
+    assert torch.allclose(
+        weights[1], torch.tensor([1 / 3, 0.0, 1 / 3, 1 / 3])
+    )
+    assert torch.allclose(weights.sum(1), torch.ones(2))
+    assert weights[0, 0] == 0
+    assert weights[1, 1] == 0
+
+
+def test_uniform_barycentric_normalization_can_exceed_both_contributors():
+    query = torch.tensor([1.0, 0.0])
+    images = torch.tensor([[0.8, 0.6], [0.8, -0.6]])
+    support = torch.ones((1, 2), dtype=torch.bool)
+    weights = synthetic_barycentric_weights(
+        torch.ones((1, 2)), support, mode="uniform_topk"
+    )
+    synthetic = F.normalize(weights @ images, dim=-1)[0]
+
+    assert torch.allclose(synthetic, query)
+    assert query @ synthetic > (images @ query).max()
+
+
+def test_ot_weighting_expression_is_unchanged_and_matches_uniform_when_equal():
+    support = torch.tensor([[False, True, True]])
+    nonuniform_plan = torch.tensor([[0.0, 0.2, 0.8]])
+    ot_weights = synthetic_barycentric_weights(
+        nonuniform_plan, support, mode="ot"
+    )
+    historical = nonuniform_plan / nonuniform_plan.sum(
+        1, keepdim=True
+    ).clamp_min(1e-8)
+    assert torch.equal(ot_weights, historical)
+
+    uniform_plan = torch.tensor([[0.0, 0.5, 0.5]])
+    equal_ot = synthetic_barycentric_weights(uniform_plan, support, mode="ot")
+    equal_uniform = synthetic_barycentric_weights(
+        uniform_plan, support, mode="uniform_topk"
+    )
+    images = torch.tensor([[1.0, 0.0], [0.8, 0.6], [0.8, -0.6]])
+    assert torch.allclose(equal_ot, equal_uniform)
+    assert torch.allclose(
+        F.normalize(equal_ot @ images, dim=-1),
+        F.normalize(equal_uniform @ images, dim=-1),
+    )
+
+
+def test_relative_loss_is_identical_for_identical_synthetic_logits():
+    base_logits = torch.tensor([[2.0, 1.0], [0.5, 1.5]])
+    synthetic_logits = torch.tensor([1.25, 0.75])
+
+    ot_result = clip_relative_denominator_loss(base_logits, synthetic_logits)
+    uniform_result = clip_relative_denominator_loss(base_logits, synthetic_logits)
+    for ot_value, uniform_value in zip(ot_result, uniform_result):
+        assert torch.equal(ot_value, uniform_value)
 
 
 class FakeCLIP(nn.Module):
@@ -306,11 +380,64 @@ def test_native_strength_differs_from_weak_relative_only_by_name_and_alpha():
     normalized_weak["experiment"]["name"] = "arm"
     normalized_native["experiment"]["name"] = "arm"
     normalized_weak["ot"]["alpha_max"] = 0.5
+    normalized_weak["ot"]["synthetic_weighting"] = "ot"
     assert normalized_weak == normalized_native
     load_training_config(
         ROOT
         / "configs/hf_cub200_clip_vit_b32_otco_relative_native_strength.yaml"
     )
+
+
+def test_uniform_native_strength_differs_from_ot_only_by_name_and_weighting():
+    ot = yaml.safe_load(
+        (
+            ROOT
+            / "configs/hf_cub200_clip_vit_b32_otco_relative_native_strength.yaml"
+        ).read_text()
+    )
+    uniform = yaml.safe_load(
+        (
+            ROOT
+            / "configs/"
+            "hf_cub200_clip_vit_b32_uniform_barycentric_relative_native_strength.yaml"
+        ).read_text()
+    )
+    normalized_ot = copy.deepcopy(ot)
+    normalized_uniform = copy.deepcopy(uniform)
+    normalized_ot["experiment"]["name"] = "arm"
+    normalized_uniform["experiment"]["name"] = "arm"
+    normalized_ot["ot"]["synthetic_weighting"] = "uniform_topk"
+    assert normalized_ot == normalized_uniform
+    load_training_config(
+        ROOT
+        / "configs/"
+        "hf_cub200_clip_vit_b32_uniform_barycentric_relative_native_strength.yaml"
+    )
+
+
+@pytest.mark.parametrize(
+    ("config_name", "incorrect_weighting"),
+    [
+        (
+            "hf_cub200_clip_vit_b32_otco_relative_native_strength.yaml",
+            "uniform_topk",
+        ),
+        (
+            "hf_cub200_clip_vit_b32_uniform_barycentric_relative_native_strength.yaml",
+            "ot",
+        ),
+    ],
+)
+def test_experiment_name_strictly_validates_weighting_mode(
+    tmp_path, config_name, incorrect_weighting
+):
+    config = yaml.safe_load((ROOT / "configs" / config_name).read_text())
+    config["ot"]["synthetic_weighting"] = incorrect_weighting
+    path = tmp_path / config_name
+    path.write_text(yaml.safe_dump(config))
+
+    with pytest.raises(ValueError, match="synthetic weighting mode"):
+        load_training_config(path)
 
 
 def test_projection_gradient_ratio_is_weighted_ot_norm_over_clip_norm():
@@ -373,6 +500,52 @@ def test_relative_otco_total_reduces_exactly_to_baseline_when_alpha_is_zero():
     )(output, species_ids=torch.arange(8), step=0)
     assert treatment.metrics["alpha_effective"] == 0
     assert torch.equal(treatment.total_loss, baseline.total_loss)
+
+
+@pytest.mark.parametrize("weighting", ["ot", "uniform_topk"])
+def test_relative_alpha_zero_equivalence_for_both_weighting_modes(weighting):
+    output = feature_output(seed=181)
+    baseline = CLIPTrainingObjective(ot_config(enabled=False))(
+        output, species_ids=torch.arange(8), step=0
+    )
+    treatment = CLIPTrainingObjective(
+        relative_ot_config(
+            synthetic_weighting=weighting,
+            enabled=True,
+            warmup_steps=100,
+        )
+    )(output, species_ids=torch.arange(8), step=0)
+
+    assert treatment.metrics["alpha_effective"] == 0
+    assert torch.equal(treatment.total_loss, baseline.total_loss)
+
+
+def test_uniform_treatment_preserves_ot_plan_gap_and_gate_semantics():
+    output = feature_output(seed=182)
+    species = torch.arange(8)
+    shared = {
+        "alpha_max": 0.5,
+        "warmup_steps": 0,
+        "ramp_steps": 0,
+    }
+    ot_objective = CLIPTrainingObjective(relative_ot_config(**shared))
+    uniform_objective = CLIPTrainingObjective(uniform_relative_config(**shared))
+    ot_result = ot_objective(output, species_ids=species, step=2000)
+    uniform_result = uniform_objective(output, species_ids=species, step=2000)
+
+    assert torch.equal(ot_objective.otco.last_plan, uniform_objective.otco.last_plan)
+    for key in (
+        "positive_selected_gap",
+        "coupling_entropy",
+        "normalized_coupling_entropy",
+        "coupling_peak_mass",
+        "selected_rank",
+        "same_species_selected_rate",
+        "alpha_scheduled",
+        "alpha_effective",
+        "gate_state_id",
+    ):
+        assert uniform_result.metrics[key] == pytest.approx(ot_result.metrics[key])
 
 
 def test_transport_mass_diagnostics_are_emitted():
@@ -501,6 +674,45 @@ def test_relative_ot_loss_detaches_scale_but_keeps_representation_gradients_live
     assert result.metrics["weighted_ot_relative_loss"] == pytest.approx(
         result.weighted_ot_loss.detach().item()
     )
+
+
+def test_uniform_relative_loss_keeps_features_live_and_emits_counterfactuals():
+    generator = torch.Generator().manual_seed(311)
+    image_source = torch.randn(8, 6, generator=generator, requires_grad=True)
+    text_source = torch.randn(8, 6, generator=generator, requires_grad=True)
+    image = F.normalize(image_source, dim=-1)
+    text = F.normalize(text_source, dim=-1)
+    raw = text @ image.T
+    scale = torch.tensor(25.0, requires_grad=True)
+    output = CLIPSimilarityOutput(
+        raw_similarity=raw,
+        logits=raw * scale,
+        image_features=image,
+        text_features=text,
+        logit_scale=scale,
+    )
+    result = CLIPTrainingObjective(uniform_relative_config())(
+        output, species_ids=torch.arange(8), step=0
+    )
+    image_gradient, text_gradient = torch.autograd.grad(
+        result.ot_loss, (image_source, text_source)
+    )
+
+    assert image_gradient.norm().item() > 0
+    assert text_gradient.norm().item() > 0
+    assert result.metrics["synthetic_weighting_mode"] == "uniform_topk"
+    for key in (
+        "active_uniform_synthetic_similarity",
+        "counterfactual_ot_synthetic_similarity",
+        "uniform_minus_ot_synthetic_similarity",
+        "fraction_uniform_gt_ot_synthetic",
+        "uniform_synthetic_vs_hardest_real_delta",
+        "ot_synthetic_vs_hardest_real_delta",
+        "fraction_uniform_synthetic_gt_hardest_real",
+        "fraction_ot_synthetic_gt_hardest_real",
+        "weighted_synthetic_relative_loss",
+    ):
+        assert key in result.metrics
 
 
 def test_relative_loss_bypasses_absolute_gate_while_historical_mode_retains_it():

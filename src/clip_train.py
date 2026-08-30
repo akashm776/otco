@@ -65,6 +65,7 @@ def load_training_config(path):
         "cub200_clip_vit_b32_otco_rawcos_gap_gate": True,
         "cub200_clip_vit_b32_otco_relative_denominator": True,
         "cub200_clip_vit_b32_otco_relative_native_strength": True,
+        "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": True,
     }
     name = config["experiment"]["name"]
     if name not in expected_arm or bool(ot["enabled"]) != expected_arm[name]:
@@ -80,9 +81,23 @@ def load_training_config(path):
         "cub200_clip_vit_b32_otco_relative_native_strength": (
             "clip_relative_denominator"
         ),
+        "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": (
+            "clip_relative_denominator"
+        ),
     }
     if ot["loss_type"] != expected_loss_type[name]:
         raise ValueError("Experiment name and OT loss type do not match")
+    expected_weighting = {
+        "cub200_clip_vit_b32_baseline": "ot",
+        "cub200_clip_vit_b32_otco_rawcos_gap_gate": "ot",
+        "cub200_clip_vit_b32_otco_relative_denominator": "ot",
+        "cub200_clip_vit_b32_otco_relative_native_strength": "ot",
+        "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": (
+            "uniform_topk"
+        ),
+    }
+    if ot.get("synthetic_weighting", "ot") != expected_weighting[name]:
+        raise ValueError("Experiment name and synthetic weighting mode do not match")
     expected_absolute_gate = ot["loss_type"] == "historical_absolute_sigmoid"
     if bool(ot["synthetic_logit_gate_enabled"]) != expected_absolute_gate:
         raise ValueError(
@@ -94,6 +109,7 @@ def load_training_config(path):
         "cub200_clip_vit_b32_otco_rawcos_gap_gate": 0.05,
         "cub200_clip_vit_b32_otco_relative_denominator": 0.05,
         "cub200_clip_vit_b32_otco_relative_native_strength": 0.5,
+        "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": 0.5,
     }
     if ot["alpha_max"] != expected_alpha_max[name]:
         raise ValueError("Experiment name and OT alpha_max do not match")
@@ -252,7 +268,19 @@ def train_epoch(
             and losses.weighted_ot_loss is not None
             and metrics["alpha_effective"] > 0
         ):
-            metrics.update(diagnostic_gradient_norms(losses, projection_parameters))
+            gradient_metrics = diagnostic_gradient_norms(
+                losses, projection_parameters
+            )
+            if metrics.get("synthetic_weighting_mode") == "uniform_topk":
+                gradient_metrics[
+                    "projection_gradient_norm_weighted_synthetic"
+                ] = gradient_metrics["projection_gradient_norm_weighted_ot"]
+                gradient_metrics[
+                    "projection_gradient_ratio_weighted_synthetic_to_clip"
+                ] = gradient_metrics[
+                    "projection_gradient_ratio_weighted_ot_to_clip"
+                ]
+            metrics.update(gradient_metrics)
             remaining_gradient_diagnostics -= 1
         losses.total_loss.backward()
         metrics["total_trainable_gradient_norm"] = parameter_gradient_norm(
@@ -437,6 +465,9 @@ def run(config, *, output_directory=None, checkpoint_directory=None):
 
     summary = {
         "experiment_name": config["experiment"]["name"],
+        "synthetic_weighting_mode": config["ot"].get(
+            "synthetic_weighting", "ot"
+        ),
         "best_epoch_by_species_top_1": best_epoch,
         "best_species_top_1_accuracy": best_species_top1,
         "final": history[-1],
