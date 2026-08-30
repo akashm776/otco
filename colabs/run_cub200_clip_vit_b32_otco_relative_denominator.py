@@ -12,7 +12,7 @@ from google.colab import files, userdata
 
 EXPERIMENT_NAME = "cub200_clip_vit_b32_otco_relative_denominator"
 CONFIG_FILE = "configs/hf_cub200_clip_vit_b32_otco_relative_denominator.yaml"
-PINNED_COMMIT = "__PIN_AFTER_REVIEW__"
+PINNED_COMMIT = "afb2bda4a5ddbce28e326874fa9610b3fff8d50b"
 REPO_DIR = Path("/content/otco")
 OUTPUT_DIR = Path("/content/otco_outputs") / EXPERIMENT_NAME
 CHECKPOINT_DIR = Path("/content/otco_checkpoints") / EXPERIMENT_NAME
