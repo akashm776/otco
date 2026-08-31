@@ -160,6 +160,31 @@ def test_uniform_barycentric_normalization_can_exceed_both_contributors():
     assert query @ synthetic > (images @ query).max()
 
 
+def test_uniform_top8_support_weights_and_synthetic_regression():
+    support = torch.zeros((1, 64), dtype=torch.bool)
+    support[0, torch.tensor([1, 7, 12, 19, 23, 31, 44, 58])] = True
+    plan = support.to(torch.float32)
+    weights = synthetic_barycentric_weights(plan, support, mode="uniform_topk")
+
+    assert int((weights != 0).sum()) == 8
+    assert torch.equal(weights != 0, support)
+    assert torch.all(weights[support] == torch.tensor(1.0 / 8))
+    assert torch.all(weights[~support] == 0)
+    assert torch.allclose(weights.sum(1), torch.ones(1))
+
+    images = torch.zeros((64, 2), dtype=torch.float32)
+    images[1] = torch.tensor([0.8, 0.6])
+    images[7] = torch.tensor([0.8, -0.6])
+    images[12] = torch.tensor([1.0, 0.0])
+    images[19] = torch.tensor([0.9, 0.1])
+    images[23] = torch.tensor([0.9, -0.1])
+    images[31] = torch.tensor([0.7, 0.2])
+    images[44] = torch.tensor([0.7, -0.2])
+    images[58] = torch.tensor([0.8, 0.0])
+    expected = F.normalize(weights @ images, dim=-1)
+    assert torch.allclose(expected, F.normalize(images[support[0]].mean(0), dim=0))
+
+
 def test_ot_weighting_expression_is_unchanged_and_matches_uniform_when_equal():
     support = torch.tensor([[False, True, True]])
     nonuniform_plan = torch.tensor([[0.0, 0.2, 0.8]])
