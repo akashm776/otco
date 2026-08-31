@@ -11,7 +11,7 @@ from google.colab import files, userdata
 
 EXPERIMENT_NAME = "cub200_clip_vit_b32_hardest_real_relative_native_strength"
 CONFIG_FILE = "configs/hf_cub200_clip_vit_b32_hardest_real_relative_native_strength.yaml"
-PINNED_COMMIT = "__PIN_AFTER_REVIEW__"
+PINNED_COMMIT = "e5b098efa056836a43f2fce0b4ad0efae48badba"
 REPO_DIR = Path("/content/otco")
 OUTPUT_DIR = Path("/content/otco_outputs") / EXPERIMENT_NAME
 CHECKPOINT_DIR = Path("/content/otco_checkpoints") / EXPERIMENT_NAME
