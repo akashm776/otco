@@ -32,6 +32,7 @@ OT_LOSS_TYPES = {
     "clip_relative_denominator",
 }
 SYNTHETIC_WEIGHTING_MODES = {"ot", "uniform_topk"}
+EXTRA_NEGATIVE_MODES = {"barycentric", "hardest_real"}
 
 
 @dataclass
@@ -89,6 +90,18 @@ def synthetic_barycentric_weights(plan, support_mask, mode="ot"):
         return plan / plan.sum(1, keepdim=True).clamp_min(1e-8)
     weights = support_mask.to(plan.dtype)
     return weights / weights.sum(1, keepdim=True).clamp_min(1)
+
+
+def hardest_real_negative_indices(raw_similarity):
+    """Select each row's hardest non-diagonal image with torch argmax ties."""
+    if raw_similarity.ndim != 2 or raw_similarity.shape[0] != raw_similarity.shape[1]:
+        raise ValueError("Hardest-real selection requires square [B, B] similarity")
+    diagonal = torch.eye(
+        raw_similarity.shape[0],
+        dtype=torch.bool,
+        device=raw_similarity.device,
+    )
+    return raw_similarity.detach().masked_fill(diagonal, float("-inf")).argmax(1)
 
 
 def scheduled_ot_alpha(step, *, alpha_max, warmup_steps, ramp_steps):
@@ -225,6 +238,20 @@ class FreshBatchRawCosineOTCO(nn.Module):
         self.config = dict(config)
         self.loss_type = loss_type
         self.synthetic_weighting = synthetic_weighting
+        self.extra_negative_mode = config.get(
+            "extra_negative_mode", "barycentric"
+        )
+        if self.extra_negative_mode not in EXTRA_NEGATIVE_MODES:
+            raise ValueError(
+                f"Unsupported extra negative mode: {self.extra_negative_mode}"
+            )
+        if (
+            self.extra_negative_mode == "hardest_real"
+            and self.loss_type != "clip_relative_denominator"
+        ):
+            raise ValueError(
+                "hardest_real requires clip_relative_denominator loss"
+            )
         self.plan_build_count = 0
         self.last_plan = None
 
@@ -287,11 +314,28 @@ class FreshBatchRawCosineOTCO(nn.Module):
             mode=self.synthetic_weighting,
         )
         live_weights = active_weights.to(image_features.dtype)
-        synthetic_features = F.normalize(live_weights @ image_features, dim=-1)
-        synthetic_similarity = (text_features * synthetic_features).sum(1)
+        if self.extra_negative_mode == "hardest_real":
+            # This U8 barycenter is observational only in the hardest-real arm.
+            with torch.no_grad():
+                synthetic_features = F.normalize(
+                    live_weights @ image_features.detach(), dim=-1
+                )
+                barycentric_similarity = (
+                    text_features.detach() * synthetic_features
+                ).sum(1)
+        else:
+            synthetic_features = F.normalize(
+                live_weights @ image_features, dim=-1
+            )
+            barycentric_similarity = (
+                text_features * synthetic_features
+            ).sum(1)
 
         counterfactual_metrics = {}
-        if self.synthetic_weighting == "uniform_topk":
+        if (
+            self.synthetic_weighting == "uniform_topk"
+            and self.extra_negative_mode == "barycentric"
+        ):
             # The OT plan is already required for gating. Use its row weights
             # only for a detached observational comparison; this path cannot
             # affect the active uniform synthetic or its gradients.
@@ -303,35 +347,47 @@ class FreshBatchRawCosineOTCO(nn.Module):
                 counterfactual_ot_similarity = (
                     text_features.detach() * counterfactual_ot_features
                 ).sum(1).float()
-            active_uniform_similarity = synthetic_similarity.detach().float()
+            active_uniform_similarity = barycentric_similarity.detach().float()
             uniform_minus_ot = (
                 active_uniform_similarity - counterfactual_ot_similarity
             )
         # CLIP's learned scale remains trainable through the native contrastive
         # logits, but neither OT loss may update it directly.
         ot_scale = logit_scale.detach()
-        synthetic_logits = synthetic_similarity * ot_scale
+        ot_base_logits = raw_similarity * ot_scale
+        hardest_real_index = hardest_real_negative_indices(raw_similarity)
+        hardest_real_live_similarity = raw_similarity[row, hardest_real_index]
+        hardest_real_logits = ot_base_logits[row, hardest_real_index]
+        if self.extra_negative_mode == "hardest_real":
+            extra_negative_similarity = hardest_real_live_similarity
+            extra_negative_logits = hardest_real_logits
+        else:
+            extra_negative_similarity = barycentric_similarity
+            extra_negative_logits = barycentric_similarity * ot_scale
         relative_metrics = {}
         if self.loss_type == "historical_absolute_sigmoid":
             gate_threshold = self.config.get("synthetic_logit_gate", -4.0)
             gate_enabled = self.config.get("synthetic_logit_gate_enabled", True)
             synthetic_gate = (
-                synthetic_logits > gate_threshold
+                extra_negative_logits > gate_threshold
                 if gate_enabled
-                else torch.ones_like(synthetic_logits, dtype=torch.bool)
+                else torch.ones_like(extra_negative_logits, dtype=torch.bool)
             )
             if synthetic_gate.any():
-                ot_loss = -F.logsigmoid(-synthetic_logits[synthetic_gate]).mean()
+                ot_loss = -F.logsigmoid(
+                    -extra_negative_logits[synthetic_gate]
+                ).mean()
             else:
-                ot_loss = synthetic_logits.mean() * 0
+                ot_loss = extra_negative_logits.mean() * 0
         else:
-            # Add the synthetic image only to the text->image denominator. Both
-            # ordinary and synthetic OT logits share the same detached scale.
-            ot_base_logits = raw_similarity * ot_scale
+            # Add one extra image candidate only to the text->image denominator.
+            # Ordinary and extra-candidate logits share the same detached scale.
             ot_loss, base_lse, augmented_lse = clip_relative_denominator_loss(
-                ot_base_logits, synthetic_logits
+                ot_base_logits, extra_negative_logits
             )
-            synthetic_gate = torch.ones_like(synthetic_logits, dtype=torch.bool)
+            synthetic_gate = torch.ones_like(
+                extra_negative_logits, dtype=torch.bool
+            )
             relative_metrics = {
                 "ot_relative_loss": float(ot_loss.detach().item()),
                 "base_row_logsumexp_mean": float(
@@ -341,9 +397,25 @@ class FreshBatchRawCosineOTCO(nn.Module):
                     augmented_lse.detach().mean().item()
                 ),
                 "synthetic_logit_minus_base_lse_mean": float(
-                    (synthetic_logits.detach() - base_lse.detach()).mean().item()
+                    (
+                        extra_negative_logits.detach() - base_lse.detach()
+                    ).mean().item()
                 ),
             }
+            if self.extra_negative_mode == "hardest_real":
+                relative_metrics.update(
+                    {
+                        "hardest_real_relative_loss": float(
+                            ot_loss.detach().item()
+                        ),
+                        "hardest_real_logit_minus_base_lse_mean": float(
+                            (
+                                hardest_real_logits.detach()
+                                - base_lse.detach()
+                            ).mean().item()
+                        ),
+                    }
+                )
 
         contributor_mask = (
             transport.support_mask
@@ -354,9 +426,12 @@ class FreshBatchRawCosineOTCO(nn.Module):
             ~contributor_mask, float("-inf")
         ).max(1).values
         synthetic_delta = (
-            synthetic_similarity.detach().float() - hardest_real_similarity
+            extra_negative_similarity.detach().float() - hardest_real_similarity
         )
-        if self.synthetic_weighting == "uniform_topk":
+        if (
+            self.synthetic_weighting == "uniform_topk"
+            and self.extra_negative_mode == "barycentric"
+        ):
             counterfactual_ot_delta = (
                 counterfactual_ot_similarity - hardest_real_similarity
             )
@@ -387,6 +462,28 @@ class FreshBatchRawCosineOTCO(nn.Module):
                 ),
             }
 
+        if self.extra_negative_mode == "hardest_real":
+            global_hardest = hardest_real_live_similarity.detach().float()
+            uniform_top8 = barycentric_similarity.detach().float()
+            uniform_minus_hardest = uniform_top8 - global_hardest
+            counterfactual_metrics = {
+                "counterfactual_uniform_top8_synthetic_similarity": float(
+                    uniform_top8.mean().item()
+                ),
+                "hardest_real_minus_uniform_top8_similarity": float(
+                    (-uniform_minus_hardest).mean().item()
+                ),
+                "fraction_hardest_real_gt_uniform_top8": float(
+                    (global_hardest > uniform_top8).float().mean().item()
+                ),
+                "uniform_top8_synthetic_vs_hardest_real_delta": float(
+                    uniform_minus_hardest.mean().item()
+                ),
+                "fraction_uniform_top8_gt_hardest_real": float(
+                    (uniform_minus_hardest > 0).float().mean().item()
+                ),
+            }
+
         species = torch.as_tensor(species_ids, device=plan.device)
         selected_same_species = species[selected] == species
         diagonal_mask = torch.eye(
@@ -396,7 +493,7 @@ class FreshBatchRawCosineOTCO(nn.Module):
         )
         positive_cosine = raw_similarity.diagonal().detach().float()
         offdiagonal_cosine = raw_similarity.detach().float()[~diagonal_mask]
-        synthetic_cosine = synthetic_similarity.detach().float()
+        synthetic_cosine = extra_negative_similarity.detach().float()
         mean_entropy = float(entropy.mean().item())
         mean_gap = float(gap.mean().item())
         alpha_scheduled = scheduled_ot_alpha(
@@ -434,10 +531,15 @@ class FreshBatchRawCosineOTCO(nn.Module):
             "same_species_selected_rate": float(
                 selected_same_species.float().mean().item()
             ),
-            "synthetic_similarity": float(synthetic_similarity.mean().item()),
+            "synthetic_similarity": float(
+                extra_negative_similarity.mean().item()
+            ),
             "positive_similarity": float(positive_similarity.mean().item()),
             "fraction_synthetic_gt_positive": float(
-                (synthetic_similarity.detach().float() > positive_similarity)
+                (
+                    extra_negative_similarity.detach().float()
+                    > positive_similarity
+                )
                 .float()
                 .mean()
                 .item()
@@ -475,6 +577,27 @@ class FreshBatchRawCosineOTCO(nn.Module):
             **relative_metrics,
             **counterfactual_metrics,
         }
+        if self.extra_negative_mode == "hardest_real":
+            hardest_detached = hardest_real_live_similarity.detach().float()
+            hardest_minus_positive = hardest_detached - positive_similarity
+            metrics.update(
+                {
+                    "extra_negative_mode": self.extra_negative_mode,
+                    "hardest_real_similarity": float(
+                        hardest_detached.mean().item()
+                    ),
+                    "hardest_real_logit": float(
+                        hardest_real_logits.detach().mean().item()
+                    ),
+                    "hardest_real_rank": 1.0,
+                    "hardest_real_minus_positive_similarity": float(
+                        hardest_minus_positive.mean().item()
+                    ),
+                    "fraction_hardest_real_gt_positive": float(
+                        (hardest_minus_positive > 0).float().mean().item()
+                    ),
+                }
+            )
         return ot_loss, alpha_effective, metrics
 
 
@@ -525,6 +648,10 @@ class CLIPTrainingObjective(nn.Module):
             metrics["weighted_synthetic_relative_loss"] = float(
                 weighted_ot.detach().item()
             )
+            if self.otco.extra_negative_mode == "hardest_real":
+                metrics["weighted_hardest_real_relative_loss"] = float(
+                    weighted_ot.detach().item()
+                )
         return CLIPLossOutput(
             total_loss=total_loss,
             clip_loss=clip_loss,

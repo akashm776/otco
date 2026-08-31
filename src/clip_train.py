@@ -53,7 +53,15 @@ def load_training_config(path):
         "cost_space": "raw_cosine",
         "solver": "historical_sparse_ot",
         "update_freq": 1,
-        "top_k": 8 if name == "cub200_clip_vit_b32_uniform_top8_relative_native_strength" else 32,
+        "top_k": (
+            8
+            if name
+            in {
+                "cub200_clip_vit_b32_uniform_top8_relative_native_strength",
+                "cub200_clip_vit_b32_hardest_real_relative_native_strength",
+            }
+            else 32
+        ),
         "ot_eps": 0.049,
         "sinkhorn_iters": 30,
         "entropy_gate_enabled": False,
@@ -68,6 +76,7 @@ def load_training_config(path):
         "cub200_clip_vit_b32_otco_relative_native_strength": True,
         "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": True,
         "cub200_clip_vit_b32_uniform_top8_relative_native_strength": True,
+        "cub200_clip_vit_b32_hardest_real_relative_native_strength": True,
     }
     if name not in expected_arm or bool(ot["enabled"]) != expected_arm[name]:
         raise ValueError("Experiment name and OT treatment flag do not match")
@@ -88,6 +97,9 @@ def load_training_config(path):
         "cub200_clip_vit_b32_uniform_top8_relative_native_strength": (
             "clip_relative_denominator"
         ),
+        "cub200_clip_vit_b32_hardest_real_relative_native_strength": (
+            "clip_relative_denominator"
+        ),
     }
     if ot["loss_type"] != expected_loss_type[name]:
         raise ValueError("Experiment name and OT loss type do not match")
@@ -100,9 +112,23 @@ def load_training_config(path):
             "uniform_topk"
         ),
         "cub200_clip_vit_b32_uniform_top8_relative_native_strength": "uniform_topk",
+        "cub200_clip_vit_b32_hardest_real_relative_native_strength": "uniform_topk",
     }
     if ot.get("synthetic_weighting", "ot") != expected_weighting[name]:
         raise ValueError("Experiment name and synthetic weighting mode do not match")
+    expected_extra_negative_mode = {
+        experiment_name: "barycentric" for experiment_name in expected_arm
+    }
+    expected_extra_negative_mode[
+        "cub200_clip_vit_b32_hardest_real_relative_native_strength"
+    ] = "hardest_real"
+    if (
+        ot.get("extra_negative_mode", "barycentric")
+        != expected_extra_negative_mode[name]
+    ):
+        raise ValueError(
+            "Experiment name and extra negative mode do not match"
+        )
     expected_absolute_gate = ot["loss_type"] == "historical_absolute_sigmoid"
     if bool(ot["synthetic_logit_gate_enabled"]) != expected_absolute_gate:
         raise ValueError(
@@ -116,6 +142,7 @@ def load_training_config(path):
         "cub200_clip_vit_b32_otco_relative_native_strength": 0.5,
         "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": 0.5,
         "cub200_clip_vit_b32_uniform_top8_relative_native_strength": 0.5,
+        "cub200_clip_vit_b32_hardest_real_relative_native_strength": 0.5,
     }
     if ot["alpha_max"] != expected_alpha_max[name]:
         raise ValueError("Experiment name and OT alpha_max do not match")
@@ -283,6 +310,15 @@ def train_epoch(
                 ] = gradient_metrics["projection_gradient_norm_weighted_ot"]
                 gradient_metrics[
                     "projection_gradient_ratio_weighted_synthetic_to_clip"
+                ] = gradient_metrics[
+                    "projection_gradient_ratio_weighted_ot_to_clip"
+                ]
+            if metrics.get("extra_negative_mode") == "hardest_real":
+                gradient_metrics[
+                    "projection_gradient_norm_weighted_hardest_real"
+                ] = gradient_metrics["projection_gradient_norm_weighted_ot"]
+                gradient_metrics[
+                    "projection_gradient_ratio_weighted_hardest_real_to_clip"
                 ] = gradient_metrics[
                     "projection_gradient_ratio_weighted_ot_to_clip"
                 ]
@@ -482,6 +518,8 @@ def run(config, *, output_directory=None, checkpoint_directory=None):
         "data_exclusion": data.exclusion_report,
         "trainable_parameters": inventory,
     }
+    if config["ot"].get("extra_negative_mode", "barycentric") != "barycentric":
+        summary["extra_negative_mode"] = config["ot"]["extra_negative_mode"]
     write_json(output_dir / "summary.json", summary)
     return summary
 

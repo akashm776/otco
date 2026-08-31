@@ -15,6 +15,7 @@ from model.clip_training import (
     clip_relative_denominator_loss,
     compute_clip_alpha_effective,
     configure_clip_trainable_parameters,
+    hardest_real_negative_indices,
     native_clip_contrastive_loss,
     synthetic_barycentric_weights,
 )
@@ -70,6 +71,12 @@ def uniform_relative_config(**overrides):
     return relative_ot_config(synthetic_weighting="uniform_topk", **overrides)
 
 
+def hardest_real_relative_config(**overrides):
+    return uniform_relative_config(
+        extra_negative_mode="hardest_real", top_k=8, **overrides
+    )
+
+
 def feature_output(seed=0, count=8, dimension=6, logit_scale=25.0):
     generator = torch.Generator().manual_seed(seed)
     image = F.normalize(torch.randn(count, dimension, generator=generator), dim=-1)
@@ -123,6 +130,53 @@ def test_relative_denominator_loss_tracks_synthetic_competitiveness():
     middle = clip_relative_denominator_loss(base_logits, synthetic_logits)[0]
     higher = clip_relative_denominator_loss(base_logits, synthetic_logits + 2.0)[0]
     assert lower < middle < higher
+
+
+def test_hardest_real_selection_excludes_positive_and_uses_expected_index():
+    similarity = torch.tensor(
+        [
+            [10.0, 0.2, 0.8, 0.1],
+            [0.4, 10.0, 0.3, 0.9],
+            [0.7, 0.6, 10.0, 0.5],
+            [0.2, 0.8, 0.4, 10.0],
+        ]
+    )
+    selected = hardest_real_negative_indices(similarity)
+    assert torch.equal(selected, torch.tensor([2, 3, 0, 1]))
+    assert torch.all(selected != torch.arange(4))
+
+
+def test_hardest_real_selection_ties_use_first_pytorch_argmax_index():
+    similarity = torch.tensor(
+        [
+            [9.0, 0.8, 0.8],
+            [0.5, 9.0, 0.5],
+            [0.7, 0.7, 9.0],
+        ]
+    )
+    assert torch.equal(
+        hardest_real_negative_indices(similarity), torch.tensor([1, 0, 0])
+    )
+
+
+def test_hardest_real_relative_loss_matches_duplicate_logit_calculation():
+    base_logits = torch.tensor(
+        [[5.0, 2.0, 1.0], [0.5, 4.0, 2.5], [3.0, 1.0, 6.0]]
+    )
+    selected = hardest_real_negative_indices(base_logits)
+    row = torch.arange(3)
+    hardest_logits = base_logits[row, selected]
+    actual = clip_relative_denominator_loss(base_logits, hardest_logits)[0]
+    expected = torch.stack(
+        [
+            torch.logsumexp(
+                torch.cat((base_logits[i], hardest_logits[i : i + 1])), dim=0
+            )
+            - torch.logsumexp(base_logits[i], dim=0)
+            for i in range(3)
+        ]
+    ).mean()
+    assert torch.allclose(actual, expected)
 
 
 def test_uniform_weights_use_exact_existing_support_and_exclude_positive():
@@ -460,6 +514,31 @@ def test_uniform_top8_native_strength_differs_from_top32_only_by_name_and_top_k(
     )
 
 
+def test_hardest_real_config_differs_from_uniform_top8_only_by_extra_mode():
+    top8 = yaml.safe_load(
+        (
+            ROOT
+            / "configs/hf_cub200_clip_vit_b32_uniform_top8_relative_native_strength.yaml"
+        ).read_text()
+    )
+    hardest = yaml.safe_load(
+        (
+            ROOT
+            / "configs/hf_cub200_clip_vit_b32_hardest_real_relative_native_strength.yaml"
+        ).read_text()
+    )
+    normalized_top8 = copy.deepcopy(top8)
+    normalized_hardest = copy.deepcopy(hardest)
+    normalized_top8["experiment"]["name"] = "arm"
+    normalized_hardest["experiment"]["name"] = "arm"
+    normalized_top8["ot"]["extra_negative_mode"] = "hardest_real"
+    assert normalized_top8 == normalized_hardest
+    load_training_config(
+        ROOT
+        / "configs/hf_cub200_clip_vit_b32_hardest_real_relative_native_strength.yaml"
+    )
+
+
 @pytest.mark.parametrize(
     ("config_name", "incorrect_weighting"),
     [
@@ -593,6 +672,38 @@ def test_uniform_treatment_preserves_ot_plan_gap_and_gate_semantics():
         assert uniform_result.metrics[key] == pytest.approx(ot_result.metrics[key])
 
 
+def test_hardest_real_preserves_uniform_top8_ot_plan_gap_and_gate_semantics():
+    output = feature_output(seed=183)
+    species = torch.arange(8)
+    shared = {"alpha_max": 0.5, "warmup_steps": 0, "ramp_steps": 0, "top_k": 8}
+    uniform_objective = CLIPTrainingObjective(uniform_relative_config(**shared))
+    hardest_objective = CLIPTrainingObjective(
+        hardest_real_relative_config(
+            alpha_max=0.5, warmup_steps=0, ramp_steps=0
+        )
+    )
+    uniform_result = uniform_objective(output, species_ids=species, step=2000)
+    hardest_result = hardest_objective(output, species_ids=species, step=2000)
+
+    assert torch.equal(
+        uniform_objective.otco.last_plan, hardest_objective.otco.last_plan
+    )
+    for key in (
+        "positive_selected_gap",
+        "coupling_entropy",
+        "normalized_coupling_entropy",
+        "coupling_peak_mass",
+        "selected_rank",
+        "same_species_selected_rate",
+        "alpha_scheduled",
+        "alpha_effective",
+        "gate_state_id",
+    ):
+        assert hardest_result.metrics[key] == pytest.approx(
+            uniform_result.metrics[key]
+        )
+
+
 def test_transport_mass_diagnostics_are_emitted():
     result = CLIPTrainingObjective(ot_config())(
         feature_output(seed=9), species_ids=torch.arange(8), step=0
@@ -719,6 +830,71 @@ def test_relative_ot_loss_detaches_scale_but_keeps_representation_gradients_live
     assert result.metrics["weighted_ot_relative_loss"] == pytest.approx(
         result.weighted_ot_loss.detach().item()
     )
+
+
+def test_hardest_real_branch_reuses_relative_loss_and_keeps_live_gradients():
+    generator = torch.Generator().manual_seed(312)
+    image_source = torch.randn(8, 6, generator=generator, requires_grad=True)
+    text_source = torch.randn(8, 6, generator=generator, requires_grad=True)
+    image = F.normalize(image_source, dim=-1)
+    text = F.normalize(text_source, dim=-1)
+    raw = text @ image.T
+    scale = torch.tensor(25.0, requires_grad=True)
+    output = CLIPSimilarityOutput(raw, raw * scale, image, text, scale)
+    result = CLIPTrainingObjective(hardest_real_relative_config())(
+        output, species_ids=torch.arange(8), step=0
+    )
+
+    row = torch.arange(8)
+    selected = hardest_real_negative_indices(raw)
+    auxiliary_base = raw * scale.detach()
+    expected = clip_relative_denominator_loss(
+        auxiliary_base, auxiliary_base[row, selected]
+    )[0]
+    assert torch.allclose(result.ot_loss, expected)
+
+    scale_gradient = torch.autograd.grad(
+        result.ot_loss, scale, retain_graph=True, allow_unused=True
+    )[0]
+    image_gradient, text_gradient = torch.autograd.grad(
+        result.ot_loss, (image_source, text_source)
+    )
+    assert scale_gradient is None
+    assert image_gradient.norm().item() > 0
+    assert text_gradient.norm().item() > 0
+    assert result.metrics["extra_negative_mode"] == "hardest_real"
+    assert result.metrics["hardest_real_rank"] == 1.0
+    assert result.metrics["hardest_real_relative_loss"] == pytest.approx(
+        expected.detach().item()
+    )
+    assert result.metrics[
+        "weighted_hardest_real_relative_loss"
+    ] == pytest.approx(result.weighted_ot_loss.detach().item())
+    for key in (
+        "counterfactual_uniform_top8_synthetic_similarity",
+        "hardest_real_minus_uniform_top8_similarity",
+        "fraction_hardest_real_gt_uniform_top8",
+        "uniform_top8_synthetic_vs_hardest_real_delta",
+        "fraction_uniform_top8_gt_hardest_real",
+        "hardest_real_similarity",
+        "hardest_real_logit",
+        "hardest_real_minus_positive_similarity",
+        "fraction_hardest_real_gt_positive",
+        "hardest_real_logit_minus_base_lse_mean",
+    ):
+        assert key in result.metrics
+
+
+def test_hardest_real_alpha_zero_reduces_exactly_to_native_clip():
+    output = feature_output(seed=313)
+    baseline = CLIPTrainingObjective(ot_config(enabled=False))(
+        output, species_ids=torch.arange(8), step=0
+    )
+    treatment = CLIPTrainingObjective(
+        hardest_real_relative_config(warmup_steps=100)
+    )(output, species_ids=torch.arange(8), step=0)
+    assert treatment.metrics["alpha_effective"] == 0
+    assert torch.equal(treatment.total_loss, baseline.total_loss)
 
 
 def test_uniform_relative_loss_keeps_features_live_and_emits_counterfactuals():
