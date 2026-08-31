@@ -415,6 +415,26 @@ def test_uniform_native_strength_differs_from_ot_only_by_name_and_weighting():
     )
 
 
+def test_uniform_top8_native_strength_differs_from_top32_only_by_name_and_top_k():
+    top32 = yaml.safe_load(
+        (ROOT / "configs/hf_cub200_clip_vit_b32_uniform_barycentric_relative_native_strength.yaml").read_text()
+    )
+    top8 = yaml.safe_load(
+        (ROOT / "configs/hf_cub200_clip_vit_b32_uniform_top8_relative_native_strength.yaml").read_text()
+    )
+    normalized_top32 = copy.deepcopy(top32)
+    normalized_top8 = copy.deepcopy(top8)
+    normalized_top32["experiment"]["name"] = "arm"
+    normalized_top8["experiment"]["name"] = "arm"
+    normalized_top32["ot"]["top_k"] = 8
+    assert normalized_top32 == normalized_top8
+    assert top32["ot"]["top_k"] == 32
+    assert top8["ot"]["top_k"] == 8
+    load_training_config(
+        ROOT / "configs/hf_cub200_clip_vit_b32_uniform_top8_relative_native_strength.yaml"
+    )
+
+
 @pytest.mark.parametrize(
     ("config_name", "incorrect_weighting"),
     [

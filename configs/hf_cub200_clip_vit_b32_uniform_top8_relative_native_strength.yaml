@@ -1,0 +1,68 @@
+experiment:
+  name: cub200_clip_vit_b32_uniform_top8_relative_native_strength
+  mode: controlled_clip_finetuning
+  seed: 42
+dataset:
+  backend: hf_cub200
+  dataset_name: alkzar90/CC6204-Hackaton-Cub-Dataset
+  train_split: train
+  validation_split: test
+  caption_sampling: epoch_random
+  diagnostic_holdout_indices: configs/cub200_clip_diagnostic_holdout_indices.json
+model:
+  backend: clip
+  checkpoint: openai/clip-vit-base-patch32
+  processor: matching_checkpoint_auto_processor
+  trainable_policy: projections_last_blocks_logit_scale
+loss:
+  base: native_clip_symmetric_contrastive
+training:
+  seed: 42
+  epochs: 50
+  batch_size: 64
+  mixed_precision: bf16
+runtime:
+  require_cuda: true
+  min_vram_mib: 14000
+  num_workers: 2
+optimizer:
+  type: adamw
+  projection_lr: 1.0e-5
+  encoder_lr: 1.0e-6
+  logit_scale_lr: 1.0e-6
+  weight_decay: 0.01
+  max_gradient_norm: 1.0
+scheduler:
+  type: cosine
+  warmup_steps: 100
+ot:
+  enabled: true
+  loss_type: clip_relative_denominator
+  synthetic_weighting: uniform_topk
+  cost_space: raw_cosine
+  top_k: 8
+  ot_eps: 0.049
+  sinkhorn_iters: 30
+  update_freq: 1
+  solver: historical_sparse_ot
+  alpha_max: 0.5
+  warmup_steps: 1000
+  ramp_steps: 1000
+  entropy_gate_enabled: false
+  entropy_threshold: 3.0
+  gap_suppress_easy: 0.10
+  gap_downweight_hard: -0.07
+  hard_alpha_scale: 0.25
+  synthetic_logit_gate_enabled: false
+  synthetic_logit_gate: -4.0
+evaluation:
+  every_epochs: 1
+  species_prompt: "a photo of a {species_name}"
+  retrieval_chunk_size: 512
+diagnostics:
+  separate_projection_gradient_steps: 5
+checkpoint:
+  root: checkpoints
+  resume: false
+output:
+  root: outputs

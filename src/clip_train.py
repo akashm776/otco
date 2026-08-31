@@ -48,11 +48,12 @@ def load_training_config(path):
     if config["experiment"]["seed"] != config["training"]["seed"]:
         raise ValueError("Experiment and training seeds must match")
     ot = config["ot"]
+    name = config["experiment"]["name"]
     required = {
         "cost_space": "raw_cosine",
         "solver": "historical_sparse_ot",
         "update_freq": 1,
-        "top_k": 32,
+        "top_k": 8 if name == "cub200_clip_vit_b32_uniform_top8_relative_native_strength" else 32,
         "ot_eps": 0.049,
         "sinkhorn_iters": 30,
         "entropy_gate_enabled": False,
@@ -66,8 +67,8 @@ def load_training_config(path):
         "cub200_clip_vit_b32_otco_relative_denominator": True,
         "cub200_clip_vit_b32_otco_relative_native_strength": True,
         "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": True,
+        "cub200_clip_vit_b32_uniform_top8_relative_native_strength": True,
     }
-    name = config["experiment"]["name"]
     if name not in expected_arm or bool(ot["enabled"]) != expected_arm[name]:
         raise ValueError("Experiment name and OT treatment flag do not match")
     expected_loss_type = {
@@ -84,6 +85,9 @@ def load_training_config(path):
         "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": (
             "clip_relative_denominator"
         ),
+        "cub200_clip_vit_b32_uniform_top8_relative_native_strength": (
+            "clip_relative_denominator"
+        ),
     }
     if ot["loss_type"] != expected_loss_type[name]:
         raise ValueError("Experiment name and OT loss type do not match")
@@ -95,6 +99,7 @@ def load_training_config(path):
         "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": (
             "uniform_topk"
         ),
+        "cub200_clip_vit_b32_uniform_top8_relative_native_strength": "uniform_topk",
     }
     if ot.get("synthetic_weighting", "ot") != expected_weighting[name]:
         raise ValueError("Experiment name and synthetic weighting mode do not match")
@@ -110,6 +115,7 @@ def load_training_config(path):
         "cub200_clip_vit_b32_otco_relative_denominator": 0.05,
         "cub200_clip_vit_b32_otco_relative_native_strength": 0.5,
         "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": 0.5,
+        "cub200_clip_vit_b32_uniform_top8_relative_native_strength": 0.5,
     }
     if ot["alpha_max"] != expected_alpha_max[name]:
         raise ValueError("Experiment name and OT alpha_max do not match")
