@@ -266,6 +266,29 @@ def diagnostic_gradient_norms(loss_output, projection_parameters):
     return result
 
 
+def add_projection_gradient_aliases(metrics, gradient_metrics):
+    """Add mode-specific aliases without mislabeling the active candidate."""
+    if (
+        metrics.get("synthetic_weighting_mode") == "uniform_topk"
+        and metrics.get("extra_negative_mode", "barycentric")
+        == "barycentric"
+    ):
+        gradient_metrics["projection_gradient_norm_weighted_synthetic"] = (
+            gradient_metrics["projection_gradient_norm_weighted_ot"]
+        )
+        gradient_metrics[
+            "projection_gradient_ratio_weighted_synthetic_to_clip"
+        ] = gradient_metrics["projection_gradient_ratio_weighted_ot_to_clip"]
+    if metrics.get("extra_negative_mode") == "hardest_real":
+        gradient_metrics[
+            "projection_gradient_norm_weighted_hardest_real"
+        ] = gradient_metrics["projection_gradient_norm_weighted_ot"]
+        gradient_metrics[
+            "projection_gradient_ratio_weighted_hardest_real_to_clip"
+        ] = gradient_metrics["projection_gradient_ratio_weighted_ot_to_clip"]
+    return gradient_metrics
+
+
 def train_epoch(
     model,
     objective,
@@ -304,24 +327,7 @@ def train_epoch(
             gradient_metrics = diagnostic_gradient_norms(
                 losses, projection_parameters
             )
-            if metrics.get("synthetic_weighting_mode") == "uniform_topk":
-                gradient_metrics[
-                    "projection_gradient_norm_weighted_synthetic"
-                ] = gradient_metrics["projection_gradient_norm_weighted_ot"]
-                gradient_metrics[
-                    "projection_gradient_ratio_weighted_synthetic_to_clip"
-                ] = gradient_metrics[
-                    "projection_gradient_ratio_weighted_ot_to_clip"
-                ]
-            if metrics.get("extra_negative_mode") == "hardest_real":
-                gradient_metrics[
-                    "projection_gradient_norm_weighted_hardest_real"
-                ] = gradient_metrics["projection_gradient_norm_weighted_ot"]
-                gradient_metrics[
-                    "projection_gradient_ratio_weighted_hardest_real_to_clip"
-                ] = gradient_metrics[
-                    "projection_gradient_ratio_weighted_ot_to_clip"
-                ]
+            add_projection_gradient_aliases(metrics, gradient_metrics)
             metrics.update(gradient_metrics)
             remaining_gradient_diagnostics -= 1
         losses.total_loss.backward()

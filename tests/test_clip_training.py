@@ -25,6 +25,7 @@ from src.clip_training_data import (
 )
 from src.clip_training_eval import chunked_bidirectional_retrieval
 from src.clip_train import (
+    add_projection_gradient_aliases,
     consider_species_checkpoint,
     diagnostic_gradient_norms,
     load_training_config,
@@ -582,6 +583,32 @@ def test_projection_gradient_ratio_is_weighted_ot_norm_over_clip_norm():
     assert metrics["projection_gradient_ratio_weighted_ot_to_clip"] == (
         pytest.approx(0.25)
     )
+
+
+def test_hardest_real_gradient_alias_is_not_mislabeled_as_synthetic():
+    generic = {
+        "projection_gradient_norm_weighted_ot": 2.0,
+        "projection_gradient_ratio_weighted_ot_to_clip": 0.25,
+    }
+    hardest = add_projection_gradient_aliases(
+        {
+            "synthetic_weighting_mode": "uniform_topk",
+            "extra_negative_mode": "hardest_real",
+        },
+        dict(generic),
+    )
+    assert hardest["projection_gradient_norm_weighted_hardest_real"] == 2.0
+    assert hardest[
+        "projection_gradient_ratio_weighted_hardest_real_to_clip"
+    ] == 0.25
+    assert "projection_gradient_norm_weighted_synthetic" not in hardest
+    assert "projection_gradient_ratio_weighted_synthetic_to_clip" not in hardest
+
+    barycentric = add_projection_gradient_aliases(
+        {"synthetic_weighting_mode": "uniform_topk"}, dict(generic)
+    )
+    assert barycentric["projection_gradient_norm_weighted_synthetic"] == 2.0
+    assert "projection_gradient_norm_weighted_hardest_real" not in barycentric
 
 
 def test_exact_diagnostic_holdout_is_excluded_from_training():
