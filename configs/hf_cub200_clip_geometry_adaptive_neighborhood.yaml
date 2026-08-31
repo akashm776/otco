@@ -1,0 +1,50 @@
+experiment:
+  name: cub200_frozen_clip_vit_b32_geometry_adaptive_neighborhood
+  mode: frozen_geometry_adaptive_neighborhood
+  purpose: test whether a local raw-similarity boundary selects useful per-query support breadth
+
+dataset:
+  backend: hf_cub200
+  dataset_name: alkzar90/CC6204-Hackaton-Cub-Dataset
+  train_split: train
+  val_split: test
+
+model:
+  backend: clip
+  checkpoint: openai/clip-vit-base-patch32
+
+sampling:
+  source_split: train
+  holdout_indices_path: configs/cub200_clip_diagnostic_holdout_indices.json
+  holdout_size: 1024
+  seed: 42
+  caption_view: canonical_first_caption
+
+runtime:
+  device: cuda
+  require_cuda: true
+  min_vram_mib: 14000
+  batch_size: 64
+  num_workers: 2
+
+batch_emulation:
+  batch_size: 64
+  num_batches: 200
+  seed: 4242
+
+selector:
+  similarity_metric: raw_cosine
+  allowed_k_values: [2, 4, 8, 16, 32]
+  selector: largest_boundary_gap
+  selector_tie_tolerance: 0.000000000001
+  selector_tie_break: smaller_k
+  exclude_same_image_positives: true
+
+comparison:
+  primary_fixed_k: 8
+  tie_tolerance: 0.000001
+  bootstrap_seed: 42
+  bootstrap_samples: 10000
+
+output:
+  directory: outputs/cub200_frozen_clip_vit_b32_geometry_adaptive_neighborhood
