@@ -11,7 +11,7 @@ from google.colab import files, userdata
 
 EXPERIMENT_NAME = "cub200_clip_vit_b32_uniform_top8_relative_pressure_matched"
 CONFIG_FILE = "configs/hf_cub200_clip_vit_b32_uniform_top8_relative_pressure_matched.yaml"
-PINNED_COMMIT = "__PIN_AFTER_REVIEW__"
+PINNED_COMMIT = "43182765ad92e5ead1630ced15acd101fa795642"
 REPO_DIR = Path("/content/otco")
 OUTPUT_DIR = Path("/content/otco_outputs") / EXPERIMENT_NAME
 CHECKPOINT_DIR = Path("/content/otco_checkpoints") / EXPERIMENT_NAME
