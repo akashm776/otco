@@ -12,7 +12,7 @@ from google.colab import files, userdata
 
 EXPERIMENT_NAME = "cub200_frozen_clip_vit_b32_negative_gradient_geometry"
 CONFIG_FILE = "configs/hf_cub200_clip_negative_gradient_geometry.yaml"
-PINNED_COMMIT = "__PIN_AFTER_REVIEW__"
+PINNED_COMMIT = "35ca04e26c4d7dc4c7b9398995b65c0eb5bdcffb"
 REPO_DIR = Path("/content/otco")
 OUTPUT_DIR = Path("/content/otco_outputs") / EXPERIMENT_NAME
 LOG_FILE = OUTPUT_DIR / "diagnostic_stdout.txt"
