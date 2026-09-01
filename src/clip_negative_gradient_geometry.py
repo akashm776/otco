@@ -95,14 +95,21 @@ def _joint(query_gradient, image_gradient):
     return torch.cat((query_gradient.reshape(-1), image_gradient.reshape(-1)))
 
 
-def _autograd_pair(loss, queries, images):
+def _autograd_pair(loss, query_leaves, image_leaves):
     query_gradient, image_gradient = torch.autograd.grad(
         loss,
-        (queries, images),
+        (query_leaves, image_leaves),
         retain_graph=True,
         create_graph=False,
     )
     return query_gradient, image_gradient
+
+
+def _maximum_abs_radial_component(gradient, normalized_embedding):
+    """Maximum |g dot x| across rows for an embedding-space gradient."""
+    if gradient.shape != normalized_embedding.shape:
+        raise ValueError("Gradient and normalized embedding shapes must match")
+    return (gradient * normalized_embedding).sum(dim=-1).abs().max()
 
 
 def compute_batch_gradient_geometry(
@@ -122,8 +129,17 @@ def compute_batch_gradient_geometry(
     if species_ids is not None and len(species_ids) != batch_size:
         raise ValueError("species_ids length must match batch size")
 
-    images = F.normalize(image_features.detach(), dim=-1).clone().requires_grad_(True)
-    queries = F.normalize(text_features.detach(), dim=-1).clone().requires_grad_(True)
+    # The leaves represent pre-normalization vectors initialized on the sphere.
+    # Differentiating through this normalization applies (I - xx^T), removing
+    # radial directions that the real CLIP normalization layer cannot realize.
+    image_leaves = (
+        F.normalize(image_features.detach(), dim=-1).clone().requires_grad_(True)
+    )
+    query_leaves = (
+        F.normalize(text_features.detach(), dim=-1).clone().requires_grad_(True)
+    )
+    images = F.normalize(image_leaves, dim=-1)
+    queries = F.normalize(query_leaves, dim=-1)
     raw_similarity = queries @ images.T
     positive_mask = torch.eye(batch_size, dtype=torch.bool, device=images.device)
 
@@ -147,6 +163,10 @@ def compute_batch_gradient_geometry(
     hardest_logits = base_logits[row_indices, hardest_indices]
 
     rows = []
+    tangent_residuals = {
+        "query": [],
+        "image": [],
+    }
     for query_index in range(batch_size):
         base_row = base_logits[query_index : query_index + 1]
         u8_loss, _, _ = clip_relative_denominator_loss(
@@ -166,16 +186,16 @@ def compute_batch_gradient_geometry(
         )
 
         u8_query_all, u8_image_gradient = _autograd_pair(
-            u8_loss, queries, images
+            u8_loss, query_leaves, image_leaves
         )
         real_query_all, real_image_gradient = _autograd_pair(
-            real_loss, queries, images
+            real_loss, query_leaves, image_leaves
         )
         native_query_all, native_image_gradient = _autograd_pair(
-            native_loss, queries, images
+            native_loss, query_leaves, image_leaves
         )
         margin_query_all, margin_image_gradient = _autograd_pair(
-            margin, queries, images
+            margin, query_leaves, image_leaves
         )
 
         u8_query_gradient = u8_query_all[query_index]
@@ -186,6 +206,25 @@ def compute_batch_gradient_geometry(
         real_joint = _joint(real_query_gradient, real_image_gradient)
         native_joint = _joint(native_query_gradient, native_image_gradient)
         margin_joint = _joint(margin_query_gradient, margin_image_gradient)
+
+        tangent_residuals["query"].extend(
+            _scalar((gradient * queries[query_index]).sum().abs())
+            for gradient in (
+                u8_query_gradient,
+                real_query_gradient,
+                native_query_gradient,
+                margin_query_gradient,
+            )
+        )
+        tangent_residuals["image"].extend(
+            _scalar(_maximum_abs_radial_component(gradient, images))
+            for gradient in (
+                u8_image_gradient,
+                real_image_gradient,
+                native_image_gradient,
+                margin_image_gradient,
+            )
+        )
 
         u8_footprint = gradient_footprint(u8_image_gradient)
         real_footprint = gradient_footprint(real_image_gradient)
@@ -305,7 +344,22 @@ def compute_batch_gradient_geometry(
         "support_mask": support_mask.detach(),
         "uniform_weights": uniform_weights.detach(),
         "u8_synthetic": u8_synthetic.detach(),
-        "model_free_local_leaves": {"queries": queries, "images": images},
+        "model_free_local_leaves": {
+            "queries": query_leaves,
+            "images": image_leaves,
+        },
+        "normalized_embeddings": {
+            "queries": queries.detach(),
+            "images": images.detach(),
+        },
+        "tangent_audit": {
+            "max_abs_query_gradient_dot_embedding": max(
+                tangent_residuals["query"]
+            ),
+            "max_abs_image_gradient_dot_embedding": max(
+                tangent_residuals["image"]
+            ),
+        },
     }
 
 
@@ -506,6 +560,7 @@ def run(config):
 
     batch_size = config["diagnostic"]["batch_size"]
     all_rows = []
+    tangent_audits = []
     for batch_index, start in enumerate(range(0, len(dataset), batch_size)):
         stop = min(start + batch_size, len(dataset))
         if stop - start != batch_size:
@@ -530,6 +585,7 @@ def run(config):
                 }
             )
             all_rows.append(row)
+        tangent_audits.append(result["tangent_audit"])
         del result
         print(f"Completed gradient batch {batch_index + 1}/{len(dataset) // batch_size}", flush=True)
 
@@ -583,13 +639,28 @@ def run(config):
             "alpha_or_schedule": None,
         },
         "gradient_definitions": {
-            "query": "cos(grad_q_i D_U8, grad_q_i D_real)",
-            "image": "cos(vec(grad_V D_U8), vec(grad_V D_real))",
-            "joint": "cos([grad_q_i; vec(grad_V)]_U8, [grad_q_i; vec(grad_V)]_real)",
+            "local_leaf_semantics": (
+                "Unit-norm pre-normalization leaves are normalized again inside "
+                "the graph; autograd therefore returns tangent-space gradients "
+                "(I - xx^T) grad_x at the unit-norm evaluation point."
+            ),
+            "query": "cos(tangent_grad_q_i D_U8, tangent_grad_q_i D_real)",
+            "image": "cos(vec(tangent_grad_V D_U8), vec(tangent_grad_V D_real))",
+            "joint": "cos([tangent_grad_q_i; vec(tangent_grad_V)]_U8, [tangent_grad_q_i; vec(tangent_grad_V)]_real)",
             "effective_image_support": "1 / sum_j p_j^2, p_j=||grad_vj||/sum_k||grad_vk||",
             "gradient_entropy": "-sum_j p_j log(p_j)",
             "native_alignment": "cos(unit auxiliary joint gradient, native row-CE joint gradient)",
             "margin_directional_change": "-grad(s_pos-s_hardest) dot unit(auxiliary joint gradient)",
+        },
+        "tangent_gradient_audit": {
+            "max_abs_query_gradient_dot_embedding": max(
+                audit["max_abs_query_gradient_dot_embedding"]
+                for audit in tangent_audits
+            ),
+            "max_abs_image_gradient_dot_embedding": max(
+                audit["max_abs_image_gradient_dot_embedding"]
+                for audit in tangent_audits
+            ),
         },
         **summaries,
     }

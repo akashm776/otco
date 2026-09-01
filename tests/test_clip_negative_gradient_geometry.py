@@ -90,10 +90,10 @@ def test_known_hardest_real_indices_are_selected_deterministically():
 
 def test_embedding_gradients_are_live_and_local_model_parameter_stays_frozen():
     encoder = torch.nn.Linear(6, 6, bias=False).requires_grad_(False)
-    inputs = torch.eye(6)[:5]
+    inputs = torch.randn(10, 6, generator=torch.Generator().manual_seed(99))
     with torch.no_grad():
         encoded = encoder(inputs)
-    images = F.normalize(torch.cat((encoded, encoded), dim=0), dim=-1)
+    images = F.normalize(encoded, dim=-1)
     texts = F.normalize(images + 0.01, dim=-1)
     result = compute_batch_gradient_geometry(images, texts, 14.0, top_k=8)
     assert all(parameter.grad is None for parameter in encoder.parameters())
@@ -101,6 +101,31 @@ def test_embedding_gradients_are_live_and_local_model_parameter_stays_frozen():
     assert all(row["query_gradient_norm_real"] > 0 for row in result["rows"])
     assert all(row["image_gradient_norm_u8"] > 0 for row in result["rows"])
     assert all(row["image_gradient_norm_real"] > 0 for row in result["rows"])
+
+
+def test_diagnostic_query_and_image_gradients_are_tangent_to_unit_sphere():
+    result = _result()
+    audit = result["tangent_audit"]
+    assert audit["max_abs_query_gradient_dot_embedding"] < 1e-5
+    assert audit["max_abs_image_gradient_dot_embedding"] < 1e-5
+
+
+def test_normalization_path_removes_radial_gradient_component():
+    leaf = F.normalize(
+        torch.tensor([2.0, -1.0, 0.5], dtype=torch.float64), dim=0
+    ).requires_grad_(True)
+    embedding = F.normalize(leaf, dim=0)
+    ambient_gradient = torch.tensor(
+        [1.5, 0.25, -0.75], dtype=torch.float64
+    )
+    loss = torch.dot(embedding, ambient_gradient)
+    tangent_gradient = torch.autograd.grad(loss, leaf)[0]
+    expected = ambient_gradient - torch.dot(
+        ambient_gradient, embedding.detach()
+    ) * embedding.detach()
+
+    assert torch.allclose(tangent_gradient, expected, atol=1e-12, rtol=1e-12)
+    assert torch.dot(tangent_gradient, embedding.detach()).abs() < 1e-12
 
 
 def test_same_candidate_has_identical_query_gradient_direction():
