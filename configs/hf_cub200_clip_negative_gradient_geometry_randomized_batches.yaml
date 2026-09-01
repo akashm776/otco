@@ -1,0 +1,48 @@
+experiment:
+  name: cub200_frozen_clip_vit_b32_negative_gradient_geometry_randomized_batches
+  mode: frozen_negative_gradient_geometry_randomized_batches
+  purpose: test U8-vs-hardest-real tangent-gradient robustness to B64 composition
+
+dataset:
+  backend: hf_cub200
+  dataset_name: alkzar90/CC6204-Hackaton-Cub-Dataset
+  train_split: train
+  val_split: test
+
+model:
+  backend: clip
+  checkpoint: openai/clip-vit-base-patch32
+
+sampling:
+  source_split: train
+  holdout_indices_path: configs/cub200_clip_diagnostic_holdout_indices.json
+  holdout_size: 1024
+  seed: 42
+  caption_view: canonical_first_caption
+
+diagnostic:
+  batch_size: 64
+  top_k: 8
+  tangent_tolerance: 0.00001
+  partitions:
+    - name: sequential
+      mode: sequential
+    - name: shuffle_seed_42
+      mode: shuffled
+      seed: 42
+    - name: shuffle_seed_123
+      mode: shuffled
+      seed: 123
+    - name: shuffle_seed_4242
+      mode: shuffled
+      seed: 4242
+
+runtime:
+  device: cuda
+  require_cuda: true
+  min_vram_mib: 14000
+  encoding_batch_size: 64
+  num_workers: 2
+
+output:
+  directory: outputs/cub200_frozen_clip_vit_b32_negative_gradient_geometry_randomized_batches
