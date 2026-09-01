@@ -17,6 +17,7 @@ from model.clip_training import (
     configure_clip_trainable_parameters,
     hardest_real_negative_indices,
     native_clip_contrastive_loss,
+    scheduled_ot_alpha,
     synthetic_barycentric_weights,
 )
 from src.clip_training_data import (
@@ -515,6 +516,51 @@ def test_uniform_top8_native_strength_differs_from_top32_only_by_name_and_top_k(
     )
 
 
+def test_pressure_matched_u8_differs_from_native_u8_only_by_name_and_alpha():
+    native = yaml.safe_load(
+        (
+            ROOT
+            / "configs/hf_cub200_clip_vit_b32_uniform_top8_relative_native_strength.yaml"
+        ).read_text()
+    )
+    matched = yaml.safe_load(
+        (
+            ROOT
+            / "configs/hf_cub200_clip_vit_b32_uniform_top8_relative_pressure_matched.yaml"
+        ).read_text()
+    )
+    normalized_native = copy.deepcopy(native)
+    normalized_matched = copy.deepcopy(matched)
+    normalized_native["experiment"]["name"] = "arm"
+    normalized_matched["experiment"]["name"] = "arm"
+    normalized_native["ot"]["alpha_max"] = 0.134
+    assert normalized_native == normalized_matched
+    assert native["ot"]["alpha_max"] == 0.5
+    assert matched["ot"]["alpha_max"] == 0.134
+    load_training_config(
+        ROOT
+        / "configs/hf_cub200_clip_vit_b32_uniform_top8_relative_pressure_matched.yaml"
+    )
+
+
+def test_pressure_matched_u8_uses_existing_alpha_schedule():
+    config = load_training_config(
+        ROOT
+        / "configs/hf_cub200_clip_vit_b32_uniform_top8_relative_pressure_matched.yaml"
+    )
+    ot = config["ot"]
+    schedule = lambda step: scheduled_ot_alpha(
+        step,
+        alpha_max=ot["alpha_max"],
+        warmup_steps=ot["warmup_steps"],
+        ramp_steps=ot["ramp_steps"],
+    )
+    assert schedule(999) == 0.0
+    assert schedule(1000) == 0.0
+    assert schedule(2000) == pytest.approx(0.134)
+    assert schedule(2001) == pytest.approx(0.134)
+
+
 def test_hardest_real_config_differs_from_uniform_top8_only_by_extra_mode():
     top8 = yaml.safe_load(
         (
@@ -668,6 +714,24 @@ def test_relative_alpha_zero_equivalence_for_both_weighting_modes(weighting):
     )(output, species_ids=torch.arange(8), step=0)
 
     assert treatment.metrics["alpha_effective"] == 0
+    assert torch.equal(treatment.total_loss, baseline.total_loss)
+
+
+def test_pressure_matched_u8_alpha_zero_is_exact_native_clip():
+    config = load_training_config(
+        ROOT
+        / "configs/hf_cub200_clip_vit_b32_uniform_top8_relative_pressure_matched.yaml"
+    )
+    output = feature_output(seed=184)
+    baseline = CLIPTrainingObjective(ot_config(enabled=False))(
+        output, species_ids=torch.arange(8), step=0
+    )
+    treatment = CLIPTrainingObjective(config["ot"])(
+        output, species_ids=torch.arange(8), step=999
+    )
+    assert treatment.metrics["alpha_effective"] == 0
+    assert treatment.weighted_ot_loss.item() == 0
+    assert torch.equal(treatment.total_loss, treatment.clip_loss)
     assert torch.equal(treatment.total_loss, baseline.total_loss)
 
 

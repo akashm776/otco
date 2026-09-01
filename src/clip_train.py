@@ -58,6 +58,7 @@ def load_training_config(path):
             if name
             in {
                 "cub200_clip_vit_b32_uniform_top8_relative_native_strength",
+                "cub200_clip_vit_b32_uniform_top8_relative_pressure_matched",
                 "cub200_clip_vit_b32_hardest_real_relative_native_strength",
             }
             else 32
@@ -76,6 +77,7 @@ def load_training_config(path):
         "cub200_clip_vit_b32_otco_relative_native_strength": True,
         "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": True,
         "cub200_clip_vit_b32_uniform_top8_relative_native_strength": True,
+        "cub200_clip_vit_b32_uniform_top8_relative_pressure_matched": True,
         "cub200_clip_vit_b32_hardest_real_relative_native_strength": True,
     }
     if name not in expected_arm or bool(ot["enabled"]) != expected_arm[name]:
@@ -97,6 +99,9 @@ def load_training_config(path):
         "cub200_clip_vit_b32_uniform_top8_relative_native_strength": (
             "clip_relative_denominator"
         ),
+        "cub200_clip_vit_b32_uniform_top8_relative_pressure_matched": (
+            "clip_relative_denominator"
+        ),
         "cub200_clip_vit_b32_hardest_real_relative_native_strength": (
             "clip_relative_denominator"
         ),
@@ -112,6 +117,7 @@ def load_training_config(path):
             "uniform_topk"
         ),
         "cub200_clip_vit_b32_uniform_top8_relative_native_strength": "uniform_topk",
+        "cub200_clip_vit_b32_uniform_top8_relative_pressure_matched": "uniform_topk",
         "cub200_clip_vit_b32_hardest_real_relative_native_strength": "uniform_topk",
     }
     if ot.get("synthetic_weighting", "ot") != expected_weighting[name]:
@@ -142,6 +148,7 @@ def load_training_config(path):
         "cub200_clip_vit_b32_otco_relative_native_strength": 0.5,
         "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength": 0.5,
         "cub200_clip_vit_b32_uniform_top8_relative_native_strength": 0.5,
+        "cub200_clip_vit_b32_uniform_top8_relative_pressure_matched": 0.134,
         "cub200_clip_vit_b32_hardest_real_relative_native_strength": 0.5,
     }
     if ot["alpha_max"] != expected_alpha_max[name]:
