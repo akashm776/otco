@@ -16,7 +16,7 @@ EXPERIMENT_NAME = (
 CONFIG_FILE = (
     "configs/hf_cub200_clip_negative_gradient_geometry_randomized_batches.yaml"
 )
-PINNED_COMMIT = "__PIN_AFTER_REVIEW__"
+PINNED_COMMIT = "56ae309effef6755157ad85a2e3caed8fe4a7091"
 REPO_DIR = Path("/content/otco")
 OUTPUT_DIR = Path("/content/otco_outputs") / EXPERIMENT_NAME
 LOG_FILE = OUTPUT_DIR / "diagnostic_stdout.txt"
