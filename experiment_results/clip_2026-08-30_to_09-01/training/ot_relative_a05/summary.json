@@ -1,0 +1,307 @@
+{
+  "experiment_name": "cub200_clip_vit_b32_otco_relative_native_strength",
+  "best_epoch_by_species_top_1": 0,
+  "best_species_top_1_accuracy": 0.5160511136054993,
+  "final": {
+    "epoch": 50,
+    "global_step": 3850,
+    "training": {
+      "clip_loss": 2.3205164748352844,
+      "weighted_ot_loss": 0.01904325224701073,
+      "total_loss": 2.339559737738077,
+      "ot_enabled": 1.0,
+      "ot_loss": 0.03808650449402146,
+      "alpha_scheduled": 0.5,
+      "alpha_effective": 0.5,
+      "coupling_entropy": 3.3171587857333096,
+      "normalized_coupling_entropy": 0.9571296975210115,
+      "positive_selected_gap": 0.004747564142400568,
+      "coupling_peak_mass": 0.09019904486931764,
+      "selected_rank": 6.173498376623376,
+      "same_species_selected_rate": 0.05133928571428571,
+      "synthetic_similarity": 0.13278499071474198,
+      "positive_similarity": 0.1445064792385349,
+      "fraction_synthetic_gt_positive": 0.28145292207792205,
+      "hardest_real_contributor_similarity": 0.15084977583451706,
+      "synthetic_vs_hardest_real_delta": -0.018064784563400528,
+      "fraction_synthetic_gt_hardest_real": 0.004261363636363636,
+      "synthetic_gate_active_fraction": 1.0,
+      "mean_positive_cosine": 0.1445064792385349,
+      "mean_offdiagonal_cosine": 0.09474892624012836,
+      "mean_synthetic_cosine": 0.13278499071474198,
+      "median_positive_cosine": 0.143846387987013,
+      "median_offdiagonal_cosine": 0.09654651988636363,
+      "transport_total_mass": 0.9999834152011128,
+      "transport_max_row_marginal_error": 5.82974912090735e-05,
+      "transport_max_column_marginal_error": 5.627393287110638e-05,
+      "transport_fraction_mass_removed": 0.0,
+      "ot_relative_loss": 0.03808650449402146,
+      "base_row_logsumexp_mean": 16.75117519923619,
+      "augmented_row_logsumexp_mean": 16.789261731234465,
+      "synthetic_logit_minus_base_lse_mean": -3.4753161374624675,
+      "weighted_ot_relative_loss": 0.01904325224701073,
+      "total_trainable_gradient_norm": 15.75215341458831,
+      "learned_logit_scale": 99.98011779785156,
+      "gap_gate_state_fractions": {
+        "fully_active": 1.0
+      }
+    },
+    "evaluation": {
+      "canonical_retrieval": {
+        "text_to_image": {
+          "r_at_1": 1.8294787034392357,
+          "r_at_5": 6.213324144482613,
+          "r_at_10": 10.182947665452957
+        },
+        "image_to_text": {
+          "r_at_1": 2.0193303003907204,
+          "r_at_5": 6.420435011386871,
+          "r_at_10": 10.096652060747147
+        }
+      },
+      "all_caption_retrieval": {
+        "text_to_image": {
+          "r_at_1": 1.316879503428936,
+          "r_at_5": 5.226096138358116,
+          "r_at_10": 8.981705456972122
+        },
+        "image_to_text": {
+          "r_at_1": 2.6924405246973038,
+          "r_at_5": 8.767690509557724,
+          "r_at_10": 14.601311087608337
+        }
+      },
+      "species": {
+        "top_1_accuracy": 0.437176376581192,
+        "top_5_accuracy": 0.762167751789093,
+        "positive_species_vs_nearest_wrong_margin": {
+          "count": 5794,
+          "mean": -0.003037571179216633,
+          "std": 0.02532826430839961,
+          "min": -0.13306230306625366,
+          "q05": -0.045069827139377586,
+          "q25": -0.018525928258895874,
+          "median": -0.003333866596221924,
+          "q75": 0.012897726148366928,
+          "q95": 0.03852840438485144,
+          "max": 0.07886669039726257
+        },
+        "fraction_positive_species_margin_lt_0": 0.5628235936164856
+      },
+      "validation_image_count": 5794,
+      "validation_caption_count": 57940,
+      "species_prompt": "a photo of a {species_name}"
+    }
+  },
+  "epoch_zero": {
+    "epoch": 0,
+    "global_step": 0,
+    "training": null,
+    "evaluation": {
+      "canonical_retrieval": {
+        "text_to_image": {
+          "r_at_1": 0.6558508612215519,
+          "r_at_5": 1.933034136891365,
+          "r_at_10": 3.261995315551758
+        },
+        "image_to_text": {
+          "r_at_1": 0.8974801748991013,
+          "r_at_5": 2.9513290151953697,
+          "r_at_10": 4.88436296582222
+        }
+      },
+      "all_caption_retrieval": {
+        "text_to_image": {
+          "r_at_1": 0.4573696758598089,
+          "r_at_5": 1.6689678654074669,
+          "r_at_10": 2.8822919353842735
+        },
+        "image_to_text": {
+          "r_at_1": 1.5015533193945885,
+          "r_at_5": 4.573696851730347,
+          "r_at_10": 7.248878479003906
+        }
+      },
+      "species": {
+        "top_1_accuracy": 0.5160511136054993,
+        "top_5_accuracy": 0.8305143117904663,
+        "positive_species_vs_nearest_wrong_margin": {
+          "count": 5794,
+          "mean": 0.0008333482087419738,
+          "std": 0.02752720307636669,
+          "min": -0.16066257655620575,
+          "q05": -0.04043209999799728,
+          "q25": -0.013092637062072754,
+          "median": 0.0009474605321884155,
+          "q75": 0.016860246658325195,
+          "q95": 0.043838644027709955,
+          "max": 0.08689481019973755
+        },
+        "fraction_positive_species_margin_lt_0": 0.4839489161968231
+      },
+      "validation_image_count": 5794,
+      "validation_caption_count": 57940,
+      "species_prompt": "a photo of a {species_name}"
+    }
+  },
+  "device": {
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-40GB",
+    "total_vram_mib": 40441.375
+  },
+  "data_exclusion": {
+    "original_training_count": 5994,
+    "diagnostic_exclusion_count": 1024,
+    "final_training_count": 4970,
+    "intersection_count": 0,
+    "holdout_path": "/content/otco/configs/cub200_clip_diagnostic_holdout_indices.json"
+  },
+  "trainable_parameters": {
+    "policy": "projections_last_blocks_logit_scale",
+    "trainable_parameter_count": 10895617,
+    "trainable_tensor_count": 35,
+    "total_parameter_count": 151277313,
+    "parameters": [
+      {
+        "name": "clip_model.logit_scale",
+        "numel": 1
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.k_proj.weight",
+        "numel": 262144
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.k_proj.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.v_proj.weight",
+        "numel": 262144
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.v_proj.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.q_proj.weight",
+        "numel": 262144
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.q_proj.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.out_proj.weight",
+        "numel": 262144
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.out_proj.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.layer_norm1.weight",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.layer_norm1.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.mlp.fc1.weight",
+        "numel": 1048576
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.mlp.fc1.bias",
+        "numel": 2048
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.mlp.fc2.weight",
+        "numel": 1048576
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.mlp.fc2.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.layer_norm2.weight",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.layer_norm2.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.k_proj.weight",
+        "numel": 589824
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.k_proj.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.v_proj.weight",
+        "numel": 589824
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.v_proj.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.q_proj.weight",
+        "numel": 589824
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.q_proj.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.out_proj.weight",
+        "numel": 589824
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.out_proj.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.layer_norm1.weight",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.layer_norm1.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.mlp.fc1.weight",
+        "numel": 2359296
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.mlp.fc1.bias",
+        "numel": 3072
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.mlp.fc2.weight",
+        "numel": 2359296
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.mlp.fc2.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.layer_norm2.weight",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.layer_norm2.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.visual_projection.weight",
+        "numel": 393216
+      },
+      {
+        "name": "clip_model.text_projection.weight",
+        "numel": 262144
+      }
+    ]
+  }
+}

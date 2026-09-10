@@ -1,0 +1,418 @@
+# Earlier experiments: ResNet-50 + DistilBERT
+
+[← Project overview](../README.md) · [CLIP experiments](clip-experiments.md) · [Running experiments](running-experiments.md)
+
+These are the earlier SigLIP-style experiments, retained from the pre-CLIP README. “Best,” “current,” and proposed next steps in the historical discussion below refer to that experiment series, not to the later CLIP study. Gating labels describe the original diagnostic heuristics; they do not prove a gradient is useful. Results are exploratory and mostly single-seed.
+
+The epoch tables and historical interpretations are preserved. The old explanation of logit bias has been corrected in [cost-scale notes](#historical-cost-scale-observations). Commands and diagnostic protocols now live in [the running guide](running-experiments.md).
+
+## Results
+
+### Flickr30K — CONCLUDED NULL RESULT
+
+> **Finding: OT-Mix adds no clear signal on Flickr30K. Random in-batch negatives are already too easy or too semantically distant for OT to find useful transport structure.**
+
+ResNet-50 + DistilBERT, 512-d, canonical R@1 using the first caption and full validation pool:
+
+| Experiment | Loss | Start | Epochs | Best Avg R@1 | Verdict |
+|---|---|---|---|---|
+| Baseline | SigLIP | scratch | 50 | 32.10% | reference |
+| OT-Mix fine-tune, α=0.05 | SigLIP + OT | baseline ckpt | 30 | 32.50% at ep28 | null — matched by continued baseline |
+| Continued baseline | SigLIP | baseline ckpt | 30 | 32.50% at ep17 | null — same gain, no OT |
+| OT-Mix scratch, α=0.05 adaptive | SigLIP + OT | scratch | 50 | 31.25% | worse than baseline |
+
+The apparent +0.40% from OT-Mix fine-tuning is explained by extra gradient steps. SigLIP alone, from the same checkpoint, reaches the same result 11 epochs faster. This suggests Flickr30K is not the right regime for OT-Mix with the current encoders and batching setup.
+
+---
+
+### CUB-200 — MAIN EXPERIMENT
+
+Fine-grained bird retrieval: 200 species, 10 Reed et al. attribute-rich captions per image, 5794-image validation pool. Within-class negatives are visually and semantically confusable, making CUB-200 a better testbed for OT-based hard-negative generation.
+
+All CUB runs use:
+
+- ResNet-50 + DistilBERT
+- 512-d shared embedding space
+- `both_last_layer` unfreezing
+- batch size 64
+- 50 epochs
+- seed 42 unless otherwise noted
+
+---
+
+## CUB-200 Summary
+
+| Setting | Batching | OT Schedule | Final / official Avg R@1 | Best Avg R@1 | Final T→I R@1 | Final I→T R@1 | Verdict |
+|---|---|---|---:|---:|---:|---:|---|
+| **OT-Mix cached-pool gated** | Random cached pool, N=128 | Adaptive OT + conditional alpha over B texts × 128 cached images | **1.48%** | **1.48% @ best checkpoint/final eval** | **1.36%** | 1.61% | Best observed run |
+| **OT-Mix adaptive gated** | Random batch | Adaptive OT + conditional alpha over B texts × B live batch images | **1.44%** | **1.44% @ best checkpoint/final eval** | **1.19%** | 1.69% | Best batch-local run |
+| OT-Mix adaptive gated, fresh plan | Random batch | Same as adaptive gated, but `update_freq=1` | 1.41% | 1.41% @ ep46/best-checkpoint eval | 1.19% | 1.62% | No gain from per-step recomputation |
+| Baseline | Random | None | 1.38% | 1.38% @ ep50 | 1.05% | **1.71%** | Strongest non-OT baseline |
+| OT-Mix adaptive | Random | Adaptive OT, α=0.05 | 1.35% best eval / 1.28% ep50 | 1.35% @ ep49 | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | Competitive, not a win |
+| OT-Mix mixed-gated | 25% stratified + 75% random | Adaptive OT + conditional alpha | 1.33% | 1.33% @ best checkpoint/final eval | **1.24%** | 1.42% | Best T→I, but lower Avg R@1 |
+| OT-Mix mixed batching | 25% stratified + 75% random | Same as adaptive | 1.32% | 1.32% @ ep50 | 1.12% | 1.52% | Best ungated OT variant |
+| OT-Mix stratified | 100% stratified | More permissive OT | incomplete | incomplete | — | — | Confounded diagnostic run |
+
+**Main conclusion:** OT-Mix can find meaningful hard negatives on CUB-200. Ungated OT-Mix does not reliably beat the baseline, and mixed-gated OT-Mix improves Text → Image but does not improve the overall average. **Adaptive gated OT-Mix with random batching remains the best batch-local run**, while **cached-pool gated OT-Mix is the best observed run overall**, reaching 1.48% Avg R@1 vs. 1.38% for the baseline. This is a promising one-seed result, not yet a general claim.
+
+---
+
+#### Baseline — COMPLETE
+
+Random batching. Standard SigLIP-style baseline, no OT term.
+
+| Ep | T→I R@1 | I→T R@1 | Avg R@1 |
+|---|---:|---:|---:|
+| 10 | 0.38% | 0.45% | 0.41% |
+| 20 | 0.64% | 0.91% | 0.78% |
+| 30 | 0.81% | 1.38% | 1.10% |
+| 40 | 0.81% | 1.12% | 0.97% |
+| 45 | 0.93% | 1.55% | 1.24% |
+| 47 | 1.12% | 1.50% | 1.31% |
+| **50** | **1.05%** | **1.71%** | **1.38%** |
+
+> **Verdict:** Strongest non-OT baseline. The baseline is non-monotone but consolidates well late in training, finishing with 1.38% canonical Avg R@1.
+
+---
+
+#### OT-Mix Adaptive — COMPLETE
+
+Random batching. Uses `gate_sim=-4.0`, `entropy_threshold=3.0`, `alpha=0.05`, and adaptive OT warmup.
+
+| Ep | T→I R@1 | I→T R@1 | Avg R@1 | vs Baseline same ep |
+|---|---:|---:|---:|---:|
+| 10 | 0.35% | 0.59% | 0.47% | +0.06 |
+| 20 | 0.57% | 1.12% | 0.85% | +0.07 |
+| 30 | 0.81% | 1.42% | 1.11% | +0.01 |
+| 40 | 0.88% | 0.95% | 0.91% | -0.06 |
+| 45 | 0.79% | 1.55% | 1.17% | -0.07 |
+| 47 | 0.93% | 1.55% | 1.24% | -0.07 |
+| **49** | **0.98%** | **1.71%** | **1.35%** | **+0.06** |
+| 50 | 0.93% | 1.62% | 1.28% | -0.10 |
+
+> **Verdict:** Competitive, but not a clean win. OT-Mix adaptive confirms that OT can find meaningful hard-negative structure on CUB-200 and produces a slightly faster early trajectory. However, the baseline consolidates better late and finishes higher than the epoch-50 adaptive checkpoint. The best adaptive evaluation reaches 1.35% Avg R@1, still below baseline's 1.38%.
+
+---
+
+#### OT-Mix Mixed Batching — COMPLETE
+
+Mixed batching uses 25% stratified samples and 75% random samples:
+
+- 4 classes × 4 images = 16 within-class hard-negative candidates
+- 48 random images from the full 200-class pool
+
+The OT schedule is identical to OT-Mix adaptive:
+
+- `gate_sim=-4.0`
+- `entropy_threshold=3.0`
+- `alpha=0.05`
+
+Only the batching strategy differs from OT-Mix adaptive, making this a cleaner test of whether adding a small amount of within-class structure improves ungated OT-Mix.
+
+| Ep | T→I R@1 | I→T R@1 | Avg R@1 | Note |
+|---|---:|---:|---:|---|
+| 10 | — | — | 0.45% | near adaptive |
+| 15 | — | — | 0.68% | ahead of baseline/adaptive |
+| 20 | — | — | 0.89% | ahead at same epoch |
+| 21 | — | — | 0.98% | early high point |
+| 22 | — | — | 0.69% | sharp dip |
+| 29 | 0.10% | 1.10% | 0.60% | T→I rank-1 wobble |
+| 30 | 0.72% | 1.16% | 0.94% | recovery |
+| 31 | 0.95% | 1.38% | 1.16% | new high |
+| 35 | 0.98% | 1.14% | 1.06% | stable recovery |
+| 40 | 0.72% | 1.14% | 0.93% | dip |
+| 45 | — | — | 1.11% | late recovery begins |
+| 46 | — | — | 1.13% | improving |
+| 47 | — | — | 1.18% | improving |
+| 48 | — | — | 1.29% | near final level |
+| 49 | — | — | 1.27% | slight dip |
+| **50** | **1.12%** | **1.52%** | **1.32%** | best mixed checkpoint |
+
+> **Verdict:** Best ungated OT variant, but still below baseline. Mixed batching improves access to meaningful fine-grained hard negatives and finishes stronger than ungated adaptive, but it does not beat the baseline.
+
+---
+
+#### OT-Mix Adaptive Gated — COMPLETE
+
+Same base configuration as OT-Mix adaptive:
+
+- random batching
+- `gate_sim=-4.0`
+- `entropy_threshold=3.0`
+- `alpha=0.05`
+- seed 42
+
+Adds per-step conditional alpha. OT loss is:
+
+- suppressed when the plan is diffuse: `coupling_entropy > 3.0`
+- suppressed when the synthetic is too easy: `pos_selected_gap > +0.10`
+- downweighted to 25% when the synthetic dominates the positive: `pos_selected_gap < -0.07`
+
+| Stage | T→I R@1 | I→T R@1 | Avg R@1 | Note |
+|---|---:|---:|---:|---|
+| Epoch 10 | 0.38% | 0.47% | 0.42% | slightly slower than ungated adaptive |
+| Epoch 11 | 0.45% | 0.66% | 0.55% | improves cleanly |
+| Epoch 12 | 0.52% | 0.74% | 0.63% | steady |
+| Epoch 13 | 0.57% | 0.76% | 0.66% | steady |
+| Epoch 14 | 0.52% | 0.83% | 0.67% | steady |
+| Epoch 16 | 0.47% | 0.90% | 0.68% | steady |
+| Epoch 48 / best checkpoint | — | — | **1.44%** | best observed checkpoint |
+| Epoch 50 | 1.05% | 1.59% | 1.32% | lower than best checkpoint |
+| Final evaluation | **1.19%** | **1.69%** | **1.44%** | official best-checkpoint eval |
+
+> **Verdict:** Best batch-local CUB-200 run. Adaptive gated OT-Mix is the first OTCO variant to beat the baseline on canonical Avg R@1: 1.44% vs. 1.38%. The improvement is small and should be validated across seeds, but the intermediate logs show that the gate is doing the intended thing: suppressing diffuse and too-easy OT states while preserving useful near-boundary hard negatives.
+
+---
+
+#### OT-Mix Adaptive Gated, Fresh Plan (`update_freq=1`) — COMPLETE
+
+Clean one-seed ablation of plan freshness. This run is identical to `cub200_softmax_mix_adaptive_gated` except that the batch-local transport plan is recomputed every active batch (`update_freq=1` instead of 10); Colab used the intentional `num_workers=2` runtime override.
+
+| Metric | `update_freq=10` | `update_freq=1` | Delta |
+|---|---:|---:|---:|
+| Best-checkpoint canonical T→I R@1 | 1.19% | 1.19% | 0.00pp |
+| Best-checkpoint canonical I→T R@1 | 1.69% | 1.62% | -0.07pp |
+| Best-checkpoint canonical Avg R@1 | **1.44%** | 1.41% | -0.03pp |
+| Best epoch | 48 | 46 | -2 epochs |
+| Epoch-50 canonical Avg R@1 | 1.32% | 1.34% | +0.02pp |
+
+> **Verdict:** Recomputing OT every step showed no measurable benefit. The fresh-plan run remained slightly above the 1.38% baseline, but finished 0.03pp below the otherwise identical adaptive-gated run. With one seed and such a small delta, this is best treated as a null result: candidate-pool quality remains a more plausible bottleneck than stale batch-local plans.
+
+---
+
+#### OT-Mix Cached-Pool Gated — COMPLETE
+
+This is the Phase III extension of adaptive gated OT-Mix. Instead of running OT over the current batch only, it keeps the same adaptive gating and alpha ramping but replaces the OT support with a larger random cached image pool:
+
+```text
+B texts × N=128 detached cached image embeddings
+```
+
+At the start of each epoch, image embeddings are cached with `model.eval()` and `torch.no_grad()`. During training, each step samples 128 cached image embeddings while excluding the current batch positives by image ID. The synthetic negative is built from detached cached image embeddings, so the synthetic OT loss primarily updates the text encoder. The vision encoder still receives gradients through the base contrastive loss.
+
+| Setting | Pool | OT Support | Image-side synthetic grad | Avg R@1 | Purpose |
+|---|---:|---|---|---:|---|
+| Adaptive gated OT-Mix | current batch | B × B | yes | 1.44% | best batch-local reference |
+| **Cached-pool gated OT-Mix** | random cached pool, N=128 | B × 128 | no | **1.48%** | test whether larger random support improves OT candidate quality |
+
+> **Verdict:** Cached-pool gated OT-Mix improves the best observed Avg R@1 from 1.44% to 1.48%. The gain is driven by a stronger Text → Image result, while Image → Text remains below the baseline and batch-local gated run. This supports the Phase III hypothesis that larger random OT support can improve candidate quality, but the detached pool still creates an asymmetric synthetic-loss path. The next run should re-forward the top OT contributors live to test whether the cached-pool gain can be kept while restoring image-side synthetic gradients.
+
+---
+
+## Intermediate Log Analysis
+
+The CUB-200 results should not be read only through recall. The intermediate logs show what OT is doing mechanistically.
+
+### Useful OT regime
+
+Across sampled/logged diagnostic steps, ungated mixed batching frequently produces the desired OT behavior:
+
+- selected synthetic negatives are usually rank 1–3 during active useful steps
+- coupling entropy is sharp, usually around 2.1–2.6
+- `Pos - Selected Gap` is close to the boundary, often around -0.05 to 0.00
+- synthetic loss is positive and contributes to training
+
+Representative ungated mixed-batching examples:
+
+| Epoch / step | Synthetic loss | Selected rank | Pos - Selected Gap | Entropy | Read |
+|---|---:|---:|---:|---:|---|
+| ep31 / step 2800 | 0.0643 | mean 1.67, median 1 | -0.0481 | 2.2995 | Useful hard-negative regime |
+| ep40 / step 3700 | 0.1040 | mean 2.70, median 2 | -0.0255 | 2.3280 | Useful hard-negative regime |
+| ep50 / step 4600 | 0.0868 | mean 1.67, median 1 | -0.0435 | 2.2182 | Useful hard-negative regime |
+
+This confirms that OT is not random on CUB-200. It can find fine-grained, near-boundary hard negatives.
+
+### Stale / easy OT regime
+
+Ungated runs also show repeated stale or too-easy OT states:
+
+- synthetic loss is zero or near-zero
+- selected rank jumps to ~30+
+- `Pos - Selected Gap` becomes strongly positive, often around +0.24 to +0.27
+- the selected synthetic is no longer a useful hard negative
+
+Representative examples from ungated mixed batching:
+
+| Epoch / step | Synthetic loss | Selected rank | Pos - Selected Gap | Read |
+|---|---:|---:|---:|---|
+| ep31 / step 2882 | 0.0000 | mean 32.25, median 31 | +0.2489 | Too easy / stale |
+| ep40 / step 3719 | 0.0000 | mean 29.25, median 28 | +0.2546 | Too easy / stale |
+| ep50 / step 4649 | 0.0000 | mean 32.77 | +0.2710 | Too easy / stale |
+
+This is the main training-dynamics issue. OT can find useful hard negatives, but fixed-alpha OT-Mix does not control when OT pressure is actually useful.
+
+---
+
+## Gated OT Analysis
+
+The adaptive gated run directly tests whether conditional OT pressure can preserve useful OT states while suppressing bad ones.
+
+### Early diffuse plans are suppressed
+
+| Epoch / step | Entropy | Selected rank | Gap | Scheduled α | Effective α | Bucket |
+|---|---:|---:|---:|---:|---:|---|
+| ep1 / step 92 | 3.1798 | 33.77 | +0.0002 | 0.0046 | **0.0000** | diffuse |
+| ep2 / step 100 | 3.4348 | 31.69 | +0.0004 | 0.0050 | **0.0000** | diffuse |
+| ep2 / step 185 | 3.2303 | 38.12 | +0.0011 | 0.0092 | **0.0000** | diffuse |
+| ep3 / step 278 | 3.0487 | 28.83 | -0.0001 | 0.0139 | **0.0000** | diffuse |
+
+These are exactly the early-training states where ungated OT would inject noisy synthetic-negative pressure.
+
+### Useful OT is allowed
+
+| Epoch / step | Synthetic loss | Selected rank | Gap | Entropy | Effective α | Bucket |
+|---|---:|---:|---:|---:|---:|---|
+| ep10 / step 900 | 0.0761 | mean 2.14, median 1 | -0.0549 | 2.7167 | **0.0450** | useful |
+| ep12 / step 1100 | 0.0638 | mean 1.94, median 1 | -0.0537 | 2.6133 | **0.0500** | useful |
+| ep17 / step 1500 | 0.0763 | mean 2.28, median 1 | -0.0485 | 2.5460 | **0.0500** | useful |
+| ep19 / step 1700 | 0.0582 | mean 2.36, median 2 | -0.0441 | 2.4271 | **0.0500** | useful |
+
+This is the intended regime: rank-1/rank-2 selected negatives, sharp enough plans, and `Pos - Selected Gap` near the decision boundary.
+
+### Too-easy states are suppressed
+
+| Epoch / step | Selected rank | Gap | Entropy | Effective α | Bucket |
+|---|---:|---:|---:|---:|---|
+| ep8 / step 743 | 32.72 | +0.1138 | 2.9532 | **0.0000** | too_easy |
+| ep10 / step 929 | 30.41 | +0.1367 | 2.7423 | **0.0000** | too_easy |
+| ep12 / step 1115 | 33.08 | +0.2055 | 2.6560 | **0.0000** | too_easy |
+| ep19 / step 1766 | 30.06 | +0.2344 | 2.4640 | **0.0000** | too_easy |
+
+This is the key improvement over ungated OT-Mix. The selected synthetic is no longer near the boundary, so OT pressure is removed.
+
+### Parsed gated diagnostic summary
+
+Sampled/logged OT diagnostic steps from adaptive gated:
+
+| Bucket | Count | Mean effective α | Mean selected rank | Mean `Pos - Selected Gap` | Mean entropy | Read |
+|---|---:|---:|---:|---:|---:|---|
+| Useful | 38 | 0.0478 | 3.57 | -0.0354 | 2.3875 | OT correctly on |
+| Too easy | 33 | 0.0000 | 32.39 | +0.2445 | 2.3518 | OT correctly off |
+| Diffuse | 12 | 0.0000 | 23.81 | -0.0067 | 3.2163 | OT correctly off |
+| Too hard | 1 | 0.0125 | 2.25 | -0.0700 | 2.5533 | OT correctly downweighted |
+
+**Interpretation:** Adaptive gating turns OT-Mix from a fixed auxiliary loss into a controller. The useful signal is not just “synthetic negatives exist,” but that OT pressure is applied only when plan quality and margin geometry indicate that the synthetic negative is informative.
+
+---
+
+## Directional Retrieval Analysis
+
+Adaptive gated improves the average primarily by improving Text → Image while keeping Image → Text close to baseline. Mixed-gated produces a strong Text → Image result, but loses too much Image → Text to improve the average. Cached-pool gated produces the strongest Text → Image result and the best overall average:
+
+| Setting | Final / official T→I R@1 | Final / official I→T R@1 | Final / official Avg R@1 |
+|---|---:|---:|---:|
+| **OT-Mix cached-pool gated** | **1.36%** | 1.61% | **1.48%** |
+| **OT-Mix adaptive gated** | 1.19% | 1.69% | 1.44% |
+| OT-Mix adaptive gated, `update_freq=1` | 1.19% | 1.62% | 1.41% |
+| Baseline | 1.05% | **1.71%** | 1.38% |
+| OT-Mix mixed-gated | **1.24%** | 1.42% | 1.33% |
+| OT-Mix adaptive | 0.98% best eval / 0.93% ep50 | 1.71% best eval / 1.62% ep50 | 1.35% best eval / 1.28% ep50 |
+| OT-Mix mixed | 1.12% | 1.52% | 1.32% |
+
+This suggests larger random cached-pool support strengthens the Text → Image direction more effectively than mixed batching, while still preserving enough Image → Text performance to improve the overall average.
+
+---
+
+## Stability Analysis
+
+Across epochs 30–50 for the completed ungated runs:
+
+| Setting | Mean Avg R@1 | Std | Min | Max | Final |
+|---|---:|---:|---:|---:|---:|
+| Baseline | **1.109%** | 0.134 | 0.87 | **1.38** | **1.38** |
+| OT-Mix adaptive | 1.063% | 0.134 | 0.82 | 1.35 | 1.28 |
+| OT-Mix mixed | 1.089% | **0.110** | 0.93 | 1.32 | 1.32 |
+
+Mixed looked unstable earlier, but from epoch 30 onward it is actually the least variable of the ungated runs. Its limitation is not late collapse. Its limitation is that the final ceiling is still lower than baseline.
+
+This stability summary only covers epochs 30–50; earlier mixed training was more volatile, including the epoch-29 Text → Image wobble.
+
+For adaptive gated, the best checkpoint reaches 1.44%, but the epoch-50 checkpoint falls to 1.32%. Cached-pool gated reaches the best observed result at 1.48%, but should also be analyzed for best-vs-final behavior. This means checkpoint selection matters. The next analysis should compare epoch-to-epoch variance across the gated and cached-pool runs once clean parsed tables are available.
+
+---
+
+#### OT-Mix Stratified — DIAGNOSTIC / INCOMPLETE
+
+Stratified batching: K=16 classes × 4 images = B=64. Uses `gate_sim=-4.5`, `entropy_threshold=3.5`.
+
+| Ep | Avg R@1 | vs Baseline same ep |
+|---|---:|---:|
+| 10 | ~0.41% | ≈ flat |
+| 16 | ~0.60% | -0.13% |
+| 21 | 0.71% | -0.16% |
+
+> **Verdict:** Inconclusive and confounded. Two things changed from adaptive: stratified batching and a more permissive OT schedule. Because both changed at once, underperformance cannot be cleanly attributed to batching alone. This run is useful for diagnostics but not for a clean design conclusion.
+
+---
+
+## Experiment Logs
+
+Chronological research logs are in [`experiment_logs/`](../experiment_logs/):
+
+| Date | File | Summary |
+|---|---|---|
+| 2026-03-11 | [`11-3-26-logs.md`](../experiment_logs/11-3-26-logs.md) | OT diagnostic on Flickr8K: negatives are semantically plausible but false-negative pressure is high, with P(neg1 > GT) = 0.65 |
+| 2026-04-17 | [`17-4-26-logs.md`](../experiment_logs/17-4-26-logs.md) | Plan to re-run diagnostics after better encoder convergence; hypothesis that improved geometry reduces false-negative pressure |
+| 2026-04-22 | [`22-4-26-logs.md`](../experiment_logs/22-4-26-logs.md) | Key finding: cosine-space OT is degenerate with SigLIP embeddings. Logit-space OT fixes this. Cosine entropy ≈ 3.33 with rank ≈ 17; logit entropy ≈ 2.0–2.5 with rank ≈ 1–2 |
+| 2026-04-23 | [`23-4-26-logs.md`](../experiment_logs/23-4-26-logs.md) | α=0.1 over-destabilizes a converged Flickr30K model. α=0.05 reduces the dip and peaks at 32.50% |
+| 2026-04-24 | [`24-4-26-logs.md`](../experiment_logs/24-4-26-logs.md) | Null result confirmed: continued baseline reaches 32.50% at epoch 17, 11 epochs before OT-Mix. Decision to move to CUB-200 |
+| 2026-04-26 | [`26-4-26-logs.md`](../experiment_logs/26-4-26-logs.md) | CUB-200 ungated analysis: baseline remained strongest; mixed batching was best ungated OT variant; OT found rank-1/rank-2 hard negatives but did not yet beat baseline |
+| 2026-04-27 | [`27-4-26-logs.md`](../experiment_logs/27-4-26-logs.md) | Adaptive gated OT-Mix produced the best batch-local CUB-200 result so far: 1.44% Avg R@1. Gating suppressed diffuse and too-easy OT states while preserving useful rank-1/rank-2 synthetic negatives |
+| 2026-05-06 | cached-pool run | Cached-pool gated OT-Mix reached the best observed CUB-200 result so far: 1.48% Avg R@1 with random N=128 cached image pool |
+| 2026-08-30 | fresh-plan ablation | Adaptive-gated OT-Mix with `update_freq=1` reached 1.41% Avg R@1 versus 1.44% for `update_freq=10`; per-step batch-local plan recomputation showed no measurable benefit |
+
+---
+
+## Technical Notes
+
+### Historical cost-scale observations
+
+The earlier experiments recorded cosine-space entropy ≈3.33 with selected rank ≈17, versus logit-space entropy ≈2.0–2.5 with rank ≈1–2. These observations motivated the historical logit-space settings, but they do not establish that logit-space OT is intrinsically superior.
+
+**Clarification from the CLIP scale controls:** a shared additive logit bias does not compress cosine similarities. Cost scale relative to entropic regularization changes the transport problem; matching that ratio makes raw-cosine and scaled-logit plans approximately equivalent. The sparse solver also needs a marginal-feasibility audit. See [CLIP scale diagnostics](clip-experiments.md#frozen-diagnostics).
+
+### OT-Mix Hyperparameters
+
+| Parameter | Description |
+|---|---|
+| `top_k` | Local neighborhood size for OT support, usually 32 |
+| `ot_eps` | Sinkhorn entropy regularization, calibrated for logit space, usually 0.7 |
+| `sinkhorn_iters` | Sinkhorn iterations, usually 30 |
+| `update_freq` | Steps between OT plan recomputation, usually 10 |
+| `gate_sim` | Logit-space threshold; synthetics below this are excluded from the OT loss |
+| `alpha` | Scheduled max weight of OT loss; ramps linearly over 1000 steps after `ot_ready` |
+| `alpha_effective` | Actual per-step OT weight after entropy/gap gating |
+| `adaptive_warmup` | Waits for coupling entropy below `entropy_threshold` before activating OT |
+| `entropy_threshold` | OT activation/gating threshold; log(32) ≈ 3.47 is uniform, healthy range is roughly 2.0–2.5 |
+| `gap_suppress_easy` | Suppress OT when `pos_selected_gap` is above this threshold |
+| `gap_downweight_hard` | Downweight OT when `pos_selected_gap` is below this threshold |
+| `hard_alpha_scale` | Scale factor for too-hard synthetic negatives, default 0.25 |
+| `pool_size` | Number of cached image embeddings sampled per step for cached-pool OT-Mix, currently 128 |
+| `image_pool` | Detached epoch-cached image embeddings used as the OT support in cached-pool mode |
+
+---
+
+
+## Historical follow-up ideas
+
+Future work should test whether the cached-pool and gated OT results are robust and whether transport structure can be made more persistent across training.
+
+Priority next steps:
+
+- repeat cached-pool gated and adaptive gated across additional seeds
+- run Phase III v2: cached-pool candidate mining with live re-forwarded top OT contributors
+- compare cached-pool N=128 against N=256 and N=512
+- add selected-rank-aware gating as a possible third condition
+- parse epoch-to-epoch stability for the gated and cached-pool runs
+- study whether persistent transport structure can reduce stale/easy OT states
+
+Rather than storing large banks of generated negatives, a future version may store compact transport information that captures how hard-negative relationships evolve over time.
+
+This direction could provide a more stable way to study:
+
+- hard-negative geometry
+- curriculum effects
+- plan freshness
+- cross-modal alignment over training
+
+These ideas are exploratory and not yet implemented.

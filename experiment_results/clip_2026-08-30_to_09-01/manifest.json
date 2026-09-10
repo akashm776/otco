@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "collection": "CLIP CUB-200 experiments collected August 30–September 1, 2026",
+  "import_date": "2026-09-10",
+  "source": "User-provided local Downloads archives",
+  "normalization": "Imported text retains source contents with trailing whitespace normalized to one final newline. JSON/JSONL values are unchanged.",
+  "files": [
+    {
+      "path": "training/baseline/summary.json",
+      "source_archive": "cub200_clip_vit_b32_baseline_results (1).zip",
+      "source_member": "cub200_clip_vit_b32_baseline/summary.json",
+      "source_sha256": "b4e54670fc578069fc21e6ba5edc90ede917987e5bec8ff9a971b0b6a104db60",
+      "imported_sha256": "8277e5575ded95a7990d89fab633525047d9fea936aecbacf6853f97bfcb6104"
+    },
+    {
+      "path": "training/baseline/metrics.jsonl",
+      "source_archive": "cub200_clip_vit_b32_baseline_results (1).zip",
+      "source_member": "cub200_clip_vit_b32_baseline/metrics.jsonl",
+      "source_sha256": "ac6f57acbc1e11ca683819bfad765d008b251901d3f6a7615ffa272ab9617511",
+      "imported_sha256": "ac6f57acbc1e11ca683819bfad765d008b251901d3f6a7615ffa272ab9617511"
+    },
+    {
+      "path": "training/baseline/resolved_config.yaml",
+      "source_archive": "cub200_clip_vit_b32_baseline_results (1).zip",
+      "source_member": "cub200_clip_vit_b32_baseline/resolved_config.yaml",
+      "source_sha256": "9f4dd6c93987382b5a6597ceba33209c2e6add9d0483520140f4afa9382eb0b2",
+      "imported_sha256": "9f4dd6c93987382b5a6597ceba33209c2e6add9d0483520140f4afa9382eb0b2"
+    },
+    {
+      "path": "training/ot_absolute/summary.json",
+      "source_archive": "cub200_clip_vit_b32_otco_rawcos_gap_gate_results.zip",
+      "source_member": "cub200_clip_vit_b32_otco_rawcos_gap_gate/summary.json",
+      "source_sha256": "da821830345b5ef4c130a3521f87dee3f3ef7199ce76d1049f50cf0e39ff41d7",
+      "imported_sha256": "93ce96ec442ab49306028cc655cea702de9ddba8feb7ebe62bb0b4b0e69bd746"
+    },
+    {
+      "path": "training/ot_absolute/metrics.jsonl",
+      "source_archive": "cub200_clip_vit_b32_otco_rawcos_gap_gate_results.zip",
+      "source_member": "cub200_clip_vit_b32_otco_rawcos_gap_gate/metrics.jsonl",
+      "source_sha256": "2c0bd4fbfddb7545f8c0ad8f0ba9f5895c38f69522884bf3e00244e84da6af5c",
+      "imported_sha256": "2c0bd4fbfddb7545f8c0ad8f0ba9f5895c38f69522884bf3e00244e84da6af5c"
+    },
+    {
+      "path": "training/ot_absolute/resolved_config.yaml",
+      "source_archive": "cub200_clip_vit_b32_otco_rawcos_gap_gate_results.zip",
+      "source_member": "cub200_clip_vit_b32_otco_rawcos_gap_gate/resolved_config.yaml",
+      "source_sha256": "d7c239e18450f217e0becb14729e2fb4d276d9984d3da1dab84d5f1633d8f048",
+      "imported_sha256": "d7c239e18450f217e0becb14729e2fb4d276d9984d3da1dab84d5f1633d8f048"
+    },
+    {
+      "path": "training/ot_relative_a005/summary.json",
+      "source_archive": "cub200_clip_vit_b32_otco_relative_denominator_results.zip",
+      "source_member": "cub200_clip_vit_b32_otco_relative_denominator/summary.json",
+      "source_sha256": "231f1211175d137d13386ef7478f147e2ccd54689ca5ccb0c7c7a19baf0c35de",
+      "imported_sha256": "f2a4a5eec3ba56afdebd2a35a52f15586cfb8990947b5c8fa9cb5debe8826dbb"
+    },
+    {
+      "path": "training/ot_relative_a005/metrics.jsonl",
+      "source_archive": "cub200_clip_vit_b32_otco_relative_denominator_results.zip",
+      "source_member": "cub200_clip_vit_b32_otco_relative_denominator/metrics.jsonl",
+      "source_sha256": "b8c52959e0238c0f9b1565fa09b3ac9646c42665a8381aa079bd4e6d99eade67",
+      "imported_sha256": "b8c52959e0238c0f9b1565fa09b3ac9646c42665a8381aa079bd4e6d99eade67"
+    },
+    {
+      "path": "training/ot_relative_a005/resolved_config.yaml",
+      "source_archive": "cub200_clip_vit_b32_otco_relative_denominator_results.zip",
+      "source_member": "cub200_clip_vit_b32_otco_relative_denominator/resolved_config.yaml",
+      "source_sha256": "66946104024b6e423955558990818dd28b3462a3afced6d01be23daae4996947",
+      "imported_sha256": "66946104024b6e423955558990818dd28b3462a3afced6d01be23daae4996947"
+    },
+    {
+      "path": "training/ot_relative_a05/summary.json",
+      "source_archive": "cub200_clip_vit_b32_otco_relative_native_strength_results.zip",
+      "source_member": "cub200_clip_vit_b32_otco_relative_native_strength/summary.json",
+      "source_sha256": "2045655113cd174fa4f8945cd71ece02aedd9c1395eea3441a0537ccb32f3190",
+      "imported_sha256": "087c984f1ebb2726d9ba80af4592a1a9701dbe67a45aa4ac608df51e2078a707"
+    },
+    {
+      "path": "training/ot_relative_a05/metrics.jsonl",
+      "source_archive": "cub200_clip_vit_b32_otco_relative_native_strength_results.zip",
+      "source_member": "cub200_clip_vit_b32_otco_relative_native_strength/metrics.jsonl",
+      "source_sha256": "0c43d76c9412f950bb708685f0ee4d7be793bcee6419b6c66500b668c23a91e2",
+      "imported_sha256": "0c43d76c9412f950bb708685f0ee4d7be793bcee6419b6c66500b668c23a91e2"
+    },
+    {
+      "path": "training/ot_relative_a05/resolved_config.yaml",
+      "source_archive": "cub200_clip_vit_b32_otco_relative_native_strength_results.zip",
+      "source_member": "cub200_clip_vit_b32_otco_relative_native_strength/resolved_config.yaml",
+      "source_sha256": "33302fcd2af1d9f6e052e835a9003e7972f1371bbf33a5175deb2ecefabad46e",
+      "imported_sha256": "33302fcd2af1d9f6e052e835a9003e7972f1371bbf33a5175deb2ecefabad46e"
+    },
+    {
+      "path": "training/uniform_top32/summary.json",
+      "source_archive": "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength_results.zip",
+      "source_member": "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength/summary.json",
+      "source_sha256": "73e0834e76e83b3cab17679ff2d5b61751d1c08f607f5c5b040281b2af3a7670",
+      "imported_sha256": "ef0a6e1e1930f92802fde9a4003af9ca8946b7caef846e0c5812aa3122914d3b"
+    },
+    {
+      "path": "training/uniform_top32/metrics.jsonl",
+      "source_archive": "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength_results.zip",
+      "source_member": "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength/metrics.jsonl",
+      "source_sha256": "a56860273b21966aaedeac1e096ba3bc95bfecf5021d77be5c437f70cca4fc2a",
+      "imported_sha256": "a56860273b21966aaedeac1e096ba3bc95bfecf5021d77be5c437f70cca4fc2a"
+    },
+    {
+      "path": "training/uniform_top32/resolved_config.yaml",
+      "source_archive": "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength_results.zip",
+      "source_member": "cub200_clip_vit_b32_uniform_barycentric_relative_native_strength/resolved_config.yaml",
+      "source_sha256": "ba3fc9407cf51f7637a29607b2e6581b7424bc41b639f5765b8f104823e50e02",
+      "imported_sha256": "ba3fc9407cf51f7637a29607b2e6581b7424bc41b639f5765b8f104823e50e02"
+    },
+    {
+      "path": "training/uniform_top8/summary.json",
+      "source_archive": "cub200_clip_vit_b32_uniform_top8_relative_native_strength_complete.zip",
+      "source_member": "outputs/summary.json",
+      "source_sha256": "97ecb385dc78bda7d37a94066f261fa8d894c953cf6ff63ad2faab771f04163d",
+      "imported_sha256": "47c7d991dd19107d76e630991855bde63ff9402e82702a89401ffdba2a815719"
+    },
+    {
+      "path": "training/uniform_top8/metrics.jsonl",
+      "source_archive": "cub200_clip_vit_b32_uniform_top8_relative_native_strength_complete.zip",
+      "source_member": "outputs/metrics.jsonl",
+      "source_sha256": "b080c48b9a3d5c64d5df371e59916ced0656e20723d6fdf398749cb9cb3e0faf",
+      "imported_sha256": "b080c48b9a3d5c64d5df371e59916ced0656e20723d6fdf398749cb9cb3e0faf"
+    },
+    {
+      "path": "training/uniform_top8/resolved_config.yaml",
+      "source_archive": "cub200_clip_vit_b32_uniform_top8_relative_native_strength_complete.zip",
+      "source_member": "outputs/resolved_config.yaml",
+      "source_sha256": "aed6cfd85269478ede86f2424f8dfd019cd676f5a6597857a9ded0cbcf4800c6",
+      "imported_sha256": "aed6cfd85269478ede86f2424f8dfd019cd676f5a6597857a9ded0cbcf4800c6"
+    },
+    {
+      "path": "training/hardest_real/summary.json",
+      "source_archive": "cub200_clip_vit_b32_hardest_real_relative_native_strength_complete.zip",
+      "source_member": "outputs/summary.json",
+      "source_sha256": "1916282fe8539023600b589ffc75dd892988c44bba1241ca22646b2eafe3d953",
+      "imported_sha256": "708ea4f034ed3b5a80098381aa5646d429885ae522a17dfab1b9fbfc55c2e196"
+    },
+    {
+      "path": "training/hardest_real/metrics.jsonl",
+      "source_archive": "cub200_clip_vit_b32_hardest_real_relative_native_strength_complete.zip",
+      "source_member": "outputs/metrics.jsonl",
+      "source_sha256": "3b603d1bae8016b33957e6dba82046aca6bb7794781714f9527138ad82b07f04",
+      "imported_sha256": "3b603d1bae8016b33957e6dba82046aca6bb7794781714f9527138ad82b07f04"
+    },
+    {
+      "path": "training/hardest_real/resolved_config.yaml",
+      "source_archive": "cub200_clip_vit_b32_hardest_real_relative_native_strength_complete.zip",
+      "source_member": "outputs/resolved_config.yaml",
+      "source_sha256": "fefa8b3e57b50515d98859d61ba96c14ab85fb62a915f1f1c0cc0c764281efef",
+      "imported_sha256": "fefa8b3e57b50515d98859d61ba96c14ab85fb62a915f1f1c0cc0c764281efef"
+    },
+    {
+      "path": "training/uniform_top8_pressure_matched/summary.json",
+      "source_archive": "cub200_clip_vit_b32_uniform_top8_relative_pressure_matched_complete.zip",
+      "source_member": "outputs/summary.json",
+      "source_sha256": "01801db55ab9abfb93e9926b6d9e2c616a6fa2f438489c712d5cb2a5fe3cd88e",
+      "imported_sha256": "f3ad1276183c073a631fe8d55659c11fb4498d8fb891fd8630aae9101e3afa24"
+    },
+    {
+      "path": "training/uniform_top8_pressure_matched/metrics.jsonl",
+      "source_archive": "cub200_clip_vit_b32_uniform_top8_relative_pressure_matched_complete.zip",
+      "source_member": "outputs/metrics.jsonl",
+      "source_sha256": "138a219302d9143e2a9add45d74aa7aec314caab0cc8d8c7ccb2cc9e844fbb61",
+      "imported_sha256": "138a219302d9143e2a9add45d74aa7aec314caab0cc8d8c7ccb2cc9e844fbb61"
+    },
+    {
+      "path": "training/uniform_top8_pressure_matched/resolved_config.yaml",
+      "source_archive": "cub200_clip_vit_b32_uniform_top8_relative_pressure_matched_complete.zip",
+      "source_member": "outputs/resolved_config.yaml",
+      "source_sha256": "d538f2e146ef4aa8d4bdf82f90a401f8a6cbdfd4bd3cd152b07f70c8457ab58e",
+      "imported_sha256": "d538f2e146ef4aa8d4bdf82f90a401f8a6cbdfd4bd3cd152b07f70c8457ab58e"
+    },
+    {
+      "path": "diagnostics/geometry_v1.json",
+      "source_archive": "cub200_frozen_clip_vit_b32_geometry_results.zip",
+      "source_member": "clip_geometry_report.json",
+      "source_sha256": "7b993dfd580319096b90dcd66eb25e0b1b0dfb7bf591360869da7086a1a4e949",
+      "imported_sha256": "84d67fac78f6c255729705e0cc6e186da2ef66a27106a572d64059bcb9daac5d"
+    },
+    {
+      "path": "diagnostics/geometry_v2.json",
+      "source_archive": "cub200_frozen_clip_vit_b32_geometry_v2_results.zip",
+      "source_member": "clip_geometry_v2_report.json",
+      "source_sha256": "399250a8f1b97d1b6796fe7c322cf98c81a613ca07f3e0ceeeb4f1389cdb2bd4",
+      "imported_sha256": "1c3c136b45c450dca00163c7ed4c20ac5c1c9fcd9e09d852b9fd762d533ce82d"
+    },
+    {
+      "path": "diagnostics/barycentric_weights.json",
+      "source_archive": "clip_barycentric_weight_ablation_results.zip",
+      "source_member": "clip_barycentric_weight_ablation_report.json",
+      "source_sha256": "7837988fe8846d6a69383165de3324690a822e515ecce0a2e43bf2b65e41f64a",
+      "imported_sha256": "49cf988594bc3c04977c5077f1ed7ee5fdd713111802b13c6deeacc800096695"
+    },
+    {
+      "path": "diagnostics/support_breadth.json",
+      "source_archive": "clip_support_breadth_ablation_results.zip",
+      "source_member": "clip_support_breadth_ablation_report.json",
+      "source_sha256": "d6e074427c3b17e40eab3e8daa3172a44a721f8f3d7a76bfee5c039e1dbd9f87",
+      "imported_sha256": "3950bd98b8ecd50af080d328dd2834f26c43e74b62c49b49c278c937ce22d0fc"
+    },
+    {
+      "path": "diagnostics/adaptive_neighborhood.json",
+      "source_archive": "clip_geometry_adaptive_neighborhood_results.zip",
+      "source_member": "clip_geometry_adaptive_neighborhood_report.json",
+      "source_sha256": "2c4ada063f6e4d528147abeb579b1292933e82c523d4dc987825af5f5f146214",
+      "imported_sha256": "ab48a7c15a4e7e905bb93ca8c4639ee8ff04b76cef139f5a85ea3a89fad9350a"
+    },
+    {
+      "path": "diagnostics/gradient_sequential.json",
+      "source_archive": "cub200_frozen_clip_vit_b32_negative_gradient_geometry_results.zip",
+      "source_member": "cub200_frozen_clip_vit_b32_negative_gradient_geometry/negative_gradient_geometry_report.json",
+      "source_sha256": "9cca07416f443c970eb3ade6844abd568208b7a959f84614435eef6bdeebf05c",
+      "imported_sha256": "2901e1a7c7444c6a5fd7697c2d6b981172daa501d77d1475752a9e29cf4ef3a9"
+    },
+    {
+      "path": "diagnostics/gradient_randomized.json",
+      "source_archive": "cub200_frozen_clip_vit_b32_negative_gradient_geometry_randomized_batches_results.zip",
+      "source_member": "cub200_frozen_clip_vit_b32_negative_gradient_geometry_randomized_batches/negative_gradient_geometry_randomized_report.json",
+      "source_sha256": "2e311d03bc06bb72a594dd014e335e1b6890c6c1d327ea17b2dc1e40dca6eca5",
+      "imported_sha256": "3168e5c1962451b8ec32153b6abd7478cd14d81a4609c6ef46544a3520c9086c"
+    },
+    {
+      "path": "diagnostics/randomized_batch_partitions.json",
+      "source_archive": "cub200_frozen_clip_vit_b32_negative_gradient_geometry_randomized_batches_results.zip",
+      "source_member": "cub200_frozen_clip_vit_b32_negative_gradient_geometry_randomized_batches/batch_partitions.json",
+      "source_sha256": "2e2c1dff020d0a3410bb369015317c14a3731160fa1200c77e2f65bf3c958413",
+      "imported_sha256": "a875d194c077487861ee3a8e425996f19cb92f56d4824a1a15c2d8634d042953"
+    },
+    {
+      "path": "diagnostics/randomized_diagnostic_holdout_indices.json",
+      "source_archive": "cub200_frozen_clip_vit_b32_negative_gradient_geometry_randomized_batches_results.zip",
+      "source_member": "cub200_frozen_clip_vit_b32_negative_gradient_geometry_randomized_batches/diagnostic_holdout_indices.json",
+      "source_sha256": "3fed73fbb44c8c5b4cf19694fe5bd7a123e0d98249190824b10d1412a74eecc1",
+      "imported_sha256": "3fed73fbb44c8c5b4cf19694fe5bd7a123e0d98249190824b10d1412a74eecc1"
+    },
+    {
+      "path": "diagnostics/randomized_resolved_config.yaml",
+      "source_archive": "cub200_frozen_clip_vit_b32_negative_gradient_geometry_randomized_batches_results.zip",
+      "source_member": "cub200_frozen_clip_vit_b32_negative_gradient_geometry_randomized_batches/resolved_config.yaml",
+      "source_sha256": "d12dd77b1252e44bb44c58b55072939f5b520b4ac46966fab5326c060d287553",
+      "imported_sha256": "d12dd77b1252e44bb44c58b55072939f5b520b4ac46966fab5326c060d287553"
+    }
+  ],
+  "excluded": [
+    "Model checkpoints (.pt), duplicate training stdout, and large per-query CSVs",
+    "Empty cub200_clip_vit_b32_uniform_top8_relative_native_strength_results.zip; complete archive used instead",
+    "Duplicate baseline results.zip; results (1).zip selected once (same summaries and epoch metrics)"
+  ],
+  "limitations": [
+    "No additional training or diagnostic runs were performed during import.",
+    "Training arms have one seed (42); randomized diagnostic partitions are not independent model seeds.",
+    "Original archive filenames and members are recorded, but external download archives are not required to read the included results."
+  ]
+}
