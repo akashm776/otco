@@ -35,3 +35,15 @@ python -m src.clip_early_pulse \
 ```
 
 [Protocol](../configs/clip_early_pulse.yaml) · [Implementation](../src/clip_early_pulse.py) · [Tests](../tests/test_clip_early_pulse.py) · [Colab runner](../colabs/run_clip_early_pulse.py)
+
+## Persistent backups in Colab
+
+The initial run's temporary Colab filesystem disappeared before completion could be verified. Mount Google Drive using `from google.colab import drive; drive.mount('/content/drive')` and approve the Google authorization prompt. The independent [backup worker](../colabs/backup_clip_run.py) can run alongside an already-started experiment without changing training code or RNGs:
+
+```bash
+python -u colabs/backup_clip_run.py \
+  --output-directory /content/otco_outputs/RUN_ID \
+  --checkpoint-directory /content/otco_checkpoints/RUN_ID
+```
+
+It waits for a real Drive mount, then checks every 60 seconds and mirrors results into `MyDrive/OTCO/early_pulse/RUN_ID/`. Each copied file is checksum-verified before publication; `backup_manifest.json` records the inventory and any errors. Incomplete JSON files are retried. Stage tensors are copied only after their completion marker. The common update-100 checkpoint and final checkpoint of each completed arm are also backed up (several GB total); actively overwritten epoch checkpoints and redundant best-model copies are excluded. This preserves completed work, but does not implement arbitrary mid-epoch resume. Drive authorization is required: a waiting worker alone is **not** an active persistent backup. A Drive mount/write failure is logged and retried independently of training.
