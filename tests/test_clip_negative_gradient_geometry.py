@@ -89,7 +89,9 @@ def test_known_hardest_real_indices_are_selected_deterministically():
 
 
 def test_embedding_gradients_are_live_and_local_model_parameter_stays_frozen():
-    encoder = torch.nn.Linear(6, 6, bias=False).requires_grad_(False)
+    with torch.random.fork_rng():
+        torch.manual_seed(0)
+        encoder = torch.nn.Linear(6, 6, bias=False).requires_grad_(False)
     inputs = torch.randn(10, 6, generator=torch.Generator().manual_seed(99))
     with torch.no_grad():
         encoded = encoder(inputs)

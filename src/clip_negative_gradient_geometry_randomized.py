@@ -137,6 +137,7 @@ def run_feature_partition(
     logit_scale,
     top_k,
     tangent_tolerance,
+    record_undefined=False,
 ):
     """Evaluate one exhaustive partition using reviewed tangent-gradient math."""
     rows = []
@@ -154,6 +155,7 @@ def run_feature_partition(
             logit_scale,
             species_ids=batch_species,
             top_k=top_k,
+            record_undefined=record_undefined,
         )
         query_residuals.append(
             result["tangent_audit"]["max_abs_query_gradient_dot_embedding"]

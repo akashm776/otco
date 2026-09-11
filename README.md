@@ -7,6 +7,7 @@ Current evidence separates **negative hardness, gradient direction, and downstre
 ## Explore
 
 - [CLIP experiments: purpose, controls, results, and interpretation](docs/clip-experiments.md)
+- [Next Colab experiment: gradient usefulness across fine-tuning stages](docs/clip-gradient-stages.md)
 - [Earlier ResNet-50 + DistilBERT experiments](docs/legacy-experiments.md)
 - [Setup and running experiments](docs/running-experiments.md)
 - [Archived CLIP reports, epoch metrics, and resolved configs](experiment_results/clip_2026-08-30_to_09-01/README.md)
@@ -73,6 +74,6 @@ See [setup and commands](docs/running-experiments.md) for frozen diagnostics, ot
 
 ## Research direction
 
-The next question is whether synthetic-negative gradients become useful at particular stages of fine-tuning. Repeating the existing diagnostic before auxiliary activation, after ramping, and late in training would test whether the frozen mismatch persists. Additional training seeds are needed before claiming reliable gains or ranking close variants.
+The [staged-gradient Colab experiment](docs/clip-gradient-stages.md) is ready to test whether synthetic-negative gradients become useful during fine-tuning: fixed held-out batches at initialization, before auxiliary activation, after ramping, and at epoch 50. GPU results are pending. Additional training seeds are needed before claiming reliable gains or ranking close variants.
 
 Paper in preparation. The [original OT proposal](https://github.com/akashm776/ot-paper) records the initial hypotheses; current conclusions are grounded in the experiments linked above.

@@ -308,6 +308,7 @@ def train_epoch(
     epoch,
     global_step,
     remaining_gradient_diagnostics,
+    step_observer=None,
 ):
     model.train()
     data.train_dataset.set_epoch(epoch)
@@ -354,6 +355,8 @@ def train_epoch(
         )
         accumulator.add(metrics)
         global_step += 1
+        if step_observer is not None:
+            step_observer(model=model, epoch=epoch, global_step=global_step)
     return global_step, remaining_gradient_diagnostics, accumulator.summarize()
 
 
@@ -384,7 +387,7 @@ def consider_species_checkpoint(record, best_score=float("-inf"), best_epoch=Non
     return best_score, best_epoch, False
 
 
-def run(config, *, output_directory=None, checkpoint_directory=None):
+def run(config, *, output_directory=None, checkpoint_directory=None, observer=None):
     from transformers import AutoProcessor
 
     seed = config["training"]["seed"]
@@ -466,6 +469,12 @@ def run(config, *, output_directory=None, checkpoint_directory=None):
         epoch_zero,
     )
     global_step = 0
+    if observer is not None:
+        observer.initialize(
+            model=model, processor=processor, data=data, device=device,
+            config=config, total_steps=total_steps,
+        )
+        observer(model=model, epoch=0, global_step=0)
     remaining_gradient_diagnostics = config["diagnostics"][
         "separate_projection_gradient_steps"
     ]
@@ -481,6 +490,7 @@ def run(config, *, output_directory=None, checkpoint_directory=None):
             epoch=epoch,
             global_step=global_step,
             remaining_gradient_diagnostics=remaining_gradient_diagnostics,
+            step_observer=observer,
         )
         evaluation = evaluate_clip(
             model, processor, data, device, **evaluation_options

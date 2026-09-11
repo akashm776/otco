@@ -1,0 +1,19 @@
+experiment: clip_gradient_stages
+# Reuse the reviewed training protocols without changing their losses/schedules.
+arms:
+  baseline: configs/hf_cub200_clip_vit_b32_baseline.yaml
+  uniform_top8: configs/hf_cub200_clip_vit_b32_uniform_top8_relative_native_strength.yaml
+  hardest_real: configs/hf_cub200_clip_vit_b32_hardest_real_relative_native_strength.yaml
+  pressure_matched: configs/hf_cub200_clip_vit_b32_uniform_top8_relative_pressure_matched.yaml
+default_arms: [baseline, uniform_top8, hardest_real]
+diagnostic:
+  holdout_size: 1024
+  batch_size: 64
+  top_k: 8
+  tangent_tolerance: 1.0e-5
+  # Encoding is deterministic fp32, as in the original frozen diagnostic.
+  encoding_num_workers: 0
+  save_features: true
+  expected_total_steps: 3850
+  reference_warmup_steps: 1000
+  reference_ramp_steps: 1000

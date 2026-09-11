@@ -119,6 +119,7 @@ def compute_batch_gradient_geometry(
     *,
     species_ids=None,
     top_k=8,
+    record_undefined=False,
 ):
     """Compute paired per-query embedding gradients on one frozen feature batch."""
     if image_features.shape != text_features.shape or image_features.ndim != 2:
@@ -225,6 +226,36 @@ def compute_batch_gradient_geometry(
                 margin_image_gradient,
             )
         )
+
+        # Optional longitudinal policy: retain query identity and tiny norms,
+        # but do not manufacture directions where existing metrics are undefined.
+        # The original frozen diagnostic remains strict by default.
+        if record_undefined:
+            cosine_pairs = [(u8_query_gradient, real_query_gradient),
+                            (u8_image_gradient, real_image_gradient),
+                            (u8_joint, real_joint), (u8_joint, native_joint),
+                            (real_joint, native_joint)]
+            undefined = any(a.norm() * b.norm() <= 1e-12 for a, b in cosine_pairs)
+            undefined = undefined or any(g.norm(dim=1).sum() <= 1e-12
+                                        for g in (u8_image_gradient, real_image_gradient))
+            undefined = undefined or any(g.norm() <= 1e-12 for g in (u8_joint, real_joint))
+            if undefined:
+                rows.append({
+                    "query_index_within_batch": query_index,
+                    "hardest_real_index": hardest_index,
+                    "u8_support_indices": json.dumps(
+                        support_mask[query_index].nonzero().flatten().cpu().tolist()),
+                    "gradient_metrics_valid": False,
+                    "undefined_reason": "At least one existing gradient metric has a norm/denominator <= 1e-12",
+                    "joint_gradient_norm_u8": _scalar(u8_joint.norm()),
+                    "joint_gradient_norm_real": _scalar(real_joint.norm()),
+                    "joint_gradient_norm_native": _scalar(native_joint.norm()),
+                    "query_gradient_norm_u8": _scalar(u8_query_gradient.norm()),
+                    "query_gradient_norm_real": _scalar(real_query_gradient.norm()),
+                    "image_gradient_norm_u8": _scalar(u8_image_gradient.norm()),
+                    "image_gradient_norm_real": _scalar(real_image_gradient.norm()),
+                })
+                continue
 
         u8_footprint = gradient_footprint(u8_image_gradient)
         real_footprint = gradient_footprint(real_image_gradient)
@@ -338,6 +369,9 @@ def compute_batch_gradient_geometry(
                     ),
                 }
             )
+        if record_undefined:
+            row["gradient_metrics_valid"] = True
+            row["undefined_reason"] = ""
         rows.append(row)
     return {
         "rows": rows,

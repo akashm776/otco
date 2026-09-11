@@ -16,6 +16,8 @@ For local Flickr8K, place `Images/` and `captions.txt` under `data/datasets/Flic
 
 ## Controlled CLIP fine-tuning
 
+For the new fixed-batch diagnostic during fine-tuning, see [gradient usefulness across stages](clip-gradient-stages.md), including the A100 Colab notebook, controls, exact step boundaries, and output guide.
+
 Run from the repository root:
 
 ```bash
