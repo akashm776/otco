@@ -387,7 +387,8 @@ def consider_species_checkpoint(record, best_score=float("-inf"), best_epoch=Non
     return best_score, best_epoch, False
 
 
-def run(config, *, output_directory=None, checkpoint_directory=None, observer=None):
+def run(config, *, output_directory=None, checkpoint_directory=None, observer=None,
+        stop_after_epochs=None):
     from transformers import AutoProcessor
 
     seed = config["training"]["seed"]
@@ -405,6 +406,11 @@ def run(config, *, output_directory=None, checkpoint_directory=None, observer=No
     objective = CLIPTrainingObjective(config["ot"]).to(device)
     optimizer = build_clip_optimizer(model, config["optimizer"])
     total_steps = len(data.train_loader) * config["training"]["epochs"]
+    execution_epochs = config["training"]["epochs"]
+    if stop_after_epochs is not None:
+        if not 1 <= stop_after_epochs <= execution_epochs:
+            raise ValueError("stop_after_epochs must be within the configured horizon")
+        execution_epochs = stop_after_epochs
     scheduler = build_scheduler(
         optimizer,
         warmup_steps=config["scheduler"]["warmup_steps"],
@@ -478,7 +484,7 @@ def run(config, *, output_directory=None, checkpoint_directory=None, observer=No
     remaining_gradient_diagnostics = config["diagnostics"][
         "separate_projection_gradient_steps"
     ]
-    for epoch in range(1, config["training"]["epochs"] + 1):
+    for epoch in range(1, execution_epochs + 1):
         global_step, remaining_gradient_diagnostics, training_metrics = train_epoch(
             model,
             objective,
@@ -543,6 +549,13 @@ def run(config, *, output_directory=None, checkpoint_directory=None, observer=No
     }
     if config["ot"].get("extra_negative_mode", "barycentric") != "barycentric":
         summary["extra_negative_mode"] = config["ot"]["extra_negative_mode"]
+    if stop_after_epochs is not None:
+        summary["execution"] = {
+            "completed_epochs": execution_epochs,
+            "completed_updates": global_step,
+            "scheduler_horizon_updates": total_steps,
+            "planned_short_run": True,
+        }
     write_json(output_dir / "summary.json", summary)
     return summary
 

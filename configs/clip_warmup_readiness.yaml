@@ -1,0 +1,8 @@
+experiment: clip_warmup_readiness
+baseline_config: configs/hf_cub200_clip_vit_b32_baseline.yaml
+diagnostic_config: configs/clip_gradient_stages.yaml
+measurement_steps: [0, 100, 250, 500, 750, 1001]
+stop_after_epochs: 13
+# Preserve the original 50-epoch LR schedule; execute only its first 13 epochs.
+expected_batches_per_epoch: 77
+projection_batches_per_partition: 2
