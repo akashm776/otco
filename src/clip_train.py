@@ -388,7 +388,7 @@ def consider_species_checkpoint(record, best_score=float("-inf"), best_epoch=Non
 
 
 def run(config, *, output_directory=None, checkpoint_directory=None, observer=None,
-        stop_after_epochs=None):
+        stop_after_epochs=None, objective_factory=None):
     from transformers import AutoProcessor
 
     seed = config["training"]["seed"]
@@ -403,7 +403,8 @@ def run(config, *, output_directory=None, checkpoint_directory=None, observer=No
     inventory = configure_clip_trainable_parameters(
         model, config["model"]["trainable_policy"]
     )
-    objective = CLIPTrainingObjective(config["ot"]).to(device)
+    objective = (CLIPTrainingObjective(config["ot"]) if objective_factory is None
+                 else objective_factory(config)).to(device)
     optimizer = build_clip_optimizer(model, config["optimizer"])
     total_steps = len(data.train_loader) * config["training"]["epochs"]
     execution_epochs = config["training"]["epochs"]
@@ -480,6 +481,9 @@ def run(config, *, output_directory=None, checkpoint_directory=None, observer=No
             model=model, processor=processor, data=data, device=device,
             config=config, total_steps=total_steps,
         )
+        if hasattr(observer, "bind_training_state"):
+            observer.bind_training_state(optimizer=optimizer, scheduler=scheduler,
+                                         objective=objective, data=data)
         observer(model=model, epoch=0, global_step=0)
     remaining_gradient_diagnostics = config["diagnostics"][
         "separate_projection_gradient_steps"

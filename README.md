@@ -8,6 +8,7 @@ Current evidence separates **negative hardness, gradient direction, and downstre
 
 - [CLIP experiments: purpose, controls, results, and interpretation](docs/clip-experiments.md)
 - [Next Colab experiment: gradient usefulness across fine-tuning stages](docs/clip-gradient-stages.md)
+- [Early-pulse causal pilot: synthetic versus real-negative pressure](docs/clip-early-pulse.md)
 - [Earlier ResNet-50 + DistilBERT experiments](docs/legacy-experiments.md)
 - [Setup and running experiments](docs/running-experiments.md)
 - [Archived CLIP reports, epoch metrics, and resolved configs](experiment_results/clip_2026-08-30_to_09-01/README.md)

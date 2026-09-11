@@ -1,0 +1,14 @@
+experiment: clip_early_pulse
+baseline_config: configs/hf_cub200_clip_vit_b32_baseline.yaml
+diagnostic_config: configs/clip_gradient_stages.yaml
+arms: [baseline, uniform_top8, hardest_real]
+seed: 42
+pulse_start: 100
+pulse_stop: 200
+stop_after_epochs: 13
+expected_batches_per_epoch: 77
+measurement_steps: [100, 200, 1001]
+calibration_seed: 20260911
+calibration_batches: 4
+calibration_target_ratio: 0.10
+projection_batches_per_partition: 2
