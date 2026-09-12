@@ -1,4 +1,9 @@
 import json
+import ast
+import hashlib
+import subprocess
+import sys
+import zipfile
 from types import SimpleNamespace
 
 import pytest
@@ -151,3 +156,44 @@ def test_completion_verifier_checks_all_seeds_rules_and_scores(tmp_path,failure)
             study.verify_completion(tmp_path)
     else:
         study.verify_completion(tmp_path)
+
+
+def handoff_namespace():
+    source=(study.ROOT/'colabs/clip_usefulness_prospective_one_cell.py').read_text()
+    tree=ast.parse(source)
+    assert isinstance(tree.body[-1],ast.Expr) and tree.body[-1].value.func.id=='run_prospective_study'
+    tree.body.pop()
+    namespace={'__name__':'handoff_test'}
+    exec(compile(tree,'<prospective handoff>','exec'),namespace)
+    return namespace
+
+
+def test_one_cell_pins_immutable_runner():
+    namespace=handoff_namespace()
+    source=subprocess.check_output(['git','show',namespace['SOURCE_COMMIT']+':colabs/run_clip_usefulness_prospective.py'],cwd=study.ROOT)
+    assert hashlib.sha256(source).hexdigest()==namespace['RUNNER_SHA256']
+
+
+@pytest.mark.parametrize('changed_rules',[False,True])
+def test_one_cell_redownloads_only_complete_frozen_results(tmp_path,monkeypatch,changed_rules):
+    namespace=handoff_namespace()
+    run='clip_usefulness_prospective_fixture'
+    control=tmp_path/('otco_control_'+run)
+    control.mkdir()
+    archive=control/(run+'_complete.zip')
+    completion=dict(status='complete',training_seeds=study.SEEDS,checkpoint_steps=study.STEPS,
+                    total_branch_rows=720,evaluated_states=15,rules_refitted=changed_rules)
+    with zipfile.ZipFile(archive,'w') as bundle:
+        bundle.writestr(run+'/results/run_manifest.json',json.dumps(dict(source_commit=namespace['SOURCE_COMMIT'],status='complete')))
+        bundle.writestr(run+'/results/completion.json',json.dumps(completion))
+    downloads=[]
+    monkeypatch.setitem(sys.modules,'google.colab',SimpleNamespace(files=SimpleNamespace(download=downloads.append)))
+    namespace['Path']=lambda _:tmp_path
+    monkeypatch.setattr(namespace['shutil'],'which',lambda _:pytest.fail('Must not start training or require GPU for re-download'))
+    if changed_rules:
+        with pytest.raises(RuntimeError,match='failed verification'):
+            namespace['run_prospective_study']()
+        assert downloads==[]
+    else:
+        namespace['run_prospective_study']()
+        assert downloads==[str(archive)]
