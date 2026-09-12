@@ -1,7 +1,12 @@
 from copy import deepcopy
+import ast
+import hashlib
 import json
 import random
+import subprocess
+import sys
 from types import SimpleNamespace
+import zipfile
 
 import numpy as np
 import pytest
@@ -171,3 +176,47 @@ def test_intermediate_runner_stays_local_and_pins_compute_stack():
         assert forbidden not in source
     assert '25 * 1024**3' in source
     assert "['torch', 'torchvision']" in source and 'No training started.' in source
+
+
+def handoff_namespace():
+    source = (ROOT / 'colabs/clip_paired_intermediate_one_cell.py').read_text()
+    tree = ast.parse(source)
+    assert isinstance(tree.body[-1], ast.Expr) and tree.body[-1].value.func.id == 'run_intermediate_study'
+    tree.body.pop()  # Inspect definitions without starting GPU work or networking.
+    namespace = {'__name__': 'handoff_test'}
+    exec(compile(tree, '<intermediate handoff test>', 'exec'), namespace)
+    return namespace
+
+
+def test_intermediate_cell_pins_committed_runner():
+    namespace = handoff_namespace()
+    source = subprocess.check_output(['git', 'show', namespace['SOURCE_COMMIT'] + ':colabs/run_clip_paired_intermediate.py'], cwd=ROOT)
+    assert hashlib.sha256(source).hexdigest() == namespace['RUNNER_SHA256']
+    cell = (ROOT / 'colabs/clip_paired_intermediate_one_cell.py').read_text()
+    assert '/content/drive' not in cell and 'drive.mount' not in cell
+
+
+@pytest.mark.parametrize('wrong_total', [False, True])
+def test_intermediate_cell_redownloads_only_complete_matching_archive(tmp_path, monkeypatch, wrong_total):
+    namespace = handoff_namespace()
+    run_id = 'clip_paired_intermediate_fixture'
+    control = tmp_path / ('otco_control_' + run_id)
+    control.mkdir()
+    archive = control / (run_id + '_complete.zip')
+    completion = dict(status='complete', training_seeds=[42, 123, 456], checkpoint_steps=STEPS,
+                      total_branch_rows=719 if wrong_total else 720,
+                      new_intermediate_branch_rows=432, endpoint_replay_branch_rows=288)
+    with zipfile.ZipFile(archive, 'w') as bundle:
+        bundle.writestr(run_id + '/results/run_manifest.json', json.dumps(dict(source_commit=namespace['SOURCE_COMMIT'], status='complete')))
+        bundle.writestr(run_id + '/results/completion.json', json.dumps(completion))
+    downloads = []
+    monkeypatch.setitem(sys.modules, 'google.colab', SimpleNamespace(files=SimpleNamespace(download=downloads.append)))
+    namespace['Path'] = lambda _: tmp_path
+    monkeypatch.setattr(namespace['shutil'], 'which', lambda _: pytest.fail('Must not train or require GPU for existing archive'))
+    if wrong_total:
+        with pytest.raises(RuntimeError, match='failed verification'):
+            namespace['run_intermediate_study']()
+        assert downloads == []
+    else:
+        namespace['run_intermediate_study']()
+        assert downloads == [str(archive)]
