@@ -1,0 +1,13 @@
+experiment: clip_paired_seed_replication
+training_seeds: [123, 456]
+reference_training_seed: 42
+stop_after_epochs: 13
+expected_batches_per_epoch: 77
+scheduler_horizon_updates: 3850
+checkpoint_steps: [100, 1001]
+paired_protocol: configs/clip_paired_updates.yaml
+baseline_config: configs/hf_cub200_clip_vit_b32_baseline.yaml
+original_calibration_selection_seed: 20260911
+original_calibration_batches: 4
+recalibrate: false
+diagnostic_caption_seed: 42

@@ -31,7 +31,7 @@ The magnitude matters. At update 100, mean native-only held-out loss reduction i
 
 This answers the narrow question **yes, useful synthetic pressure can depend on the state at which it is applied** in this particular CLIP/CUB experiment. It does not locate the transition between updates 100 and 1,001, separate learning-rate/momentum from representation changes, or establish a general rule. It also tests a uniform synthetic construction, not the incremental value of OT weighting. One seed and a reused diagnostic holdout remain important limitations; tiny effects merit replication. The near-null [100-update pulse pilot](clip-early-pulse.md) is still the relevant longer-horizon evidence.
 
-**Next proposed check, not run:** repeat this fixed two-state paired protocol on independently seeded baseline trajectories before using a denser checkpoint scan to choose an activation window. Any selected curriculum then needs an independent multi-seed downstream evaluation.
+**Next check, prepared but not run:** [one-cell replication on baseline seeds 123 and 456](clip-paired-seed-replication.md), keeping the two states, diagnostic inputs and auxiliary coefficients fixed. Replicate the sign pattern before using a denser checkpoint scan to choose an activation window. Any selected curriculum then needs an independent multi-seed downstream evaluation.
 
 [All 96 branch records, summaries, provenance and audit](../experiment_results/clip_paired_updates_2026-09/README.md) · [Reproduce the figure](../scripts/plot_clip_paired_updates.py)
 

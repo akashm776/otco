@@ -13,6 +13,7 @@ The current evidence separates **hardness, gradient direction, actual optimizer 
 | [Dense warmup / shared-head probes](docs/clip-warmup-readiness.md) | Completed | Weak positive head alignment at update 100 becomes near-zero or negative later |
 | [Early-pulse intervention](docs/clip-early-pulse.md) | Completed | Tiny retrieval gain, lower species accuracy; no convincing overall benefit |
 | [Paired actual-AdamW updates](docs/clip-paired-updates.md) | Completed | Synthetic update improves held-out loss in 16/16 early trials, 0/16 later trials; effects are small |
+| [Two-seed replication](docs/clip-paired-seed-replication.md) | Prepared; user-run GPU results pending | Repeat the fixed paired protocol on baseline seeds 123 and 456; local-only Colab storage |
 
 ## Latest completed experiment: actual optimizer updates
 

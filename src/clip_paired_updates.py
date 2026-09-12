@@ -157,17 +157,23 @@ def verified_checkpoint(source, relative, manifest):
     return torch.load(path, map_location='cpu', weights_only=False)
 
 
-def main():
+def cache_heldout(processor, data, holdout):
+    diagnostic = CUBCLIPDiagnosticDataset(data.train_dataset.grouped_split, data.train_dataset.species_ids, holdout)
+    batches = []
+    for start in range(0, len(diagnostic), 64):
+        records = [diagnostic[i] for i in range(start, min(start + 64, len(diagnostic)))]
+        batches.append(dict(processor(images=[r['image'] for r in records], text=[r['caption'] for r in records],
+                                      padding=True, truncation=True, return_tensors='pt')))
+    return batches
+
+
+def run(source, output, protocol=None):
     from transformers import AutoProcessor
-    parser = argparse.ArgumentParser(__doc__)
-    parser.add_argument('--source-directory', required=True)
-    parser.add_argument('--output-directory', required=True)
-    args = parser.parse_args()
-    source, output = Path(args.source_directory), Path(args.output_directory)
+    source, output = Path(source), Path(output)
     if output.exists():
         raise FileExistsError('Choose a fresh output directory')
     output.mkdir(parents=True)
-    protocol = yaml.safe_load((ROOT / 'configs/clip_paired_updates.yaml').read_text())
+    protocol = deepcopy(protocol) if protocol is not None else yaml.safe_load((ROOT / 'configs/clip_paired_updates.yaml').read_text())
     clip_train.write_json(output / 'protocol.json', protocol)
     if source.name != protocol['source_run']:
         raise ValueError('Unexpected source run')
@@ -197,21 +203,23 @@ def main():
         batch = data.train_loader.collate_fn([data.train_dataset[i] for i in selected])
         identities.append({'source_indices': batch['source_indices'].tolist(), 'captions': batch['captions']})
         training_batches.append(batch)
-    diagnostic = CUBCLIPDiagnosticDataset(data.train_dataset.grouped_split, data.train_dataset.species_ids, holdout)
-    heldout_batches = []
-    for start in range(0, len(diagnostic), 64):
-        records = [diagnostic[i] for i in range(start, min(start + 64, len(diagnostic)))]
-        heldout_batches.append(dict(processor(images=[r['image'] for r in records], text=[r['caption'] for r in records],
-                                              padding=True, truncation=True, return_tensors='pt')))
+    heldout_batches = cache_heldout(processor, data, holdout)
     conditions, partitions = build_partition_conditions(EXPECTED_PARTITIONS, len(holdout), 64)
     clip_train.write_json(output / 'protocol.json', protocol)
     clip_train.write_json(output / 'training_batches.json', identities)
     clip_train.write_json(output / 'heldout_partitions.json', partitions)
+    for name, expected in protocol.get('fixed_input_sha256', {}).items():
+        if hashlib.sha256((output / name).read_bytes()).hexdigest() != expected:
+            raise AssertionError('Fixed diagnostic inputs differ from original seed-42 experiment: ' + name)
     clip_train.write_json(output / 'device.json', info)
     manifest = read(source / 'backup_manifest.json')
     all_rows, provenance = [], []
     for step, relative in [(100, 'checkpoints/baseline/common_step_100.pt'), (1001, 'checkpoints/baseline/latest.pt')]:
         checkpoint = verified_checkpoint(source, relative, manifest)
+        if 'training_seed' in protocol:
+            actual_seed = checkpoint.get('training_seed') if step == 100 else checkpoint['config']['training']['seed']
+            if actual_seed != protocol['training_seed']:
+                raise AssertionError('Checkpoint training seed differs from replication protocol')
         if step == 100:
             hashes = {k: state_digest(v) for k,v in checkpoint.items()}
             if hashes != read(results / 'prefix_hashes.json'):
@@ -312,6 +320,14 @@ def summarize(output, rows):
     for suffix in ['png','svg']:
         fig.savefig(output / f'paired_update_effects.{suffix}', dpi=180)
     plt.close(fig)
+
+
+def main():
+    parser = argparse.ArgumentParser(__doc__)
+    parser.add_argument('--source-directory', required=True)
+    parser.add_argument('--output-directory', required=True)
+    args = parser.parse_args()
+    run(args.source_directory, args.output_directory)
 
 
 if __name__ == '__main__':
