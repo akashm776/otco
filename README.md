@@ -12,27 +12,28 @@ The current evidence separates **hardness, gradient direction, actual optimizer 
 | [Gradients across fine-tuning](docs/clip-gradient-stages.md) | Completed | The per-query synthetic margin proxy improves during native-only warmup |
 | [Dense warmup / shared-head probes](docs/clip-warmup-readiness.md) | Completed | Weak positive head alignment at update 100 becomes near-zero or negative later |
 | [Early-pulse intervention](docs/clip-early-pulse.md) | Completed | Tiny retrieval gain, lower species accuracy; no convincing overall benefit |
-| [Paired actual-AdamW updates](docs/clip-paired-updates.md) | Implemented; GPU results pending | Test incremental held-out loss change from a single auxiliary-augmented update |
+| [Paired actual-AdamW updates](docs/clip-paired-updates.md) | Completed | Synthetic update improves held-out loss in 16/16 early trials, 0/16 later trials; effects are small |
 
-## Latest completed experiment: early pulse
+## Latest completed experiment: actual optimizer updates
 
-Same model and optimizer state through update 100; apply synthetic or hardest-real auxiliary pressure for exactly 100 updates, then return to native CLIP training through update 1,001. This is **13 epochs on the original 50-epoch learning-rate schedule**, not the older epoch-50 comparison. Both coefficients were fixed using training-only gradient calibration.
+Restore the same baseline model **and AdamW state**, take one native-only or auxiliary-augmented update, then compare loss on 1,024 held-out examples. Repeat with 16 fixed training batches at updates 100 and 1,001: **96 branches**, all completed and audited on A100.
 
-| Arm | Final canonical average R@1 | Species top-1 |
+| Auxiliary | Early: extra held-out loss | Later: extra held-out loss |
 |---|---:|---:|
-| Native CLIP baseline | 1.614% | 45.823% |
-| Uniform-top-8 synthetic pulse | 1.631% | 45.564% |
-| Hardest-real pulse | 1.614% | 45.858% |
+| Uniform-top-8 synthetic | −0.00002563; **16/16 beneficial** | +0.00000272; **0/16 beneficial** |
+| Hardest real | +0.00000543; 6/16 beneficial | +0.00000193; 7/16 beneficial |
 
-The synthetic gain is **+0.017 percentage points**—a net two top-1 retrieval successes across the two directions—while species accuracy falls **0.259 points**. Differences fluctuate during training. One seed and a repeatedly inspected evaluation set do not establish a reliable gain.
+Negative means better than the native-only update, not an accuracy gain. Intuitively, the synthetic negative gives a tiny useful nudge early and a tiny counterproductive nudge later. This is evidence of a **state-dependent one-step effect**, not proof of a successful curriculum, an exact activation window, or generality beyond this CLIP/CUB run. Both updates still reduce loss from their starting checkpoints on average.
 
-![Early-pulse differences from baseline; shaded interval is the intervention.](docs/figures/clip_early_pulse_differences.png)
+![Paired one-step effects, same vertical scale at both checkpoints. Below zero is better than native-only.](docs/figures/clip_paired_update_effects.png)
 
-[Experiment, controls, diagnostics and limitations](docs/clip-early-pulse.md) · [Numeric evidence and archive hashes](experiment_results/clip_curriculum_2026-09/README.md) · [Full training curves](docs/figures/clip_early_pulse_performance.png)
+[Protocol, findings and limitations](docs/clip-paired-updates.md) · [All 96 records and audit](experiment_results/clip_paired_updates_2026-09/README.md)
 
 ## Earlier evidence
 
-The [original CLIP study](docs/clip-experiments.md) compares eight 50-epoch arms: baseline finishes at **1.968%** canonical average R@1, versus **1.907%** for uniform top-8 and **1.942%** for hardest-real at maximum α=0.5. Every arm's best species checkpoint is epoch zero. These longer-run values must not be directly ranked against the 13-epoch pulse table above.
+The [13-epoch early-pulse intervention](docs/clip-early-pulse.md) adds synthetic pressure for 100 updates, then switches it off. Final canonical average R@1 is **1.631% vs 1.614%** for baseline (+0.017 percentage points, a net two retrieval successes), while species accuracy falls **0.259 points**. Thus an early one-step benefit has not translated into a convincing overall training gain. [Training differences](docs/figures/clip_early_pulse_differences.png).
+
+The [original CLIP study](docs/clip-experiments.md) compares eight 50-epoch arms: baseline finishes at **1.968%** canonical average R@1, versus **1.907%** for uniform top-8 and **1.942%** for hardest-real at maximum α=0.5. Every arm's best species checkpoint is epoch zero. These longer-run values must not be directly ranked against the 13-epoch pulse values.
 
 [Earlier ResNet-50 + DistilBERT experiments](docs/legacy-experiments.md) use a different architecture and SigLIP-style objective. They are historical evidence, not a controlled architecture comparison with CLIP.
 

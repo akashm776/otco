@@ -1,0 +1,66 @@
+[
+  {
+    "checkpoint_step": 100,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": -2.563260716606508e-05,
+    "median_incremental_heldout_loss": -2.5298159583853064e-05,
+    "beneficial_trials": 16,
+    "range": [
+      -3.155182532754708e-05,
+      -1.8990966135223886e-05
+    ],
+    "mean_incremental_train_loss": 9.63359477677006e-05,
+    "mean_full_gradient_alignment": 0.0541395402213936,
+    "mean_projection_gradient_alignment": 0.06483845121866078,
+    "mean_actual_update_difference_ratio": 0.026097907181945122,
+    "mean_actual_update_cosine_to_native": 0.999658408295262
+  },
+  {
+    "checkpoint_step": 100,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 5.425586240337399e-06,
+    "median_incremental_heldout_loss": 2.1777531580280396e-06,
+    "beneficial_trials": 6,
+    "range": [
+      -2.024097423047877e-05,
+      3.5647256049653464e-05
+    ],
+    "mean_incremental_train_loss": 9.39100193824427e-05,
+    "mean_full_gradient_alignment": 0.26585951831893506,
+    "mean_projection_gradient_alignment": 0.3029109633074649,
+    "mean_actual_update_difference_ratio": 0.028729531836192868,
+    "mean_actual_update_cosine_to_native": 0.9995867269999632
+  },
+  {
+    "checkpoint_step": 1001,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": 2.7190746046124037e-06,
+    "median_incremental_heldout_loss": 2.391040344829065e-06,
+    "beneficial_trials": 0,
+    "range": [
+      4.23511373526253e-07,
+      5.810934407879387e-06
+    ],
+    "mean_incremental_train_loss": 2.1074432520418185e-05,
+    "mean_full_gradient_alignment": 0.022722727492740877,
+    "mean_projection_gradient_alignment": 0.027079553497654344,
+    "mean_actual_update_difference_ratio": 0.020299742836272026,
+    "mean_actual_update_cosine_to_native": 0.9997929773832405
+  },
+  {
+    "checkpoint_step": 1001,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 1.9343556150464014e-06,
+    "median_incremental_heldout_loss": 9.255442079414422e-07,
+    "beneficial_trials": 7,
+    "range": [
+      -1.8317931850919678e-05,
+      2.609839053047125e-05
+    ],
+    "mean_incremental_train_loss": 5.746616739377153e-05,
+    "mean_full_gradient_alignment": 0.26725629900122494,
+    "mean_projection_gradient_alignment": 0.2793108163224045,
+    "mean_actual_update_difference_ratio": 0.03591327079513594,
+    "mean_actual_update_cosine_to_native": 0.9993517573383919
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "status": "complete",
+  "checkpoint_steps": [
+    100,
+    1001
+  ],
+  "trials_per_checkpoint": 16,
+  "rows": 96
+}

@@ -22,7 +22,7 @@ Calibration sets coefficients to **0.06005351588542947** (synthetic) and **0.375
 
 [Archived audit, metrics and provenance](../experiment_results/clip_curriculum_2026-09/README.md) · [Full training curves](figures/clip_early_pulse_performance.png). The ZIP audit checked all 120 files, nine stage feature/metadata hashes, 36,864 valid query-partition observations, and 288 head/batch probe records. One fixed batch per stage was recomputed on CPU within floating-point tolerances. The archived audit summarizes the measured comparisons; it does not make the repeated inputs independent replications.
 
-**Next:** [paired actual-AdamW updates](clip-paired-updates.md), testing incremental held-out loss changes before another curriculum rollout. The preregistered design below is retained unchanged for provenance.
+**Completed follow-up:** [paired actual-AdamW updates](clip-paired-updates.md) find a small synthetic held-out benefit at update 100 and a smaller disadvantage at 1,001. This one-step result does not overturn the near-null longer-horizon pilot. The preregistered design below is retained unchanged for provenance.
 
 ## Question and preregistered decision
 

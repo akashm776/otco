@@ -14,6 +14,7 @@ Figures are generated directly from [the archived JSON reports and epoch metrics
 | Warmup head probes | Matched batch embedding and shared-head alignment across six baseline states | [PNG](clip_warmup_projection_readiness.png) |
 | Early-pulse trajectories | Raw retrieval/species curves for the 13-epoch pulse pilot | [PNG](clip_early_pulse_performance.png) |
 | Early-pulse differences | Signed differences from baseline; one seed, not confidence intervals | [PNG](clip_early_pulse_differences.png) · [SVG](clip_early_pulse_differences.svg) |
+| Paired actual updates | Extra held-out loss after an auxiliary update vs a matched native update; identical y-axis scales | [PNG](clip_paired_update_effects.png) · [SVG](clip_paired_update_effects.svg) |
 
 ## Reproduce
 
@@ -26,6 +27,8 @@ uv run --with matplotlib==3.10.8 python scripts/plot_clip_results.py
 [The plotting script](../../scripts/plot_clip_results.py) requires Matplotlib and NumPy. It reads only the committed artifacts, performs no training, and regenerates the eight image files in this directory. No Downloads archives or model checkpoints are required.
 
 Regenerate the early-pulse difference plot from committed [numeric evidence](../../experiment_results/clip_curriculum_2026-09/early_pulse_performance.json) with `python scripts/plot_clip_early_pulse_differences.py`. The other new plots are imported from the verified study ZIPs; their original generators are `src.clip_gradient_stages.plot_results`, `src.clip_warmup_readiness.plot_projection`, and `src.clip_early_pulse.plot_performance`.
+
+Regenerate paired-update effects with `python scripts/plot_clip_paired_updates.py`. It reads the committed [96 branch records](../../experiment_results/clip_paired_updates_2026-09/paired_updates.jsonl). Dots represent fixed training batches, not elapsed training or independent seeds; dashed lines are means. Loss differences are displayed in units of 10⁻⁶, not accuracy percentage points.
 
 ## Reading conventions
 

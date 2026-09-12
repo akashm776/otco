@@ -2,7 +2,38 @@
 
 [Project](../README.md) · [Early-pulse findings](clip-early-pulse.md)
 
-**Status: implemented; GPU results pending.** This protocol is fixed before observing its results. It is a mechanism check, not a curriculum search or a new training rollout.
+**Status: completed and audited.** Run `clip_paired_updates_20260912T042828_516737Z`, pinned source `d22b9d7cec94d5b044b814d774911cab5e37d560`, A100 40 GB. All 96 branches completed. The protocol below was committed before observing the results. This is a mechanism check, not a curriculum search or a new training rollout.
+
+## Findings
+
+**The synthetic auxiliary adds a small held-out benefit at update 100 and a smaller disadvantage at update 1,001.** Each entry below compares the treatment's post-update loss with its paired native-only post-update loss; negative is beneficial. The primary score averages the three fixed shuffled partitions.
+
+| Checkpoint | Auxiliary | Mean extra held-out loss | Range across 16 trials | Beneficial trials |
+|---|---|---:|---:|---:|
+| 100 | Uniform top-8 | −0.00002563 | −0.00003155 to −0.00001899 | 16/16 |
+| 100 | Hardest real | +0.00000543 | −0.00002024 to +0.00003565 | 6/16 |
+| 1,001 | Uniform top-8 | +0.00000272 | +0.00000042 to +0.00000581 | 0/16 |
+| 1,001 | Hardest real | +0.00000193 | −0.00001832 to +0.00002610 | 7/16 |
+
+![Actual one-step effects; both panels use the same loss scale.](figures/clip_paired_update_effects.png)
+
+Intuitively: imagine copying the same learner three times and giving each copy the same practice batch. One practices normally; another also uses a synthetic negative; the third adds a real negative. We then quiz them on other examples. The synthetic nudge helps every paired early trial on the primary score, but slightly weakens every later trial. We reset the copies before the next batch, so these effects do not accumulate into a training trajectory.
+
+The magnitude matters. At update 100, mean native-only held-out loss reduction is **0.00290888**, versus **0.00293451** with synthetic pressure: about **0.88% more reduction**. At update 1,001, the corresponding reductions are **0.00018800** and **0.00018528**: about **1.45% less reduction**. These are ratios of mean loss reductions, not retrieval-accuracy percentages. Both methods improve from their starting checkpoints on average; “hurts later” means worse *than the native-only update*.
+
+### Supporting checks and interpretation
+
+- Early synthetic benefit is present in all 16 trials in each individual partition, including sequential. Later, each partition's mean effect is positive, but shuffle-123 has 4/16 individually beneficial trials and sequential has 5/16. Thus “0/16 later” refers to the pre-specified three-shuffle average, not every constituent partition or example.
+- Mean extra **training-batch** loss is positive for both auxiliaries at both stages. Synthetic values are +0.00009634 early and +0.00002107 later. The early held-out benefit is not simply a larger drop on the optimized batch; this is compatible with a regularizing effect, not proof of its mechanism.
+- Native/auxiliary **full-gradient cosine on these training batches** averages +0.0541 early and +0.0227 later for synthetic, versus +0.2659/+0.2673 for hardest real. Stronger raw alignment does not guarantee a better held-out AdamW update. These training-batch values are not the previous held-out shared-head probe, whose later alignment was negative.
+- Synthetic actual-update differences have norm about **2.61% early / 2.03% later** of the native update norm; update-direction cosine stays above 0.999 on average. Small directional changes can have measurable but tiny effects. Fixed coefficients yield mean weighted gradient ratios **0.1090 / 0.0602** for synthetic, versus **0.1015 / 0.1018** for real; pressure is not matched across stages.
+- Both checkpoints reproduce the archived feature hashes exactly. No-update re-encoding and first-native-update replay are exact. All 96 optimizer-reset checks pass; frozen parameters and source states remain unchanged. The downloaded ZIP matches the verified Drive SHA256, and an offline audit recomputes every recorded loss difference and summary. These checks establish within-run consistency, not cross-hardware numerical robustness.
+
+This answers the narrow question **yes, useful synthetic pressure can depend on the state at which it is applied** in this particular CLIP/CUB experiment. It does not locate the transition between updates 100 and 1,001, separate learning-rate/momentum from representation changes, or establish a general rule. It also tests a uniform synthetic construction, not the incremental value of OT weighting. One seed and a reused diagnostic holdout remain important limitations; tiny effects merit replication. The near-null [100-update pulse pilot](clip-early-pulse.md) is still the relevant longer-horizon evidence.
+
+**Next proposed check, not run:** repeat this fixed two-state paired protocol on independently seeded baseline trajectories before using a denser checkpoint scan to choose an activation window. Any selected curriculum then needs an independent multi-seed downstream evaluation.
+
+[All 96 branch records, summaries, provenance and audit](../experiment_results/clip_paired_updates_2026-09/README.md) · [Reproduce the figure](../scripts/plot_clip_paired_updates.py)
 
 ## Why this experiment
 

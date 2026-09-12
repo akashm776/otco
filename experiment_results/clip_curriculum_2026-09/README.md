@@ -18,4 +18,4 @@ The larger result ZIPs retain raw per-query CSVs, saved diagnostic embeddings, p
 
 The staged study's 49,152 query observations, warmup's 24,576, and pulse's 36,864 count repeated query/partition/stage combinations, not unique examples. All original holdouts have 1,024 examples. CPU recomputation of pulse head probes used absolute tolerance 5e-5 plus relative tolerance 1e-4; maximum absolute difference across all metrics was 0.001095 (gradient norms are scale-dependent). Feature and metadata checksums were exact.
 
-Interpretation: [staged](../../docs/clip-gradient-stages.md), [warmup](../../docs/clip-warmup-readiness.md), [early pulse](../../docs/clip-early-pulse.md). The [paired-update study](../../docs/clip-paired-updates.md) is a new experiment and has no results in this archive yet.
+Interpretation: [staged](../../docs/clip-gradient-stages.md), [warmup](../../docs/clip-warmup-readiness.md), [early pulse](../../docs/clip-early-pulse.md). The completed [paired-update study](../../docs/clip-paired-updates.md) has a separate [96-branch evidence archive](../clip_paired_updates_2026-09/README.md).
