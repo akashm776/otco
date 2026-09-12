@@ -138,13 +138,68 @@ def train_eval(model, batch):
 
 
 def normalize_checkpoint(checkpoint, step):
-    if step == 100:
-        if checkpoint.get('completed_updates') != 100:
-            raise ValueError('Incorrect early checkpoint')
+    if 0 < step < 1001:
+        if checkpoint.get('completed_updates') != step:
+            raise ValueError('Incorrect early/intermediate checkpoint')
         return {k: checkpoint[k] for k in ('model','optimizer','scheduler')}
-    if checkpoint.get('epoch') != 13 or checkpoint.get('metrics', {}).get('global_step') != 1001:
+    if step != 1001 or checkpoint.get('epoch') != 13 or checkpoint.get('metrics', {}).get('global_step') != 1001:
         raise ValueError('Incorrect late checkpoint')
     return {key: checkpoint[key + '_state_dict'] for key in ('model','optimizer','scheduler')}
+
+
+def checkpoint_relative_path(step):
+    if type(step) is not int:
+        raise ValueError('Checkpoint steps must be integers')
+    if step == 100:
+        return 'checkpoints/baseline/common_step_100.pt'
+    if step == 1001:
+        return 'checkpoints/baseline/latest.pt'
+    if not 0 < step < 1001:
+        raise ValueError('Unsupported checkpoint step')
+    return f'checkpoints/baseline/step_{step:06d}.pt'
+
+
+def validate_protocol(protocol):
+    steps = protocol['checkpoint_steps']
+    if not steps or steps != sorted(set(steps)):
+        raise ValueError('Checkpoint steps must be nonempty, unique and sorted')
+    for step in steps:
+        checkpoint_relative_path(step)
+    if protocol['arms'] != ['baseline', 'uniform_top8', 'hardest_real']:
+        raise ValueError('Three fixed arms, native first, are required')
+    if protocol['training_batches'] != 16 or protocol['batch_size'] != 64:
+        raise ValueError('Keep the original 16 B64 diagnostic inputs')
+    return steps, len(steps) * 16 * 3
+
+
+def compare_endpoint_losses(rows, references, step, atol):
+    """Compare every endpoint loss to the historical seed, with a fixed tolerance."""
+    reference_rows = [r for r in references if r['checkpoint_step'] == step]
+    expected = {(r['trial'], r['arm']): r for r in reference_rows}
+    selected = [r for r in rows if r['checkpoint_step'] == step]
+    keys = {(trial, arm) for trial in range(16) for arm in ['baseline', 'uniform_top8', 'hardest_real']}
+    if (len(selected) != 48 or len(reference_rows) != 48 or set(expected) != keys
+            or {(r['trial'], r['arm']) for r in selected} != keys):
+        raise AssertionError('Incomplete historical endpoint replay')
+    maximum = 0.
+    for row in selected:
+        reference = expected[row['trial'], row['arm']]
+        pairs = [(row[key], reference[key]) for key in ['heldout_mean', 'heldout_change',
+                 'incremental_heldout_loss', 'train_before', 'train_after', 'incremental_train_loss']]
+        if row['heldout_loss'].keys() != reference['heldout_loss'].keys():
+            raise AssertionError('Historical endpoint partitions differ')
+        for name in row['heldout_loss']:
+            if len(row['heldout_loss'][name]) != len(reference['heldout_loss'][name]):
+                raise AssertionError('Historical endpoint batch count differs')
+            pairs.extend(zip(row['heldout_loss'][name], reference['heldout_loss'][name]))
+        for a, b in pairs:
+            if not math.isfinite(a) or not math.isfinite(b):
+                raise AssertionError('Nonfinite endpoint loss')
+            maximum = max(maximum, abs(a-b))
+    if maximum > atol:
+        raise AssertionError(f'Historical endpoint losses differ: {maximum} > {atol}')
+    return {'step': step, 'rows': 48, 'loss_absolute_tolerance': atol,
+            'maximum_absolute_loss_difference': maximum, 'passed': True}
 
 
 def verified_checkpoint(source, relative, manifest):
@@ -174,6 +229,7 @@ def run(source, output, protocol=None):
         raise FileExistsError('Choose a fresh output directory')
     output.mkdir(parents=True)
     protocol = deepcopy(protocol) if protocol is not None else yaml.safe_load((ROOT / 'configs/clip_paired_updates.yaml').read_text())
+    steps, expected_rows = validate_protocol(protocol)
     clip_train.write_json(output / 'protocol.json', protocol)
     if source.name != protocol['source_run']:
         raise ValueError('Unexpected source run')
@@ -213,11 +269,18 @@ def run(source, output, protocol=None):
             raise AssertionError('Fixed diagnostic inputs differ from original seed-42 experiment: ' + name)
     clip_train.write_json(output / 'device.json', info)
     manifest = read(source / 'backup_manifest.json')
+    references = None
+    if protocol.get('endpoint_reference_directory'):
+        reference_directory = ROOT / protocol['endpoint_reference_directory']
+        references = [json.loads(line) for line in (reference_directory / 'paired_updates.jsonl').read_text().splitlines()]
+        reference_states = {r['step']: r for r in read(reference_directory / 'checkpoint_provenance.json')}
     all_rows, provenance = [], []
-    for step, relative in [(100, 'checkpoints/baseline/common_step_100.pt'), (1001, 'checkpoints/baseline/latest.pt')]:
+    endpoint_checks = []
+    for step in steps:
+        relative = checkpoint_relative_path(step)
         checkpoint = verified_checkpoint(source, relative, manifest)
         if 'training_seed' in protocol:
-            actual_seed = checkpoint.get('training_seed') if step == 100 else checkpoint['config']['training']['seed']
+            actual_seed = checkpoint.get('training_seed') if step < 1001 else checkpoint['config']['training']['seed']
             if actual_seed != protocol['training_seed']:
                 raise AssertionError('Checkpoint training seed differs from replication protocol')
         if step == 100:
@@ -233,6 +296,12 @@ def run(source, output, protocol=None):
         expected_feature_hash = read(results / 'baseline/diagnostics' / f'{step:06d}_pulse_{step}/report.json')['features_and_scale_sha256']
         if feature_hash(original_encoded) != expected_feature_hash:
             raise AssertionError('Checkpoint does not reproduce saved held-out features')
+        if references is not None and step in reference_states:
+            reference = reference_states[step]
+            if initial_hash != reference['initial_state_sha256'] or expected_feature_hash != reference['features_sha256']:
+                raise AssertionError('Historical endpoint model/optimizer state or features differ')
+            if [g['lr'] for g in optimizer.param_groups] != reference['learning_rates']:
+                raise AssertionError('Historical endpoint learning rates differ')
         if feature_hash(encode_cached(model, heldout_batches)) != expected_feature_hash:
             raise AssertionError('No-update re-encoding is nondeterministic')
         initial_losses = partition_losses(original_encoded, conditions)
@@ -285,17 +354,21 @@ def run(source, output, protocol=None):
         assert all(torch.equal(p.detach().cpu(), frozen[n]) for n,p in model.named_parameters() if n in frozen), 'Frozen parameters mutated'
         provenance[-1].update(source_state_immutable=True, frozen_parameters_unchanged=True,
                               optimizer_reset_checks=48)
+        if references is not None and step in reference_states:
+            endpoint_checks.append(compare_endpoint_losses(all_rows, references, step, protocol['endpoint_loss_atol']))
+            clip_train.write_json(output / 'endpoint_replay_checks.json', endpoint_checks)
         clip_train.write_json(output / 'checkpoint_provenance.json', provenance)
         del checkpoint, initial, frozen
-    if len(all_rows) != 96:
+    if len(all_rows) != expected_rows:
         raise AssertionError('Incomplete paired experiment')
     summarize(output, all_rows)
-    clip_train.write_json(output / 'completion.json', {'status': 'complete', 'checkpoint_steps': [100,1001], 'trials_per_checkpoint': 16, 'rows': 96})
+    clip_train.write_json(output / 'completion.json', {'status': 'complete', 'checkpoint_steps': steps, 'trials_per_checkpoint': 16, 'rows': expected_rows})
 
 
 def summarize(output, rows):
     summaries = []
-    for step in [100,1001]:
+    steps = sorted({r['checkpoint_step'] for r in rows})
+    for step in steps:
         for arm in ['uniform_top8','hardest_real']:
             selected = [r for r in rows if r['checkpoint_step'] == step and r['arm'] == arm]
             values = np.array([r['incremental_heldout_loss'] for r in selected])
@@ -308,8 +381,9 @@ def summarize(output, rows):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    fig, axes = plt.subplots(1, 2, figsize=(10, 4), constrained_layout=True)
-    for ax, step in zip(axes, [100,1001]):
+    fig, axes = plt.subplots(1, len(steps), figsize=(5 * len(steps), 4), constrained_layout=True, squeeze=False)
+    axes = axes[0]
+    for ax, step in zip(axes, steps):
         for arm, color in [('uniform_top8','tab:orange'), ('hardest_real','tab:green')]:
             selected = [r for r in rows if r['checkpoint_step'] == step and r['arm'] == arm]
             ax.plot([r['trial']+1 for r in selected], [r['incremental_heldout_loss'] for r in selected], marker='o', color=color, label=arm)
