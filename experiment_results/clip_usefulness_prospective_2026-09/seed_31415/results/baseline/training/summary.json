@@ -1,0 +1,280 @@
+{
+  "experiment_name": "cub200_clip_vit_b32_baseline",
+  "synthetic_weighting_mode": "ot",
+  "best_epoch_by_species_top_1": 0,
+  "best_species_top_1_accuracy": 0.5160511136054993,
+  "final": {
+    "epoch": 13,
+    "global_step": 1001,
+    "training": {
+      "clip_loss": 2.526378266223065,
+      "total_loss": 2.526378266223065,
+      "ot_enabled": 0.0,
+      "total_trainable_gradient_norm": 14.6451264347225,
+      "learned_logit_scale": 99.97936129879642
+    },
+    "evaluation": {
+      "canonical_retrieval": {
+        "text_to_image": {
+          "r_at_1": 1.6914049163460732,
+          "r_at_5": 5.315843969583511,
+          "r_at_10": 8.629617094993591
+        },
+        "image_to_text": {
+          "r_at_1": 1.8122196197509766,
+          "r_at_5": 5.557473376393318,
+          "r_at_10": 9.00932028889656
+        }
+      },
+      "all_caption_retrieval": {
+        "text_to_image": {
+          "r_at_1": 1.1442871764302254,
+          "r_at_5": 4.502934217453003,
+          "r_at_10": 7.6061442494392395
+        },
+        "image_to_text": {
+          "r_at_1": 2.191922627389431,
+          "r_at_5": 7.714877277612686,
+          "r_at_10": 12.668277323246002
+        }
+      },
+      "species": {
+        "top_1_accuracy": 0.45995858311653137,
+        "top_5_accuracy": 0.7887469530105591,
+        "positive_species_vs_nearest_wrong_margin": {
+          "count": 5794,
+          "mean": -0.0014265794943520477,
+          "std": 0.026676441231113426,
+          "min": -0.14385199546813965,
+          "q05": -0.043734175711870195,
+          "q25": -0.01672324165701866,
+          "median": -0.002078920602798462,
+          "q75": 0.014950521290302277,
+          "q95": 0.043562436103820774,
+          "max": 0.0958680659532547
+        },
+        "fraction_positive_species_margin_lt_0": 0.540041446685791
+      },
+      "validation_image_count": 5794,
+      "validation_caption_count": 57940,
+      "species_prompt": "a photo of a {species_name}"
+    }
+  },
+  "epoch_zero": {
+    "epoch": 0,
+    "global_step": 0,
+    "training": null,
+    "evaluation": {
+      "canonical_retrieval": {
+        "text_to_image": {
+          "r_at_1": 0.6558508612215519,
+          "r_at_5": 1.933034136891365,
+          "r_at_10": 3.261995315551758
+        },
+        "image_to_text": {
+          "r_at_1": 0.8974801748991013,
+          "r_at_5": 2.9513290151953697,
+          "r_at_10": 4.88436296582222
+        }
+      },
+      "all_caption_retrieval": {
+        "text_to_image": {
+          "r_at_1": 0.4573696758598089,
+          "r_at_5": 1.6689678654074669,
+          "r_at_10": 2.8822919353842735
+        },
+        "image_to_text": {
+          "r_at_1": 1.5015533193945885,
+          "r_at_5": 4.573696851730347,
+          "r_at_10": 7.248878479003906
+        }
+      },
+      "species": {
+        "top_1_accuracy": 0.5160511136054993,
+        "top_5_accuracy": 0.8305143117904663,
+        "positive_species_vs_nearest_wrong_margin": {
+          "count": 5794,
+          "mean": 0.0008333482087419738,
+          "std": 0.02752720307636669,
+          "min": -0.16066257655620575,
+          "q05": -0.04043209999799728,
+          "q25": -0.013092637062072754,
+          "median": 0.0009474605321884155,
+          "q75": 0.016860246658325195,
+          "q95": 0.043838644027709955,
+          "max": 0.08689481019973755
+        },
+        "fraction_positive_species_margin_lt_0": 0.4839489161968231
+      },
+      "validation_image_count": 5794,
+      "validation_caption_count": 57940,
+      "species_prompt": "a photo of a {species_name}"
+    }
+  },
+  "device": {
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-40GB",
+    "total_vram_mib": 40441.375
+  },
+  "data_exclusion": {
+    "original_training_count": 5994,
+    "diagnostic_exclusion_count": 1024,
+    "final_training_count": 4970,
+    "intersection_count": 0,
+    "holdout_path": "/content/otco_control_clip_usefulness_prospective_20260912T175040_066114Z/source/configs/cub200_clip_diagnostic_holdout_indices.json"
+  },
+  "trainable_parameters": {
+    "policy": "projections_last_blocks_logit_scale",
+    "trainable_parameter_count": 10895617,
+    "trainable_tensor_count": 35,
+    "total_parameter_count": 151277313,
+    "parameters": [
+      {
+        "name": "clip_model.logit_scale",
+        "numel": 1
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.k_proj.weight",
+        "numel": 262144
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.k_proj.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.v_proj.weight",
+        "numel": 262144
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.v_proj.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.q_proj.weight",
+        "numel": 262144
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.q_proj.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.out_proj.weight",
+        "numel": 262144
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.self_attn.out_proj.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.layer_norm1.weight",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.layer_norm1.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.mlp.fc1.weight",
+        "numel": 1048576
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.mlp.fc1.bias",
+        "numel": 2048
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.mlp.fc2.weight",
+        "numel": 1048576
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.mlp.fc2.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.layer_norm2.weight",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.text_model.encoder.layers.11.layer_norm2.bias",
+        "numel": 512
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.k_proj.weight",
+        "numel": 589824
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.k_proj.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.v_proj.weight",
+        "numel": 589824
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.v_proj.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.q_proj.weight",
+        "numel": 589824
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.q_proj.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.out_proj.weight",
+        "numel": 589824
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.self_attn.out_proj.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.layer_norm1.weight",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.layer_norm1.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.mlp.fc1.weight",
+        "numel": 2359296
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.mlp.fc1.bias",
+        "numel": 3072
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.mlp.fc2.weight",
+        "numel": 2359296
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.mlp.fc2.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.layer_norm2.weight",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.vision_model.encoder.layers.11.layer_norm2.bias",
+        "numel": 768
+      },
+      {
+        "name": "clip_model.visual_projection.weight",
+        "numel": 393216
+      },
+      {
+        "name": "clip_model.text_projection.weight",
+        "numel": 262144
+      }
+    ]
+  },
+  "execution": {
+    "completed_epochs": 13,
+    "completed_updates": 1001,
+    "scheduler_horizon_updates": 3850,
+    "planned_short_run": true
+  }
+}

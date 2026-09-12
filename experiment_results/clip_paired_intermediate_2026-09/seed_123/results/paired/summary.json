@@ -1,0 +1,162 @@
+[
+  {
+    "checkpoint_step": 100,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": -2.9556107708689217e-05,
+    "median_incremental_heldout_loss": -2.9868681165057254e-05,
+    "beneficial_trials": 16,
+    "range": [
+      -3.824208523628414e-05,
+      -2.2148225877316463e-05
+    ],
+    "mean_incremental_train_loss": 0.00010581333589912423,
+    "mean_full_gradient_alignment": 0.06430788987683188,
+    "mean_projection_gradient_alignment": 0.0731982869867919,
+    "mean_actual_update_difference_ratio": 0.026997079857231463,
+    "mean_actual_update_cosine_to_native": 0.9996356139129252
+  },
+  {
+    "checkpoint_step": 100,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 1.0559535379456308e-05,
+    "median_incremental_heldout_loss": 1.1381773196150746e-05,
+    "beneficial_trials": 3,
+    "range": [
+      -1.0882335754747174e-05,
+      2.9648883468347265e-05
+    ],
+    "mean_incremental_train_loss": 9.273409545268452e-05,
+    "mean_full_gradient_alignment": 0.2701349394933809,
+    "mean_projection_gradient_alignment": 0.3035643631283626,
+    "mean_actual_update_difference_ratio": 0.029073242435161333,
+    "mean_actual_update_cosine_to_native": 0.999575537665118
+  },
+  {
+    "checkpoint_step": 250,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": 4.664238830137668e-06,
+    "median_incremental_heldout_loss": 5.057293156696119e-06,
+    "beneficial_trials": 1,
+    "range": [
+      -4.373772748422766e-07,
+      9.475183032403578e-06
+    ],
+    "mean_incremental_train_loss": 4.390809586918287e-05,
+    "mean_full_gradient_alignment": 0.02468902101955675,
+    "mean_projection_gradient_alignment": 0.022681830055407116,
+    "mean_actual_update_difference_ratio": 0.02397127104284852,
+    "mean_actual_update_cosine_to_native": 0.9997121716631756
+  },
+  {
+    "checkpoint_step": 250,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 1.4899153308323143e-06,
+    "median_incremental_heldout_loss": -3.586757425289022e-06,
+    "beneficial_trials": 10,
+    "range": [
+      -1.6002918638235997e-05,
+      3.1766505445229853e-05
+    ],
+    "mean_incremental_train_loss": 8.516620855955614e-05,
+    "mean_full_gradient_alignment": 0.254327924040872,
+    "mean_projection_gradient_alignment": 0.2777512291430251,
+    "mean_actual_update_difference_ratio": 0.03419442480365647,
+    "mean_actual_update_cosine_to_native": 0.9994111677008699
+  },
+  {
+    "checkpoint_step": 500,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": 1.9748389823437407e-07,
+    "median_incremental_heldout_loss": 1.5048984614018934e-07,
+    "beneficial_trials": 6,
+    "range": [
+      -2.6401042303447753e-06,
+      4.705352992129264e-06
+    ],
+    "mean_incremental_train_loss": 3.0474898496141156e-05,
+    "mean_full_gradient_alignment": 0.036612572285311944,
+    "mean_projection_gradient_alignment": 0.029409379687496857,
+    "mean_actual_update_difference_ratio": 0.021705080081513187,
+    "mean_actual_update_cosine_to_native": 0.9997627694444212
+  },
+  {
+    "checkpoint_step": 500,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 1.0838087950437725e-06,
+    "median_incremental_heldout_loss": -7.54448433060162e-07,
+    "beneficial_trials": 9,
+    "range": [
+      -1.9203382753296694e-05,
+      1.6517159452167363e-05
+    ],
+    "mean_incremental_train_loss": 6.964814962590049e-05,
+    "mean_full_gradient_alignment": 0.25378342560837663,
+    "mean_projection_gradient_alignment": 0.26883239604639025,
+    "mean_actual_update_difference_ratio": 0.03565958641306127,
+    "mean_actual_update_cosine_to_native": 0.9993632550618894
+  },
+  {
+    "checkpoint_step": 750,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": -5.123382093574769e-08,
+    "median_incremental_heldout_loss": 1.9697674757956918e-07,
+    "beneficial_trials": 6,
+    "range": [
+      -3.720471446033713e-06,
+      2.916899849658705e-06
+    ],
+    "mean_incremental_train_loss": 2.0555195033411522e-05,
+    "mean_full_gradient_alignment": 0.036400601748675564,
+    "mean_projection_gradient_alignment": 0.037497512527590884,
+    "mean_actual_update_difference_ratio": 0.021045430035645837,
+    "mean_actual_update_cosine_to_native": 0.9997770903511608
+  },
+  {
+    "checkpoint_step": 750,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 8.002604210244346e-06,
+    "median_incremental_heldout_loss": 7.385162718920313e-06,
+    "beneficial_trials": 4,
+    "range": [
+      -6.706965003377974e-06,
+      2.109680784911916e-05
+    ],
+    "mean_incremental_train_loss": 5.600837952304816e-05,
+    "mean_full_gradient_alignment": 0.2373185282848451,
+    "mean_projection_gradient_alignment": 0.2546446912862273,
+    "mean_actual_update_difference_ratio": 0.03632617969054425,
+    "mean_actual_update_cosine_to_native": 0.9993369011954572
+  },
+  {
+    "checkpoint_step": 1001,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": -4.869424780923337e-06,
+    "median_incremental_heldout_loss": -4.1764286140555384e-06,
+    "beneficial_trials": 15,
+    "range": [
+      -1.0269976753463084e-05,
+      2.898355202063385e-06
+    ],
+    "mean_incremental_train_loss": 1.777751054951593e-05,
+    "mean_full_gradient_alignment": 0.032460020267573296,
+    "mean_projection_gradient_alignment": 0.03192516387983847,
+    "mean_actual_update_difference_ratio": 0.020165198737753656,
+    "mean_actual_update_cosine_to_native": 0.999795463285974
+  },
+  {
+    "checkpoint_step": 1001,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 8.389215676807282e-06,
+    "median_incremental_heldout_loss": 9.223073811126525e-06,
+    "beneficial_trials": 4,
+    "range": [
+      -1.268075258886725e-05,
+      2.734193163878018e-05
+    ],
+    "mean_incremental_train_loss": 5.9172074631935745e-05,
+    "mean_full_gradient_alignment": 0.24991565208176728,
+    "mean_projection_gradient_alignment": 0.25763846272919444,
+    "mean_actual_update_difference_ratio": 0.036959935003856755,
+    "mean_actual_update_cosine_to_native": 0.9993159409110479
+  }
+]

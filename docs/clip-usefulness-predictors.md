@@ -2,7 +2,7 @@
 
 Completed and verified locally; no new training, GPU, dependencies or Drive access.
 
-Alignment (full or projection) classified **11/15** held-out states correctly, mean seed balanced accuracy **0.764**, versus step **9/15 / 0.611**. Excluding effects within ±1e-6, both scored **9/12**. This is a screening clue, not convincing evidence of superiority. Next: [freeze full alignment and step rules and test new seeds](clip-usefulness-prospective.md). The frozen development artifact preserves the fifteen state inputs and source hashes.
+Alignment (full or projection) classified **11/15** held-out states correctly, mean seed balanced accuracy **0.764**, versus step **9/15 / 0.611**. Excluding effects within ±1e-6, both scored **9/12**. This is a screening clue, not convincing evidence of superiority. The [frozen-rule new-seed test is now completed](clip-usefulness-prospective.md). [Original report, 15 states and all 105 candidate/fold predictions](../experiment_results/clip_usefulness_predictors_2026-09/README.md) are archived with source/script hashes and a file inventory; no new fit was performed during archiving.
 
 ```bash
 cd /Users/akashmittal/Projects/otco

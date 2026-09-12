@@ -1,0 +1,12 @@
+{
+  "status": "complete",
+  "training_seed": 123,
+  "completed_updates": 1001,
+  "checkpoint_steps": [
+    100,
+    250,
+    500,
+    750,
+    1001
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "completed_updates": 1001,
+  "training_seed": 123,
+  "features_and_scale_sha256": "b40fa9b986b373d9be191a9f402c316a155d5d9a6c67b661634c5bbbb5bb8801",
+  "initial_state_sha256": "177b38f558439f6109959b7c91eb24d132b8f274daab6060e46170bb0d1c7cb8",
+  "features_sha256": "b40fa9b986b373d9be191a9f402c316a155d5d9a6c67b661634c5bbbb5bb8801",
+  "learning_rates": [
+    8.641974434184832e-06,
+    8.641974434184832e-07,
+    8.641974434184832e-07
+  ],
+  "historical_endpoint_state_exact": true,
+  "expected_initial_state_sha256": "177b38f558439f6109959b7c91eb24d132b8f274daab6060e46170bb0d1c7cb8",
+  "expected_features_sha256": "b40fa9b986b373d9be191a9f402c316a155d5d9a6c67b661634c5bbbb5bb8801"
+}

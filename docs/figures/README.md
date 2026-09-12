@@ -16,6 +16,8 @@ Figures are generated directly from [the archived JSON reports and epoch metrics
 | Early-pulse differences | Signed differences from baseline; one seed, not confidence intervals | [PNG](clip_early_pulse_differences.png) · [SVG](clip_early_pulse_differences.svg) |
 | Paired actual updates | Extra held-out loss after an auxiliary update vs a matched native update; identical y-axis scales | [PNG](clip_paired_update_effects.png) · [SVG](clip_paired_update_effects.svg) |
 | Paired seed replication | Early benefit across three seeds, smaller mixed later effects; all input trials and per-seed means on common scales | [PNG](clip_paired_seed_replication.png) · [SVG](clip_paired_seed_replication.svg) |
+| Intermediate usefulness | Non-monotonic five-state curves across development seeds; shading is batch range, not confidence intervals | [PNG](../../experiment_results/clip_paired_intermediate_2026-09/results/intermediate_usefulness.png) · [SVG](../../experiment_results/clip_paired_intermediate_2026-09/results/intermediate_usefulness.svg) |
+| Frozen-rule prospective test | Three new seed trajectories and frozen alignment/step balanced accuracy | [PNG](../../experiment_results/clip_usefulness_prospective_2026-09/results/prospective_usefulness.png) · [SVG](../../experiment_results/clip_usefulness_prospective_2026-09/results/prospective_usefulness.svg) |
 
 ## Reproduce
 
@@ -34,6 +36,8 @@ Regenerate paired-update effects with `python scripts/plot_clip_paired_updates.p
 Regenerate the three-seed comparison with `python scripts/plot_clip_paired_seeds.py`. It combines the original seed-42 records with the [192 new branch records](../../experiment_results/clip_paired_seeds_2026-09/README.md). Diamonds are per-seed means; small dots are fixed diagnostic training batches, not independent seeds or confidence intervals. The late-stage effect is smaller and changes sign across seeds.
 
 ## Reading conventions
+
+Regenerate the intermediate and prospective figures from committed numeric records with `python scripts/plot_clip_usefulness_studies.py --output-directory /path/to/fresh_plots`. Original PNG/SVG bytes remain in each evidence archive; regeneration writes to a new directory rather than replacing them.
 
 - Training curves are unsmoothed epoch measurements from seed 42. They do not show uncertainty across training seeds.
 - Canonical Avg R@1 averages the two retrieval directions. Species top-1 uses fixed prompts; the two metrics evaluate different capabilities.

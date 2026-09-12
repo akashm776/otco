@@ -1,0 +1,28 @@
+{
+  "run_id": "clip_paired_intermediate_20260912T131926_801067Z",
+  "source_commit": "cce20072fe61be22bfcfd3b17ac8605d8bdce78b",
+  "training_seeds": [
+    42,
+    123,
+    456
+  ],
+  "checkpoint_steps": [
+    100,
+    250,
+    500,
+    750,
+    1001
+  ],
+  "status": "complete",
+  "storage": "colab_local_only_no_drive",
+  "gpu": "NVIDIA A100-SXM4-40GB, 40960 MiB",
+  "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "transformers": "4.57.3",
+    "datasets": "2.21.0",
+    "numpy": "2.1.3",
+    "PyYAML": "6.0.3"
+  }
+}

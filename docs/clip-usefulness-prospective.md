@@ -1,6 +1,23 @@
 # Prospective new-seed test of frozen usefulness rules
 
-Status: **prepared; no new results yet**. Question: does an alignment-based rule transfer to new CLIP/CUB training trajectories better than a training-step rule?
+Status: **completed and audited**, all 720 branches. Question: does an alignment-based rule transfer to new CLIP/CUB training trajectories better than a training-step rule?
+
+## Findings
+
+| Frozen rule | Mean seed balanced accuracy | Correct states | Correct outside ±1e-6 |
+|---|---:|---:|---:|
+| Full-gradient alignment | **90.28%** | 13/15 | 12/13 |
+| Training step | 83.33% | 13/15 | 12/13 |
+
+The prespecified primary difference is **+6.94 percentage points** for alignment. Per-seed differences are +8.33 (789), +25.00 (2026), and −12.50 (31415). Balanced accuracy weights detection of helpful and harmful states equally within each seed before averaging seeds; it is not ordinary pooled accuracy.
+
+Alignment detects all five helpful states, including a near-zero late effect, but makes two false-positive predictions. Step detects three helpful states and makes no false positives. Both rules classify 13/15 states correctly and tie at 12/13 after the fixed near-zero exclusion. Thus this is modest positive evidence on the primary metric, not decisive superiority.
+
+The clearest transferred signal is seed 2026 at update 500: synthetic mean extra held-out loss is **−3.28 ×10⁻⁶**, beneficial in 12/16 trials, with beneficial means in every partition. Alignment predicts this return of usefulness; the timing rule misses it. It also incorrectly predicts benefit at seed 789/update 750 (+1.71 ×10⁻⁶) and seed 31415/update 250 (+0.80 ×10⁻⁶, near zero). Some weak effects are partition-sensitive.
+
+![New-seed usefulness curves and frozen-rule balanced accuracy.](../experiment_results/clip_usefulness_prospective_2026-09/results/prospective_usefulness.png)
+
+[Raw records, frozen rules, predictions and audit](../experiment_results/clip_usefulness_prospective_2026-09/README.md). No rule was refitted. These are three new training seeds, not fifteen independent models or a fresh evaluation dataset. No gate-driven training was tested. Keep the rules frozen and test a separate evaluation set before making a curriculum claim; no further run has been started.
 
 ## Decisions frozen before the new runs
 

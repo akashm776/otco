@@ -1,0 +1,37 @@
+{
+  "experiment": "clip_usefulness_prospective",
+  "training_seeds": [
+    789,
+    2026,
+    31415
+  ],
+  "development_seeds": [
+    42,
+    123,
+    456
+  ],
+  "checkpoint_steps": [
+    100,
+    250,
+    500,
+    750,
+    1001
+  ],
+  "stop_after_epochs": 13,
+  "expected_batches_per_epoch": 77,
+  "scheduler_horizon_updates": 3850,
+  "paired_protocol": "configs/clip_paired_updates.yaml",
+  "baseline_config": "configs/hf_cub200_clip_vit_b32_baseline.yaml",
+  "frozen_rules": "configs/clip_usefulness_frozen_rules.json",
+  "original_calibration_selection_seed": 20260911,
+  "original_calibration_batches": 4,
+  "diagnostic_caption_seed": 42,
+  "recalibrate": false,
+  "expected_total_branches": 720,
+  "primary_predictor": "full_gradient_alignment",
+  "comparator": "checkpoint_step",
+  "primary_metric": "mean_per_seed_balanced_accuracy_difference",
+  "near_zero_absolute_band": 1e-06,
+  "refit_on_new_seeds": false,
+  "independent_evaluation_dataset": false
+}

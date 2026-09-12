@@ -1,0 +1,18 @@
+{
+  "status": "complete",
+  "training_seeds": [
+    789,
+    2026,
+    31415
+  ],
+  "checkpoint_steps": [
+    100,
+    250,
+    500,
+    750,
+    1001
+  ],
+  "total_branch_rows": 720,
+  "evaluated_states": 15,
+  "rules_refitted": false
+}

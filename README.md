@@ -2,7 +2,7 @@
 
 Research code studying **when synthetic hard negatives help contrastive learning—and when they do not**. OTCO uses optimal transport to weight nearby mismatched embeddings and mix them into synthetic negatives. Uniform mixtures and real-negative controls test which parts actually matter.
 
-The current evidence separates **hardness, gradient direction, actual optimizer updates, and downstream performance**. CLIP/CUB-200 studies include a three-seed one-step replication; longer training interventions remain primarily single-seed. They do not establish a general curriculum rule.
+The current evidence separates **hardness, gradient direction, actual optimizer updates, and downstream performance**. Staged one-step CLIP/CUB-200 studies now cover six training seeds; longer training interventions remain primarily single-seed. They do not establish a general curriculum rule.
 
 ## Research progress
 
@@ -16,25 +16,24 @@ The current evidence separates **hardness, gradient direction, actual optimizer 
 | [Two-seed replication](docs/clip-paired-seed-replication.md) | Completed | Early benefit repeats in seeds 123 and 456; later effects are smaller and change sign across seeds |
 | [Intermediate checkpoints](docs/clip-paired-intermediate.md) | Completed | Five-state curves are non-monotonic and seed-dependent; no universal switch-off point |
 | [Predictor screening](docs/clip-usefulness-predictors.md) | Completed | Alignment: 11/15 correct vs step: 9/15; tied at 9/12 after excluding near-zero effects |
-| [Frozen-rule new-seed test](docs/clip-usefulness-prospective.md) | Prepared | Test alignment and timing rules on seeds 789, 2026 and 31415 without refitting |
+| [Frozen-rule new-seed test](docs/clip-usefulness-prospective.md) | Completed | Alignment +6.94 points in mean seed balanced accuracy; ordinary and non-near-zero accuracy tied |
 
-## Three-seed endpoint comparison
+## Latest completed study: frozen rules on new seeds
 
-Restore each baseline model **and AdamW state**, take one native-only or auxiliary-augmented update, then compare loss on 1,024 held-out examples. The two new training seeds add **192 audited branches** to the previous seed-42 experiment. The same 16 diagnostic training batches are used at updates 100 and 1,001 across all seeds.
+After mapping five checkpoints in development seeds 42, 123 and 456, freeze an alignment threshold and a timing comparator, then test **new seeds 789, 2026 and 31415** without refitting. The prospective run completed **720 paired branches / 15 seed-checkpoint states**.
 
-| Training seed | Early synthetic effect; beneficial trials | Later synthetic effect; beneficial trials |
-|---|---:|---:|
-| 42 — previous run | −25.63; **16/16** | +2.72; **0/16** |
-| 123 | −29.56; **16/16** | −4.87; **15/16** |
-| 456 | −13.80; **16/16** | +1.43; **3/16** |
+| Frozen rule | Mean seed balanced accuracy | Correct states | Correct excluding ±1e-6 |
+|---|---:|---:|---:|
+| Full-gradient alignment | **90.28%** | 13/15 | 12/13 |
+| Training step | 83.33% | 13/15 | 12/13 |
 
-Effects are mean extra held-out loss in units of **10⁻⁶**; negative means better than the paired native-only step, not an accuracy gain. **The small early benefit repeats; consistently harmful later pressure does not.** Later effects are weaker and seed-dependent. Seed 123's later synthetic step helps by reducing the loss increase caused by its native-only step, not by improving on the initial checkpoint.
+Alignment's primary advantage is **+6.94 percentage points**, but ordinary and non-near-zero accuracy are tied. It detects more helpful states at the cost of false positives. This is modest new-seed evidence, not a proven curriculum gain, statistical significance claim or independent-evaluation confirmation.
 
-![Seed-level means and fixed-input trials: early benefit repeats while later effects change sign.](docs/figures/clip_paired_seed_replication.png)
+![New-seed usefulness curves and frozen-rule scores.](experiment_results/clip_usefulness_prospective_2026-09/results/prospective_usefulness.png)
 
-These are three training seeds, not 48 independent replicates per stage. One-step effects on a reused holdout do not prove a long-term curriculum gain, an exact activation window, or transfer beyond CLIP/CUB. The hardest-real control has worse mean loss than native-only at both states in all three seeds on the primary score.
+The [five-checkpoint development study](docs/clip-paired-intermediate.md) shows non-monotonic, seed-dependent usefulness. The [predictor screening](docs/clip-usefulness-predictors.md) motivated this test. The original [three-seed endpoint comparison](docs/clip-paired-seed-replication.md) remains archived separately; endpoint replays are not additional independent seeds.
 
-[Protocol, findings and limitations](docs/clip-paired-seed-replication.md) · [192 new records and audit](experiment_results/clip_paired_seeds_2026-09/README.md) · [Seed-42 reference](experiment_results/clip_paired_updates_2026-09/README.md)
+[Prospective findings and protocol](docs/clip-usefulness-prospective.md) · [720 new records and audit](experiment_results/clip_usefulness_prospective_2026-09/README.md) · [Intermediate evidence](experiment_results/clip_paired_intermediate_2026-09/README.md) · [Screening evidence](experiment_results/clip_usefulness_predictors_2026-09/README.md)
 
 ## Earlier evidence
 
@@ -46,7 +45,7 @@ The [original CLIP study](docs/clip-experiments.md) compares eight 50-epoch arms
 
 ## Run and reproduce
 
-Requires Python 3.12+; GPU experiments use A100 Colab runtimes. See [setup and commands](docs/running-experiments.md), [Colab runners](colabs/), and each study's protocol. The next [frozen-rule new-seed cell](colabs/clip_usefulness_prospective_one_cell.py) is local-only with one combined ZIP download and **no Drive writes**. Earlier runners may use Drive backups. Check the experiment's completion marker, not just the launcher's status.
+Requires Python 3.12+; GPU experiments use A100 Colab runtimes. See [setup and commands](docs/running-experiments.md), [Colab runners](colabs/), and each study's protocol. The [frozen-rule new-seed cell](colabs/clip_usefulness_prospective_one_cell.py) reproduces the completed study with one combined ZIP download and **no Drive writes**. Earlier runners may use Drive backups. Check the experiment's completion marker, not just the launcher's status.
 
 ```bash
 uv sync

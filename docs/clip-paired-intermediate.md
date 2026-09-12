@@ -14,7 +14,9 @@ Mean synthetic-minus-native held-out loss ×10⁻⁶ (negative favors synthetic)
 
 Usefulness is not monotonic or governed by a shared cutoff. At update 500, synthetic helps seed 456 in 16/16 trials but hurts seed 42 in 16/16, in every partition. Near-zero cases remain partition-sensitive. Seed 123's later relative benefit reduces an absolute loss increase. These are small one-step effects, not demonstrated curriculum gains.
 
-Source ZIP: `clip_paired_intermediate_20260912T131926_801067Z_complete.zip`, SHA256 `c34004cc190bf42bfe45e89fed137750b79ee0af7294ddcc306c1124f3eb4004`. The original ZIP remains in local Downloads; checkpoints are not included, so GPU checks are verified recorded evidence, not independently rerun offline. [Predictor screening](clip-usefulness-predictors.md) · [Next prospective seed test](clip-usefulness-prospective.md).
+Source ZIP: `clip_paired_intermediate_20260912T131926_801067Z_complete.zip`, SHA256 `c34004cc190bf42bfe45e89fed137750b79ee0af7294ddcc306c1124f3eb4004`. [Raw numeric records, plots and audit are archived](../experiment_results/clip_paired_intermediate_2026-09/README.md). Checkpoints are not included, so GPU checks are verified recorded evidence, not independently rerun offline. [Predictor screening](clip-usefulness-predictors.md) · [Completed prospective seed test](clip-usefulness-prospective.md).
+
+![Five checkpoint usefulness curves across the development seeds.](../experiment_results/clip_paired_intermediate_2026-09/results/intermediate_usefulness.png)
 
 Intuitively, we have checked the same three journeys near the start and much later. Now we add three stops between them. At each stop, restore the model **and its optimizer memory**, try one ordinary update and one update with synthetic pressure on the same examples, then ask which transfers better to held-out examples. Each trial resets; the synthetic updates never alter the underlying training journey.
 

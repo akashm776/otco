@@ -1,0 +1,7 @@
+{
+  "original_training_count": 5994,
+  "diagnostic_exclusion_count": 1024,
+  "final_training_count": 4970,
+  "intersection_count": 0,
+  "holdout_path": "/content/otco_control_clip_paired_intermediate_20260912T131926_801067Z/source/configs/cub200_clip_diagnostic_holdout_indices.json"
+}

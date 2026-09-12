@@ -1,0 +1,12 @@
+{
+  "completed_updates": 100,
+  "training_seed": 2026,
+  "features_and_scale_sha256": "0f7b54ccc79fd2a79fd529bb95c5e25dfc71169bc902ea25d2d3932c6ef056d0",
+  "initial_state_sha256": "24b595d18da8bfc22d9eae030e81d5d635eba936583ce08eb64481ec26f0c870",
+  "features_sha256": "0f7b54ccc79fd2a79fd529bb95c5e25dfc71169bc902ea25d2d3932c6ef056d0",
+  "learning_rates": [
+    1e-05,
+    1e-06,
+    1e-06
+  ]
+}

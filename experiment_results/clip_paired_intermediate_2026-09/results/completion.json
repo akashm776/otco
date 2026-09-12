@@ -1,0 +1,18 @@
+{
+  "status": "complete",
+  "training_seeds": [
+    42,
+    123,
+    456
+  ],
+  "checkpoint_steps": [
+    100,
+    250,
+    500,
+    750,
+    1001
+  ],
+  "total_branch_rows": 720,
+  "new_intermediate_branch_rows": 432,
+  "endpoint_replay_branch_rows": 288
+}

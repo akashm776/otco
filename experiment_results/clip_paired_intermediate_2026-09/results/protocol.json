@@ -1,0 +1,38 @@
+{
+  "experiment": "clip_paired_intermediate",
+  "training_seeds": [
+    42,
+    123,
+    456
+  ],
+  "checkpoint_steps": [
+    100,
+    250,
+    500,
+    750,
+    1001
+  ],
+  "new_measurement_steps": [
+    250,
+    500,
+    750
+  ],
+  "endpoint_replay_steps": [
+    100,
+    1001
+  ],
+  "stop_after_epochs": 13,
+  "expected_batches_per_epoch": 77,
+  "scheduler_horizon_updates": 3850,
+  "paired_protocol": "configs/clip_paired_updates.yaml",
+  "baseline_config": "configs/hf_cub200_clip_vit_b32_baseline.yaml",
+  "original_calibration_selection_seed": 20260911,
+  "original_calibration_batches": 4,
+  "diagnostic_caption_seed": 42,
+  "recalibrate": false,
+  "endpoint_state_and_features_exact": true,
+  "endpoint_loss_atol": 1e-08,
+  "expected_total_branches": 720,
+  "expected_new_intermediate_branches": 432,
+  "expected_endpoint_replay_branches": 288
+}

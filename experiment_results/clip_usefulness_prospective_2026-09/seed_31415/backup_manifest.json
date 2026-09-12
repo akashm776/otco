@@ -1,0 +1,101 @@
+{
+  "verified_files": {
+    "checkpoints/baseline/best_model.pt": {
+      "bytes": 605277087,
+      "sha256": "25371a32cb00fa807c4aeda94df2a3f2f506a41349419581d00204b3595d4c71"
+    },
+    "checkpoints/baseline/common_step_100.pt": {
+      "bytes": 692470841,
+      "sha256": "468d4aa0b3da875b99b1a972aa1cca5779069c9b813c3a66826acefa47751c81"
+    },
+    "checkpoints/baseline/latest.pt": {
+      "bytes": 692463572,
+      "sha256": "4ecb921628944fe70380eee29289d8dac6c582342eb717042b770815ea5e8199"
+    },
+    "checkpoints/baseline/step_000250.pt": {
+      "bytes": 692468805,
+      "sha256": "0f44fc6c1a157fee547ff6932d7fe0cbec49d5bc55b4a4b2cabe2c28a95d1b5a"
+    },
+    "checkpoints/baseline/step_000500.pt": {
+      "bytes": 692468805,
+      "sha256": "6f5692a48f314d7707a6191db125c1e3e3f4ae222975162e3cab496c50332d3e"
+    },
+    "checkpoints/baseline/step_000750.pt": {
+      "bytes": 692468805,
+      "sha256": "32ac68e52088cb462f2cbbe59aa059e3808c69cd9eeaa38bf57274e2310e0410"
+    },
+    "results/baseline/completion.json": {
+      "bytes": 155,
+      "sha256": "86004ffea6354b47ecbfa5ae6a155d8361d85675453182a0695be1698afad745"
+    },
+    "results/baseline/diagnostics/000100_pulse_100/report.json": {
+      "bytes": 397,
+      "sha256": "296846a89b737d63f30aa62833b3c0db5246c789b75e8fb2231f69a58d09089e"
+    },
+    "results/baseline/diagnostics/000100_pulse_100/snapshot_hashes.json": {
+      "bytes": 425,
+      "sha256": "6d9fdb5d7bd8a4885bf9dbad692e209be2e76de9032c21bff726a56316fdd663"
+    },
+    "results/baseline/diagnostics/000250_pulse_250/report.json": {
+      "bytes": 445,
+      "sha256": "2de85e7708c6c7738011b3cdef9aa5615b4aa9a4e76b9b04ae543abbe15184a9"
+    },
+    "results/baseline/diagnostics/000250_pulse_250/snapshot_hashes.json": {
+      "bytes": 425,
+      "sha256": "94efc03319a801e0bf6c070919c602c6e0b3b778012f28823f004696304fb841"
+    },
+    "results/baseline/diagnostics/000500_pulse_500/report.json": {
+      "bytes": 445,
+      "sha256": "ab85380a2a657ba84a8bd68ab715be283e44bdfa22f44298d01079674c70366d"
+    },
+    "results/baseline/diagnostics/000500_pulse_500/snapshot_hashes.json": {
+      "bytes": 425,
+      "sha256": "a668c067915c5f6e2101893cba7442756e94654ac7ac7351e447f40ab6c57a4f"
+    },
+    "results/baseline/diagnostics/000750_pulse_750/report.json": {
+      "bytes": 445,
+      "sha256": "307f5c14c5a743bdf0070f7b1ac1e9835a2463109cb256b39437fa4088b9d4de"
+    },
+    "results/baseline/diagnostics/000750_pulse_750/snapshot_hashes.json": {
+      "bytes": 425,
+      "sha256": "109d4c178c1b861fb634a31ea63c617e935347491319c42f9f4794f340a2c615"
+    },
+    "results/baseline/diagnostics/001001_pulse_1001/report.json": {
+      "bytes": 446,
+      "sha256": "c1961ac769fa69e7ea1f590f52982e007510c4f5f1cb389eae73ee22f6a959ef"
+    },
+    "results/baseline/diagnostics/diagnostic_holdout_indices.json": {
+      "bytes": 8004,
+      "sha256": "9984120baf2b4d410a21946f83370eed40ff682fe5ee53e64ca426917a1fcbd2"
+    },
+    "results/baseline/training/data_exclusion_report.json": {
+      "bytes": 288,
+      "sha256": "a5b4650ef6bd69d73e0488045a6100d0e336642d5e8ffe1120ac2c7ca51b5de7"
+    },
+    "results/baseline/training/metrics.jsonl": {
+      "bytes": 18314,
+      "sha256": "540a4f1ac51c80e84181edc047fc823209eeba604c4b79a553b4327b457c2674"
+    },
+    "results/baseline/training/resolved_config.yaml": {
+      "bytes": 1568,
+      "sha256": "3aed32a15787e61e771f0333fc262fdc6d61fd1a7d21801441554f73536752bb"
+    },
+    "results/baseline/training/summary.json": {
+      "bytes": 8436,
+      "sha256": "3b85cc9e536a9988cf17aa5357a71340da7d113249908bffe9c25f15aa1d1b82"
+    },
+    "results/baseline/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "results/calibration.json": {
+      "bytes": 3974,
+      "sha256": "909d5db75c5c2527d9b0895decd8d169bb0b9b3bbfe88cb404a4788e57c917d0"
+    },
+    "results/prefix_hashes.json": {
+      "bytes": 425,
+      "sha256": "6d9fdb5d7bd8a4885bf9dbad692e209be2e76de9032c21bff726a56316fdd663"
+    }
+  },
+  "scope": "Local closed-file integrity inventory; no external backup"
+}
