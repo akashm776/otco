@@ -1,0 +1,15 @@
+{
+  "run_id": "clip_early_pulse_20260911T233840_978774Z",
+  "source_commit": "030c081f9c6d6c8e03740c7424c0f26af0ec81bb",
+  "gpu": "NVIDIA A100-SXM4-40GB, 40960",
+  "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+  "status": "complete",
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "transformers": "4.57.3",
+    "datasets": "2.21.0",
+    "numpy": "2.1.3",
+    "PyYAML": "6.0.3"
+  }
+}

@@ -10,6 +10,10 @@ Figures are generated directly from [the archived JSON reports and epoch metrics
 | Final comparison | All eight arms' epoch-50 changes from baseline, in percentage points | [PNG](clip_final_comparison.png) · [SVG](clip_final_comparison.svg) |
 | Hardness dynamics | Uniform top-8 hardness and applied alpha over training, comparing alpha=0.5 with alpha=0.134 | [PNG](clip_hardness_dynamics.png) · [SVG](clip_hardness_dynamics.svg) |
 | Gradient geometry | Native-loss alignment, predicted real-negative margin change, and auxiliary-gradient disagreement across shuffled partitions | [PNG](clip_gradient_geometry.png) · [SVG](clip_gradient_geometry.svg) |
+| Staged gradients | Four fixed measurement times across three 50-epoch arms | [PNG](clip_gradient_stages.png) |
+| Warmup head probes | Matched batch embedding and shared-head alignment across six baseline states | [PNG](clip_warmup_projection_readiness.png) |
+| Early-pulse trajectories | Raw retrieval/species curves for the 13-epoch pulse pilot | [PNG](clip_early_pulse_performance.png) |
+| Early-pulse differences | Signed differences from baseline; one seed, not confidence intervals | [PNG](clip_early_pulse_differences.png) · [SVG](clip_early_pulse_differences.svg) |
 
 ## Reproduce
 
@@ -20,6 +24,8 @@ uv run --with matplotlib==3.10.8 python scripts/plot_clip_results.py
 ```
 
 [The plotting script](../../scripts/plot_clip_results.py) requires Matplotlib and NumPy. It reads only the committed artifacts, performs no training, and regenerates the eight image files in this directory. No Downloads archives or model checkpoints are required.
+
+Regenerate the early-pulse difference plot from committed [numeric evidence](../../experiment_results/clip_curriculum_2026-09/early_pulse_performance.json) with `python scripts/plot_clip_early_pulse_differences.py`. The other new plots are imported from the verified study ZIPs; their original generators are `src.clip_gradient_stages.plot_results`, `src.clip_warmup_readiness.plot_projection`, and `src.clip_early_pulse.plot_performance`.
 
 ## Reading conventions
 

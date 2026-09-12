@@ -2,6 +2,27 @@
 
 [Previous staged experiment](clip-gradient-stages.md) · [Project overview](../README.md)
 
+## Completed findings — September 11, 2026
+
+All six snapshots completed. The baseline endpoint feature hashes exactly reproduce the earlier 50-epoch run's corresponding states; the observer did not change that realized trajectory. The local audit verified 24,576 valid query-partition observations and 192 projection/batch records.
+
+| Completed updates | Mean per-query U8 margin change | U8 vs native: shared-head gradient cosine | Positive shared-head batches |
+|---:|---:|---:|---:|
+| 0 | −0.0993 | +0.0663 | 5/6 |
+| 100 | +0.1383 | +0.0784 | 6/6 |
+| 250 | +0.1670 | +0.0043 | 2/6 |
+| 500 | +0.1769 | −0.0348 | 1/6 |
+| 750 | +0.1831 | −0.0196 | 2/6 |
+| 1,001 | +0.1758 | −0.0174 | 2/6 |
+
+Means use the three shuffled partitions; head measurements use two selected batches per partition. These are reused inputs, not independent seeds. The original per-query reference is native row CE, whereas the head reference above is native symmetric CLIP. Matched batch-level embedding controls show that aggregation matters as well as the mapping into shared weights. Real-negative head alignment remains positive (approximately 0.25–0.54).
+
+![Matched batch embedding and projection-head gradient alignment during warmup.](figures/clip_warmup_projection_readiness.png)
+
+**Interpretation:** ordinary fine-tuning makes the average per-query margin proxy positive by update 100, but that does not imply a broadly useful shared-parameter instruction. The weak early head-alignment signal motivated the [completed early-pulse pilot](clip-early-pulse.md), which did not show convincing overall benefit. This is not evidence that step 100 is universally optimal.
+
+[Archived numeric analysis](../experiment_results/clip_curriculum_2026-09/warmup_analysis.json). The original pre-result protocol follows.
+
 ## Preregistered experiment
 
 Baseline-only CLIP fine-tuning, seed 42, stopped after **1,001 updates / 13 epochs**. Keep the original 50-epoch learning-rate schedule (3,850-update horizon); shortening the schedule itself would change the trajectory. No synthetic loss is applied during training. Measure at **0, 100, 250, 500, 750, 1,001** completed updates.

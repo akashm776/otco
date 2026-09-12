@@ -1,0 +1,15 @@
+experiment: clip_paired_updates
+source_run: clip_early_pulse_20260911T233840_978774Z
+checkpoint_steps: [100, 1001]
+arms: [baseline, uniform_top8, hardest_real]
+training_batches: 16
+batch_size: 64
+selection_seed: 20260912
+branch_seed: 202609120
+caption_epoch: 2
+exclude_calibration_examples: true
+primary_partitions: [shuffle_seed_42, shuffle_seed_123, shuffle_seed_4242]
+# Reuse the prior training-only calibration. Never tune on held-out effects.
+coefficients:
+  uniform_top8: 0.06005351588542947
+  hardest_real: 0.3753711620568176

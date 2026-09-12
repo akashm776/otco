@@ -2,6 +2,28 @@
 
 [Project](../README.md) · [Readiness diagnostic](clip-warmup-readiness.md)
 
+## Completed result — September 12, 2026
+
+**A near-null single-seed pilot, not a convincing overall benefit.** All three arms completed 1,001 updates with exactly matching pre-pulse model/optimizer/RNG hashes. Both treatment audits contain exactly objective steps 100–199. The baseline endpoint features reproduce the previous baseline experiment exactly.
+
+| Arm | Final canonical Avg R@1 | Difference vs baseline | Species top-1 |
+|---|---:|---:|---:|
+| Baseline | 1.613738% | — | 45.823264% |
+| Uniform-top-8 pulse | 1.630998% | +0.017259 pp | 45.564377% |
+| Hardest-real pulse | 1.613738% | 0.000000 pp | 45.857784% |
+
+The synthetic primary-endpoint gain corresponds to a net two additional top-1 retrieval successes across the two directions (one fewer text→image, three more image→text). It costs 15 species-classification successes, or −0.258887 percentage points. All-caption text→image R@1 is unchanged, and image→text R@1 is slightly lower. Immediately after the pulse (step 200), synthetic canonical Avg R@1 is **0.060407 points below** baseline. The later differences fluctuate around zero rather than forming a sustained advantage. No uncertainty over training seeds can be estimated from this one run.
+
+![Paired trajectory differences from baseline; shaded area is the pulse.](figures/clip_early_pulse_differences.png)
+
+Synthetic projection-head alignment with native symmetric CLIP falls from **+0.078418** at 100 to **−0.019591** at 200, then **−0.017059** at 1,001. Baseline's corresponding values are +0.078418, +0.006418 and −0.017358. The older per-query embedding margin remains positive; that proxy and the shared-head diagnostic are not interchangeable. Better gradient agreement in the real-negative control also does not produce a final canonical R@1 gain.
+
+Calibration sets coefficients to **0.06005351588542947** (synthetic) and **0.3753711620568176** (real). Actual mean full-parameter auxiliary/native gradient ratios during the pulse are **7.772%** and **10.181%**, respectively; matching on calibration batches did not continuously equalize pressure.
+
+[Archived audit, metrics and provenance](../experiment_results/clip_curriculum_2026-09/README.md) · [Full training curves](figures/clip_early_pulse_performance.png). The ZIP audit checked all 120 files, nine stage feature/metadata hashes, 36,864 valid query-partition observations, and 288 head/batch probe records. One fixed batch per stage was recomputed on CPU within floating-point tolerances. The archived audit summarizes the measured comparisons; it does not make the repeated inputs independent replications.
+
+**Next:** [paired actual-AdamW updates](clip-paired-updates.md), testing incremental held-out loss changes before another curriculum rollout. The preregistered design below is retained unchanged for provenance.
+
 ## Question and preregistered decision
 
 Does briefly adding synthetic-negative pressure early in fine-tuning improve what native CLIP would learn anyway? The preceding single-seed diagnostic found weak positive projection-head alignment at update 100 (6/6 selected shuffled batches), near-zero mean alignment at 250, and negative means at 500–1,001. This motivates a candidate interval; it does not establish an optimal window or a general OTCO principle.

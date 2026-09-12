@@ -2,7 +2,17 @@
 
 [← Overview](../README.md) · [Previous CLIP evidence](clip-experiments.md)
 
-**Status: implemented; GPU experiment not yet run.** This is a measurement experiment, not a new curriculum or a claim of improvement.
+**Status: completed on A100; single training seed.** This is a measurement experiment, not a new curriculum or a claim of improvement.
+
+## Completed findings — September 11, 2026
+
+All three 50-epoch arms and all 12 diagnostic snapshots completed. Baseline and both treatments have identical pretrained and pre-activation features. Ordinary native training changes mean U8 per-query real-margin direction from **−0.09934** at initialization to **+0.17583** at update 1,001, before any auxiliary pressure is applied. Mean native row-CE alignment rises from **0.13596 to 0.32152**. Thus the frozen mismatch does not describe every stage of fine-tuning.
+
+That local improvement does not establish a training benefit: final canonical Avg R@1 is **1.967553% baseline**, **1.907145% uniform-top-8**, and **1.941664% hardest-real**. The U8-treated arm's mean margin direction is +0.17007 after the ramp and +0.15340 at the end, not a progressively stronger signal. All query-gradient measurements were valid in this run. An accidentally duplicated same-seed execution reproduced the features; it is **not a second independent seed**.
+
+![Fixed-query gradient trends across all three training arms.](figures/clip_gradient_stages.png)
+
+[Archived comparison CSV](../experiment_results/clip_curriculum_2026-09/staged_comparison.csv) · [Dense warmup follow-up](clip-warmup-readiness.md) · [Early-pulse intervention](clip-early-pulse.md). The original protocol and interpretation limits are retained below.
 
 ## Question and controls
 

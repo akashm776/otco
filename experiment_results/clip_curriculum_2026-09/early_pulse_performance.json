@@ -1,0 +1,290 @@
+[
+  {
+    "arm": "baseline",
+    "step": 0,
+    "canonical_avg_r1_percent": 0.7766655180603266,
+    "species_top1_percent": 51.60511136054993
+  },
+  {
+    "arm": "baseline",
+    "step": 77,
+    "canonical_avg_r1_percent": 0.9837762918323278,
+    "species_top1_percent": 50.535035133361816
+  },
+  {
+    "arm": "baseline",
+    "step": 100,
+    "canonical_avg_r1_percent": 1.0614428669214249,
+    "species_top1_percent": 50.77666640281677
+  },
+  {
+    "arm": "baseline",
+    "step": 154,
+    "canonical_avg_r1_percent": 1.1908871121704578,
+    "species_top1_percent": 49.87918436527252
+  },
+  {
+    "arm": "baseline",
+    "step": 200,
+    "canonical_avg_r1_percent": 1.2167759705334902,
+    "species_top1_percent": 49.982741475105286
+  },
+  {
+    "arm": "baseline",
+    "step": 231,
+    "canonical_avg_r1_percent": 1.1995167005807161,
+    "species_top1_percent": 49.775630235672
+  },
+  {
+    "arm": "baseline",
+    "step": 308,
+    "canonical_avg_r1_percent": 1.2944424990564585,
+    "species_top1_percent": 48.325854539871216
+  },
+  {
+    "arm": "baseline",
+    "step": 385,
+    "canonical_avg_r1_percent": 1.2771832756698132,
+    "species_top1_percent": 47.92889058589935
+  },
+  {
+    "arm": "baseline",
+    "step": 462,
+    "canonical_avg_r1_percent": 1.4670348726212978,
+    "species_top1_percent": 47.7217823266983
+  },
+  {
+    "arm": "baseline",
+    "step": 539,
+    "canonical_avg_r1_percent": 1.4929236844182014,
+    "species_top1_percent": 46.80704176425934
+  },
+  {
+    "arm": "baseline",
+    "step": 616,
+    "canonical_avg_r1_percent": 1.4670348726212978,
+    "species_top1_percent": 46.44459784030914
+  },
+  {
+    "arm": "baseline",
+    "step": 693,
+    "canonical_avg_r1_percent": 1.5533310361206532,
+    "species_top1_percent": 46.668967604637146
+  },
+  {
+    "arm": "baseline",
+    "step": 770,
+    "canonical_avg_r1_percent": 1.6482568345963955,
+    "species_top1_percent": 46.16844952106476
+  },
+  {
+    "arm": "baseline",
+    "step": 847,
+    "canonical_avg_r1_percent": 1.6568864695727825,
+    "species_top1_percent": 45.71970999240875
+  },
+  {
+    "arm": "baseline",
+    "step": 924,
+    "canonical_avg_r1_percent": 1.6223679296672344,
+    "species_top1_percent": 45.09837627410889
+  },
+  {
+    "arm": "baseline",
+    "step": 1001,
+    "canonical_avg_r1_percent": 1.6137382946908474,
+    "species_top1_percent": 45.82326412200928
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 0,
+    "canonical_avg_r1_percent": 0.7766655180603266,
+    "species_top1_percent": 51.60511136054993
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 77,
+    "canonical_avg_r1_percent": 0.9837762918323278,
+    "species_top1_percent": 50.535035133361816
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 100,
+    "canonical_avg_r1_percent": 1.0614428669214249,
+    "species_top1_percent": 50.77666640281677
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 154,
+    "canonical_avg_r1_percent": 1.0959613602608442,
+    "species_top1_percent": 49.982741475105286
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 200,
+    "canonical_avg_r1_percent": 1.1563686653971672,
+    "species_top1_percent": 49.775630235672
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 231,
+    "canonical_avg_r1_percent": 1.1908871121704578,
+    "species_top1_percent": 49.58577752113342
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 308,
+    "canonical_avg_r1_percent": 1.3548498507589102,
+    "species_top1_percent": 48.0151891708374
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 385,
+    "canonical_avg_r1_percent": 1.2685536872595549,
+    "species_top1_percent": 47.808077931404114
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 462,
+    "canonical_avg_r1_percent": 1.492923777550459,
+    "species_top1_percent": 47.58370816707611
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 539,
+    "canonical_avg_r1_percent": 1.4325164258480072,
+    "species_top1_percent": 47.08319008350372
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 616,
+    "canonical_avg_r1_percent": 1.4670348726212978,
+    "species_top1_percent": 46.46185636520386
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 693,
+    "canonical_avg_r1_percent": 1.5447014011442661,
+    "species_top1_percent": 46.63445055484772
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 770,
+    "canonical_avg_r1_percent": 1.6223679296672344,
+    "species_top1_percent": 46.16844952106476
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 847,
+    "canonical_avg_r1_percent": 1.6914049163460732,
+    "species_top1_percent": 45.54711878299713
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 924,
+    "canonical_avg_r1_percent": 1.6223680227994919,
+    "species_top1_percent": 45.25371193885803
+  },
+  {
+    "arm": "uniform_top8",
+    "step": 1001,
+    "canonical_avg_r1_percent": 1.6309976112097502,
+    "species_top1_percent": 45.564377307891846
+  },
+  {
+    "arm": "hardest_real",
+    "step": 0,
+    "canonical_avg_r1_percent": 0.7766655180603266,
+    "species_top1_percent": 51.60511136054993
+  },
+  {
+    "arm": "hardest_real",
+    "step": 77,
+    "canonical_avg_r1_percent": 0.9837762918323278,
+    "species_top1_percent": 50.535035133361816
+  },
+  {
+    "arm": "hardest_real",
+    "step": 100,
+    "canonical_avg_r1_percent": 1.0614428669214249,
+    "species_top1_percent": 50.77666640281677
+  },
+  {
+    "arm": "hardest_real",
+    "step": 154,
+    "canonical_avg_r1_percent": 1.1995167471468449,
+    "species_top1_percent": 49.82740879058838
+  },
+  {
+    "arm": "hardest_real",
+    "step": 200,
+    "canonical_avg_r1_percent": 1.1995167471468449,
+    "species_top1_percent": 49.896445870399475
+  },
+  {
+    "arm": "hardest_real",
+    "step": 231,
+    "canonical_avg_r1_percent": 1.1995167005807161,
+    "species_top1_percent": 49.74111020565033
+  },
+  {
+    "arm": "hardest_real",
+    "step": 308,
+    "canonical_avg_r1_percent": 1.3030721340328455,
+    "species_top1_percent": 48.3776330947876
+  },
+  {
+    "arm": "hardest_real",
+    "step": 385,
+    "canonical_avg_r1_percent": 1.2771833222359419,
+    "species_top1_percent": 48.0151891708374
+  },
+  {
+    "arm": "hardest_real",
+    "step": 462,
+    "canonical_avg_r1_percent": 1.4756645075976849,
+    "species_top1_percent": 47.859856486320496
+  },
+  {
+    "arm": "hardest_real",
+    "step": 539,
+    "canonical_avg_r1_percent": 1.4842940960079432,
+    "species_top1_percent": 46.876078844070435
+  },
+  {
+    "arm": "hardest_real",
+    "step": 616,
+    "canonical_avg_r1_percent": 1.4497756492346525,
+    "species_top1_percent": 46.530893445014954
+  },
+  {
+    "arm": "hardest_real",
+    "step": 693,
+    "canonical_avg_r1_percent": 1.5878494828939438,
+    "species_top1_percent": 46.68622612953186
+  },
+  {
+    "arm": "hardest_real",
+    "step": 770,
+    "canonical_avg_r1_percent": 1.6223679296672344,
+    "species_top1_percent": 46.06489539146423
+  },
+  {
+    "arm": "hardest_real",
+    "step": 847,
+    "canonical_avg_r1_percent": 1.6396271996200085,
+    "species_top1_percent": 45.75422704219818
+  },
+  {
+    "arm": "hardest_real",
+    "step": 924,
+    "canonical_avg_r1_percent": 1.6482568345963955,
+    "species_top1_percent": 45.35726606845856
+  },
+  {
+    "arm": "hardest_real",
+    "step": 1001,
+    "canonical_avg_r1_percent": 1.6137382946908474,
+    "species_top1_percent": 45.857784152030945
+  }
+]
