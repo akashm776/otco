@@ -40,7 +40,7 @@ The [original CLIP study](docs/clip-experiments.md) compares eight 50-epoch arms
 
 ## Run and reproduce
 
-Requires Python 3.12+; GPU experiments use A100 Colab runtimes. See [setup and commands](docs/running-experiments.md), [Colab runners](colabs/), and each study's protocol. Mount Drive before long runs; a completed notebook launcher cell does not by itself prove training has finished.
+Requires Python 3.12+; GPU experiments use A100 Colab runtimes. See [setup and commands](docs/running-experiments.md), [Colab runners](colabs/), and each study's protocol. Storage is runner-specific: the [two-seed overnight cell](colabs/clip_paired_seeds_one_cell.py) is local-only, while earlier runners use Drive backups. Check the experiment's completion marker, not just the launcher's status.
 
 ```bash
 uv sync

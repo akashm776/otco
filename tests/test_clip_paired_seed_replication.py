@@ -1,5 +1,9 @@
 import json
+import ast
+import hashlib
 import random
+import subprocess
+import sys
 from types import SimpleNamespace
 import zipfile
 
@@ -130,3 +134,39 @@ def test_overnight_runner_has_no_drive_writes_or_mount():
     for forbidden in ['/content/drive', 'drive.mount', 'RunBackup', 'copy_verified']:
         assert forbidden not in source
     assert 'colab_local_only_no_drive' in source
+
+
+def handoff_namespace():
+    source = (replication.ROOT / 'colabs/clip_paired_seeds_one_cell.py').read_text()
+    tree = ast.parse(source)
+    assert isinstance(tree.body[-1], ast.Expr) and tree.body[-1].value.func.id == 'run_two_seeds'
+    tree.body.pop()  # Inspect definitions without ever starting Colab or networking.
+    namespace = {'__name__': 'handoff_test'}
+    exec(compile(tree, '<handoff test>', 'exec'), namespace)
+    return namespace
+
+
+def test_one_cell_pins_committed_runner_and_never_mounts_drive():
+    namespace = handoff_namespace()
+    commit = namespace['SOURCE_COMMIT']
+    source = subprocess.check_output(['git', 'show', commit + ':colabs/run_clip_paired_seed_replication.py'], cwd=replication.ROOT)
+    assert hashlib.sha256(source).hexdigest() == namespace['RUNNER_SHA256']
+    cell = (replication.ROOT / 'colabs/clip_paired_seeds_one_cell.py').read_text()
+    assert '/content/drive' not in cell and 'drive.mount' not in cell
+
+
+def test_one_cell_redownloads_completed_archive_without_gpu_or_retraining(tmp_path, monkeypatch):
+    namespace = handoff_namespace()
+    run_id = 'clip_paired_seeds_fixture'
+    control = tmp_path / ('otco_control_' + run_id)
+    control.mkdir()
+    archive = control / (run_id + '_complete.zip')
+    with zipfile.ZipFile(archive, 'w') as bundle:
+        bundle.writestr(run_id + '/results/run_manifest.json', json.dumps(dict(source_commit=namespace['SOURCE_COMMIT'], status='complete')))
+        bundle.writestr(run_id + '/results/completion.json', json.dumps(dict(status='complete', new_branch_rows=192, new_training_seeds=[123, 456])))
+    downloads = []
+    monkeypatch.setitem(sys.modules, 'google.colab', SimpleNamespace(files=SimpleNamespace(download=downloads.append)))
+    namespace['Path'] = lambda _: tmp_path
+    monkeypatch.setattr(namespace['shutil'], 'which', lambda _: pytest.fail('Should not require GPU for re-download'))
+    namespace['run_two_seeds']()
+    assert downloads == [str(archive)]
