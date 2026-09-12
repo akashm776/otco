@@ -2,7 +2,7 @@
 
 Research code studying **when synthetic hard negatives help contrastive learning—and when they do not**. OTCO uses optimal transport to weight nearby mismatched embeddings and mix them into synthetic negatives. Uniform mixtures and real-negative controls test which parts actually matter.
 
-The current evidence separates **hardness, gradient direction, actual optimizer updates, and downstream performance**. Results below are exploratory, primarily single-seed CLIP experiments on CUB-200; they do not establish a general curriculum rule.
+The current evidence separates **hardness, gradient direction, actual optimizer updates, and downstream performance**. CLIP/CUB-200 studies include a three-seed one-step replication; longer training interventions remain primarily single-seed. They do not establish a general curriculum rule.
 
 ## Research progress
 
@@ -12,23 +12,26 @@ The current evidence separates **hardness, gradient direction, actual optimizer 
 | [Gradients across fine-tuning](docs/clip-gradient-stages.md) | Completed | The per-query synthetic margin proxy improves during native-only warmup |
 | [Dense warmup / shared-head probes](docs/clip-warmup-readiness.md) | Completed | Weak positive head alignment at update 100 becomes near-zero or negative later |
 | [Early-pulse intervention](docs/clip-early-pulse.md) | Completed | Tiny retrieval gain, lower species accuracy; no convincing overall benefit |
-| [Paired actual-AdamW updates](docs/clip-paired-updates.md) | Completed | Synthetic update improves held-out loss in 16/16 early trials, 0/16 later trials; effects are small |
-| [Two-seed replication](docs/clip-paired-seed-replication.md) | Prepared; user-run GPU results pending | Repeat the fixed paired protocol on baseline seeds 123 and 456; local-only Colab storage |
+| [Paired actual-AdamW updates](docs/clip-paired-updates.md) | Completed, seed 42 | Synthetic update improves held-out loss in 16/16 early trials, 0/16 later trials; effects are small |
+| [Two-seed replication](docs/clip-paired-seed-replication.md) | Completed | Early benefit repeats in seeds 123 and 456; later effects are smaller and change sign across seeds |
 
-## Latest completed experiment: actual optimizer updates
+## Latest completed experiment: three-seed paired-update comparison
 
-Restore the same baseline model **and AdamW state**, take one native-only or auxiliary-augmented update, then compare loss on 1,024 held-out examples. Repeat with 16 fixed training batches at updates 100 and 1,001: **96 branches**, all completed and audited on A100.
+Restore each baseline model **and AdamW state**, take one native-only or auxiliary-augmented update, then compare loss on 1,024 held-out examples. The two new training seeds add **192 audited branches** to the previous seed-42 experiment. The same 16 diagnostic training batches are used at updates 100 and 1,001 across all seeds.
 
-| Auxiliary | Early: extra held-out loss | Later: extra held-out loss |
+| Training seed | Early synthetic effect; beneficial trials | Later synthetic effect; beneficial trials |
 |---|---:|---:|
-| Uniform-top-8 synthetic | −0.00002563; **16/16 beneficial** | +0.00000272; **0/16 beneficial** |
-| Hardest real | +0.00000543; 6/16 beneficial | +0.00000193; 7/16 beneficial |
+| 42 — previous run | −25.63; **16/16** | +2.72; **0/16** |
+| 123 | −29.56; **16/16** | −4.87; **15/16** |
+| 456 | −13.80; **16/16** | +1.43; **3/16** |
 
-Negative means better than the native-only update, not an accuracy gain. Intuitively, the synthetic negative gives a tiny useful nudge early and a tiny counterproductive nudge later. This is evidence of a **state-dependent one-step effect**, not proof of a successful curriculum, an exact activation window, or generality beyond this CLIP/CUB run. Both updates still reduce loss from their starting checkpoints on average.
+Effects are mean extra held-out loss in units of **10⁻⁶**; negative means better than the paired native-only step, not an accuracy gain. **The small early benefit repeats; consistently harmful later pressure does not.** Later effects are weaker and seed-dependent. Seed 123's later synthetic step helps by reducing the loss increase caused by its native-only step, not by improving on the initial checkpoint.
 
-![Paired one-step effects, same vertical scale at both checkpoints. Below zero is better than native-only.](docs/figures/clip_paired_update_effects.png)
+![Seed-level means and fixed-input trials: early benefit repeats while later effects change sign.](docs/figures/clip_paired_seed_replication.png)
 
-[Protocol, findings and limitations](docs/clip-paired-updates.md) · [All 96 records and audit](experiment_results/clip_paired_updates_2026-09/README.md)
+These are three training seeds, not 48 independent replicates per stage. One-step effects on a reused holdout do not prove a long-term curriculum gain, an exact activation window, or transfer beyond CLIP/CUB. The hardest-real control has worse mean loss than native-only at both states in all three seeds on the primary score.
+
+[Protocol, findings and limitations](docs/clip-paired-seed-replication.md) · [192 new records and audit](experiment_results/clip_paired_seeds_2026-09/README.md) · [Seed-42 reference](experiment_results/clip_paired_updates_2026-09/README.md)
 
 ## Earlier evidence
 

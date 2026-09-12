@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "new_training_seeds": [
+    123,
+    456
+  ],
+  "new_branch_rows": 192,
+  "reference_seed": 42,
+  "seed_level_summary_rows": 12
+}

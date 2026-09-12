@@ -1,0 +1,35 @@
+{
+  "experiment": "clip_paired_updates",
+  "source_run": "seed_123",
+  "checkpoint_steps": [
+    100,
+    1001
+  ],
+  "arms": [
+    "baseline",
+    "uniform_top8",
+    "hardest_real"
+  ],
+  "training_batches": 16,
+  "batch_size": 64,
+  "selection_seed": 20260912,
+  "branch_seed": 202609120,
+  "caption_epoch": 2,
+  "exclude_calibration_examples": true,
+  "primary_partitions": [
+    "shuffle_seed_42",
+    "shuffle_seed_123",
+    "shuffle_seed_4242"
+  ],
+  "coefficients": {
+    "uniform_top8": 0.06005351588542947,
+    "hardest_real": 0.3753711620568176
+  },
+  "training_seed": 123,
+  "diagnostic_caption_seed": 42,
+  "reference_run": "clip_early_pulse_20260911T233840_978774Z",
+  "fixed_input_sha256": {
+    "training_batches.json": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b",
+    "heldout_partitions.json": "2e2c1dff020d0a3410bb369015317c14a3731160fa1200c77e2f65bf3c958413"
+  }
+}

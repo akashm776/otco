@@ -2,7 +2,50 @@
 
 [Project](../README.md) · [Completed seed-42 findings](clip-paired-updates.md)
 
-**Status: prepared for a user-launched overnight Colab run; no new GPU results yet.** Seeds and protocol are fixed before seeing either new result.
+**Status: completed and audited.** Run `clip_paired_seeds_20260912T050100_795138Z`, pinned source `2c4c610576c5167114bb6778cef526f0a8d64df8`, A100 40 GB. All **192 new branches** completed; seed 42 remains the historical reference. Seeds and protocol were fixed before seeing either new result.
+
+## Findings: early benefit repeats, later harm does not reliably repeat
+
+The uniform-top-8 synthetic auxiliary improves the pre-specified held-out score relative to a matched native-only update in **16/16 early trials in each of three seeds**. At the later state, its effect is smaller and changes sign across seeds. The original seed-42 result therefore did not establish a universal late-stage disadvantage.
+
+| Training seed | Early mean extra loss (×10⁻⁶) | Early beneficial trials | Later mean extra loss (×10⁻⁶) | Later beneficial trials |
+|---|---:|---:|---:|---:|
+| 42 — previous run | −25.63 | 16/16 | +2.72 | 0/16 |
+| 123 | −29.56 | 16/16 | −4.87 | 15/16 |
+| 456 | −13.80 | 16/16 | +1.43 | 3/16 |
+
+Negative means lower held-out loss **than the paired native-only step**, not an accuracy gain and not necessarily a decrease from the starting checkpoint. Counts refer to the primary average across three shuffled partitions.
+
+![All paired inputs and per-seed means on common vertical scales.](figures/clip_paired_seed_replication.png)
+
+Intuitively, the synthetic negative supplies a small useful nudge early across all three learning trajectories. Later, the nudge is much weaker and whether it helps depends on the state the learner has reached. This supports **a more consistent early one-step benefit**, not “always harmful later” or a universal switch-off update.
+
+### Effect size and controls
+
+The early synthetic effect adds about **0.88%, 0.78%, and 0.38%** to the mean native-only held-out loss reduction in seeds 42, 123, and 456 respectively. These are ratios of small loss changes, not retrieval-accuracy improvements. The earlier near-null [100-update pulse rollout](clip-early-pulse.md) still limits claims about long-term utility.
+
+Seed 123 illustrates the distinction between relative and absolute benefit: its later native-only step **increases** held-out loss by +0.00028763 on average; native + synthetic increases it by +0.00028276. The auxiliary helps by reducing that increase, not by improving on the initial checkpoint. In seeds 42 and 456, both later branches reduce initial loss, but the synthetic branch reduces it slightly less.
+
+The hardest-real control has a positive mean incremental loss in all six seed/stage combinations on the primary score:
+
+| Training seed | Real: early mean extra loss (×10⁻⁶), beneficial trials | Real: later mean extra loss (×10⁻⁶), beneficial trials |
+|---|---:|---:|
+| 42 | +5.43; 6/16 | +1.93; 7/16 |
+| 123 | +10.56; 3/16 | +8.39; 4/16 |
+| 456 | +4.51; 5/16 | +4.26; 3/16 |
+
+Its full-gradient alignment remains stronger than synthetic alignment, so raw alignment alone is not a sufficient predictor of the held-out AdamW effect. Both auxiliaries produce less native training-batch loss reduction than the native-only branch on average at every seed/state; early synthetic transfer is not simply better fitting of the optimized batch.
+
+### Consistency, limitations and next question
+
+- Early synthetic benefit holds for every trial in each individual partition in all three seeds. Later partition means are positive for seed 42 and negative for seed 123. Seed 456's three shuffled means are positive, while its sequential mean is slightly negative (−0.45 ×10⁻⁶). Thus the weaker later effect is also sensitive to evaluation grouping.
+- Fixed diagnostic identities/captions and partitions match the original hashes exactly, with no overlap between selected training inputs and the holdout/calibration examples. The new seed configs, 13-epoch stops and original 3,850-update scheduler horizon are verified. The six seed/state feature hashes are distinct, and recorded no-update/replay, optimizer-reset and frozen-state checks all pass.
+- The downloaded ZIP contains 54 files and **192 new branch records**. Its offline audit checks file integrity and recomputes recorded per-batch loss differences and summaries, including the 96 historical rows. Package versions match seed 42. Checkpoints are not in the ZIP: saved hashes match the inventories, but GPU checks are recorded runtime evidence, not independently rerun offline.
+- There are **three training seeds**, not 48 independent seeds at a stage. The same holdout has been reused across experiments; these are small one-step CLIP/CUB effects, not an untouched-set confirmation, a demonstrated curriculum gain, or an OT-weighting advantage. No significance claim follows from the 16/16 batch counts alone.
+
+**Next proposed check, not started:** measure intermediate checkpoints across the same three seed trajectories to see how the early benefit weakens and whether any timing rule is consistent. Do not choose a universal switch-off step from these two endpoints. Learning rates, optimizer moments and relative auxiliary pressure change with stage, so this does not isolate representation geometry.
+
+[All results, provenance and reproducible audit](../experiment_results/clip_paired_seeds_2026-09/README.md) · [Plotting script](../scripts/plot_clip_paired_seeds.py)
 
 ## Question and design
 

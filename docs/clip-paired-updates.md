@@ -4,6 +4,8 @@
 
 **Status: completed and audited.** Run `clip_paired_updates_20260912T042828_516737Z`, pinned source `d22b9d7cec94d5b044b814d774911cab5e37d560`, A100 40 GB. All 96 branches completed. The protocol below was committed before observing the results. This is a mechanism check, not a curriculum search or a new training rollout.
 
+**Replication update:** [two additional seeds](clip-paired-seed-replication.md) reproduce the early benefit, but later effects change sign across seeds. The findings below describe seed 42; “hurts later” is not a seed-robust conclusion.
+
 ## Findings
 
 **The synthetic auxiliary adds a small held-out benefit at update 100 and a smaller disadvantage at update 1,001.** Each entry below compares the treatment's post-update loss with its paired native-only post-update loss; negative is beneficial. The primary score averages the three fixed shuffled partitions.
@@ -31,7 +33,7 @@ The magnitude matters. At update 100, mean native-only held-out loss reduction i
 
 This answers the narrow question **yes, useful synthetic pressure can depend on the state at which it is applied** in this particular CLIP/CUB experiment. It does not locate the transition between updates 100 and 1,001, separate learning-rate/momentum from representation changes, or establish a general rule. It also tests a uniform synthetic construction, not the incremental value of OT weighting. One seed and a reused diagnostic holdout remain important limitations; tiny effects merit replication. The near-null [100-update pulse pilot](clip-early-pulse.md) is still the relevant longer-horizon evidence.
 
-**Next check, prepared but not run:** [one-cell replication on baseline seeds 123 and 456](clip-paired-seed-replication.md), keeping the two states, diagnostic inputs and auxiliary coefficients fixed. Replicate the sign pattern before using a denser checkpoint scan to choose an activation window. Any selected curriculum then needs an independent multi-seed downstream evaluation.
+**Completed follow-up:** [replication on baseline seeds 123 and 456](clip-paired-seed-replication.md), keeping the two states, diagnostic inputs and auxiliary coefficients fixed. Early benefit repeats, but the later sign pattern does not. A denser checkpoint study is proposed, not yet run; any selected curriculum still needs an independent multi-seed downstream evaluation.
 
 [All 96 branch records, summaries, provenance and audit](../experiment_results/clip_paired_updates_2026-09/README.md) · [Reproduce the figure](../scripts/plot_clip_paired_updates.py)
 

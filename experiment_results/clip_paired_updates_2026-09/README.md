@@ -4,6 +4,8 @@
 
 Completed A100 run: `clip_paired_updates_20260912T042828_516737Z`. Experiment source: `d22b9d7cec94d5b044b814d774911cab5e37d560`. Inputs are the baseline model/AdamW checkpoints after 100 and 1,001 updates from `clip_early_pulse_20260911T233840_978774Z`.
 
+**Follow-up:** the [completed seed-123/456 replication](../clip_paired_seeds_2026-09/README.md) reproduces the early benefit but finds mixed later signs. This directory remains the unchanged seed-42 numeric reference.
+
 - [All 96 branch records](paired_updates.jsonl): every held-out B64 loss in all four partitions, training losses, gradients, and actual update metrics. One seed, 16 paired input batches, not 16 independent training runs.
 - [Summary](summary.json) and [offline audit](audit.json): recomputed differences, beneficial counts, partition sensitivity, initial losses, relative pressure, and SHA256 inventory of the original ZIP's 13 files.
 - [Checkpoint provenance](checkpoint_provenance.json): checkpoint/feature hashes, actual learning rates, exact re-encoding and native replay, optimizer resets and state immutability checks recorded by the GPU runner.
