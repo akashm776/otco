@@ -1,0 +1,188 @@
+{
+  "development_archive_sha256": "c34004cc190bf42bfe45e89fed137750b79ee0af7294ddcc306c1124f3eb4004",
+  "development_script_sha256": "6ad39ca217e16d9bfb0ea28c44ea4b19f51bc3b577fad9aac29a4e814249af7f",
+  "development_seeds": [
+    42,
+    123,
+    456
+  ],
+  "states": [
+    {
+      "training_seed": 42,
+      "checkpoint_step": 100,
+      "effect": -0.00002563260716606508,
+      "full_gradient_alignment": 0.05413954022139359,
+      "projection_gradient_alignment": 0.06483845121866078,
+      "weighted_gradient_ratio": 0.1089928896103111,
+      "actual_update_difference_ratio": 0.026097907181945122,
+      "actual_update_cosine_to_native": 0.9996584082952621,
+      "near_zero": false
+    },
+    {
+      "training_seed": 42,
+      "checkpoint_step": 250,
+      "effect": 0.000003119411853103049,
+      "full_gradient_alignment": 0.0386152470745346,
+      "projection_gradient_alignment": 0.037194971430096466,
+      "weighted_gradient_ratio": 0.0814546964175685,
+      "actual_update_difference_ratio": 0.02465239707454931,
+      "actual_update_cosine_to_native": 0.9996954513032492,
+      "near_zero": false
+    },
+    {
+      "training_seed": 42,
+      "checkpoint_step": 500,
+      "effect": 0.00002268236438243698,
+      "full_gradient_alignment": -0.0008726741637038836,
+      "projection_gradient_alignment": -0.0009168727814168848,
+      "weighted_gradient_ratio": 0.0667816335585688,
+      "actual_update_difference_ratio": 0.022029907754654604,
+      "actual_update_cosine_to_native": 0.9997554718449719,
+      "near_zero": false
+    },
+    {
+      "training_seed": 42,
+      "checkpoint_step": 750,
+      "effect": 0.000008364264916349562,
+      "full_gradient_alignment": 0.011567674033253416,
+      "projection_gradient_alignment": 0.011936628976856104,
+      "weighted_gradient_ratio": 0.06036090078956121,
+      "actual_update_difference_ratio": 0.02090905002563546,
+      "actual_update_cosine_to_native": 0.9997808921995598,
+      "near_zero": false
+    },
+    {
+      "training_seed": 42,
+      "checkpoint_step": 1001,
+      "effect": 0.0000027190746046124037,
+      "full_gradient_alignment": 0.02272272749274088,
+      "projection_gradient_alignment": 0.027079553497654344,
+      "weighted_gradient_ratio": 0.06016965235559588,
+      "actual_update_difference_ratio": 0.020299742836272026,
+      "actual_update_cosine_to_native": 0.9997929773832404,
+      "near_zero": false
+    },
+    {
+      "training_seed": 123,
+      "checkpoint_step": 100,
+      "effect": -0.000029556107708689217,
+      "full_gradient_alignment": 0.06430788987683188,
+      "projection_gradient_alignment": 0.07319828698679189,
+      "weighted_gradient_ratio": 0.10939077011054056,
+      "actual_update_difference_ratio": 0.026997079857231463,
+      "actual_update_cosine_to_native": 0.9996356139129252,
+      "near_zero": false
+    },
+    {
+      "training_seed": 123,
+      "checkpoint_step": 250,
+      "effect": 0.000004664238830137668,
+      "full_gradient_alignment": 0.02468902101955675,
+      "projection_gradient_alignment": 0.022681830055407116,
+      "weighted_gradient_ratio": 0.0801705773486124,
+      "actual_update_difference_ratio": 0.02397127104284852,
+      "actual_update_cosine_to_native": 0.9997121716631757,
+      "near_zero": false
+    },
+    {
+      "training_seed": 123,
+      "checkpoint_step": 500,
+      "effect": 1.9748389823437407e-7,
+      "full_gradient_alignment": 0.036612572285311944,
+      "projection_gradient_alignment": 0.029409379687496854,
+      "weighted_gradient_ratio": 0.06693045534371692,
+      "actual_update_difference_ratio": 0.021705080081513187,
+      "actual_update_cosine_to_native": 0.9997627694444212,
+      "near_zero": true
+    },
+    {
+      "training_seed": 123,
+      "checkpoint_step": 750,
+      "effect": -5.123382093574769e-8,
+      "full_gradient_alignment": 0.036400601748675564,
+      "projection_gradient_alignment": 0.037497512527590884,
+      "weighted_gradient_ratio": 0.06092848779806483,
+      "actual_update_difference_ratio": 0.021045430035645837,
+      "actual_update_cosine_to_native": 0.9997770903511608,
+      "near_zero": true
+    },
+    {
+      "training_seed": 123,
+      "checkpoint_step": 1001,
+      "effect": -0.000004869424780923337,
+      "full_gradient_alignment": 0.032460020267573296,
+      "projection_gradient_alignment": 0.031925163879838465,
+      "weighted_gradient_ratio": 0.05866562731861984,
+      "actual_update_difference_ratio": 0.020165198737753656,
+      "actual_update_cosine_to_native": 0.999795463285974,
+      "near_zero": false
+    },
+    {
+      "training_seed": 456,
+      "checkpoint_step": 100,
+      "effect": -0.000013802853830319206,
+      "full_gradient_alignment": 0.04252779643566838,
+      "projection_gradient_alignment": 0.04374547039577287,
+      "weighted_gradient_ratio": 0.11081747326562592,
+      "actual_update_difference_ratio": 0.026714175453174796,
+      "actual_update_cosine_to_native": 0.9996423275652891,
+      "near_zero": false
+    },
+    {
+      "training_seed": 456,
+      "checkpoint_step": 250,
+      "effect": -9.036574636078765e-7,
+      "full_gradient_alignment": 0.04113840714161133,
+      "projection_gradient_alignment": 0.03828812759269967,
+      "weighted_gradient_ratio": 0.08262289721155576,
+      "actual_update_difference_ratio": 0.024679892840223382,
+      "actual_update_cosine_to_native": 0.9996933879909846,
+      "near_zero": true
+    },
+    {
+      "training_seed": 456,
+      "checkpoint_step": 500,
+      "effect": -0.00000653228115740645,
+      "full_gradient_alignment": 0.045213519455504045,
+      "projection_gradient_alignment": 0.0386052297720125,
+      "weighted_gradient_ratio": 0.06891360866039913,
+      "actual_update_difference_ratio": 0.022616823118968364,
+      "actual_update_cosine_to_native": 0.9997429069303622,
+      "near_zero": false
+    },
+    {
+      "training_seed": 456,
+      "checkpoint_step": 750,
+      "effect": 0.000004469452229510784,
+      "full_gradient_alignment": 0.029234553623800733,
+      "projection_gradient_alignment": 0.023380012936948916,
+      "weighted_gradient_ratio": 0.060803041349285505,
+      "actual_update_difference_ratio": 0.02072595153084709,
+      "actual_update_cosine_to_native": 0.9997839498851485,
+      "near_zero": false
+    },
+    {
+      "training_seed": 456,
+      "checkpoint_step": 1001,
+      "effect": 0.0000014267184047511705,
+      "full_gradient_alignment": 0.02740384239542822,
+      "projection_gradient_alignment": 0.03237579534536297,
+      "weighted_gradient_ratio": 0.05712889906482547,
+      "actual_update_difference_ratio": 0.020132572320495642,
+      "actual_update_cosine_to_native": 0.9997960919352675,
+      "near_zero": false
+    }
+  ],
+  "rules": {
+    "full_gradient_alignment": {
+      "feature": "full_gradient_alignment",
+      "threshold": 0.030847286945687016,
+      "lower_is_helpful": false
+    },
+    "checkpoint_step": {
+      "feature": "checkpoint_step",
+      "threshold": 175,
+      "lower_is_helpful": true
+    }
+  }
+}

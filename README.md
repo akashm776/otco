@@ -14,9 +14,11 @@ The current evidence separates **hardness, gradient direction, actual optimizer 
 | [Early-pulse intervention](docs/clip-early-pulse.md) | Completed | Tiny retrieval gain, lower species accuracy; no convincing overall benefit |
 | [Paired actual-AdamW updates](docs/clip-paired-updates.md) | Completed, seed 42 | Synthetic update improves held-out loss in 16/16 early trials, 0/16 later trials; effects are small |
 | [Two-seed replication](docs/clip-paired-seed-replication.md) | Completed | Early benefit repeats in seeds 123 and 456; later effects are smaller and change sign across seeds |
-| [Intermediate checkpoints](docs/clip-paired-intermediate.md) | Prepared, not run | Measure updates 100, 250, 500, 750 and 1,001 across the same three seeds; investigate fading usefulness without choosing a universal cutoff |
+| [Intermediate checkpoints](docs/clip-paired-intermediate.md) | Completed | Five-state curves are non-monotonic and seed-dependent; no universal switch-off point |
+| [Predictor screening](docs/clip-usefulness-predictors.md) | Completed | Alignment: 11/15 correct vs step: 9/15; tied at 9/12 after excluding near-zero effects |
+| [Frozen-rule new-seed test](docs/clip-usefulness-prospective.md) | Prepared | Test alignment and timing rules on seeds 789, 2026 and 31415 without refitting |
 
-## Latest completed experiment: three-seed paired-update comparison
+## Three-seed endpoint comparison
 
 Restore each baseline model **and AdamW state**, take one native-only or auxiliary-augmented update, then compare loss on 1,024 held-out examples. The two new training seeds add **192 audited branches** to the previous seed-42 experiment. The same 16 diagnostic training batches are used at updates 100 and 1,001 across all seeds.
 
@@ -44,7 +46,7 @@ The [original CLIP study](docs/clip-experiments.md) compares eight 50-epoch arms
 
 ## Run and reproduce
 
-Requires Python 3.12+; GPU experiments use A100 Colab runtimes. See [setup and commands](docs/running-experiments.md), [Colab runners](colabs/), and each study's protocol. The next [intermediate-checkpoint cell](colabs/clip_paired_intermediate_one_cell.py) is local-only with one combined ZIP download and **no Drive writes**. Earlier runners may use Drive backups. Check the experiment's completion marker, not just the launcher's status.
+Requires Python 3.12+; GPU experiments use A100 Colab runtimes. See [setup and commands](docs/running-experiments.md), [Colab runners](colabs/), and each study's protocol. The next [frozen-rule new-seed cell](colabs/clip_usefulness_prospective_one_cell.py) is local-only with one combined ZIP download and **no Drive writes**. Earlier runners may use Drive backups. Check the experiment's completion marker, not just the launcher's status.
 
 ```bash
 uv sync
