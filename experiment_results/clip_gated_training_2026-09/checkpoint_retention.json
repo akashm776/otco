@@ -1,0 +1,40 @@
+{
+  "policy": "hybrid_v1",
+  "permanent_checkpoints": [
+    "seed_2026/alignment_gated/checkpoints/step_000250.pt",
+    "seed_2026/alignment_gated/checkpoints/step_000500.pt",
+    "seed_2026/alignment_gated/checkpoints/step_000750.pt",
+    "seed_2026/alignment_gated/checkpoints/step_001001.pt",
+    "seed_2026/always_on/checkpoints/step_001001.pt",
+    "seed_2026/baseline/checkpoints/step_001001.pt",
+    "seed_2026/shared/checkpoints/step_000100.pt",
+    "seed_2026/step_gated/checkpoints/step_001001.pt",
+    "seed_31415/alignment_gated/checkpoints/step_000250.pt",
+    "seed_31415/alignment_gated/checkpoints/step_000500.pt",
+    "seed_31415/alignment_gated/checkpoints/step_000750.pt",
+    "seed_31415/alignment_gated/checkpoints/step_001001.pt",
+    "seed_31415/always_on/checkpoints/step_001001.pt",
+    "seed_31415/baseline/checkpoints/step_001001.pt",
+    "seed_31415/shared/checkpoints/step_000100.pt",
+    "seed_31415/step_gated/checkpoints/step_001001.pt",
+    "seed_789/alignment_gated/checkpoints/step_000250.pt",
+    "seed_789/alignment_gated/checkpoints/step_000500.pt",
+    "seed_789/alignment_gated/checkpoints/step_000750.pt",
+    "seed_789/alignment_gated/checkpoints/step_001001.pt",
+    "seed_789/always_on/checkpoints/step_001001.pt",
+    "seed_789/baseline/checkpoints/step_001001.pt",
+    "seed_789/shared/checkpoints/step_000100.pt",
+    "seed_789/step_gated/checkpoints/step_001001.pt"
+  ],
+  "rolling_checkpoint": "rolling_checkpoint.pt",
+  "rolling_refresh_steps": [
+    100,
+    250,
+    500,
+    750,
+    1001
+  ],
+  "local_only_trainer_scratch": "/content/.otco_gated_work_8kuc9uhh/checkpoints",
+  "best_epoch_weights_retained": false,
+  "automatic_mid_epoch_resume": false
+}

@@ -1,0 +1,9 @@
+{
+  "status": "complete",
+  "states": 12,
+  "branches": 36,
+  "branch_updates": 1800,
+  "trial_updates": 24,
+  "optimizer_steps": 1824,
+  "predictions_committed_before_reporting": true
+}

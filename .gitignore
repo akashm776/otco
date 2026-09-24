@@ -18,6 +18,9 @@ wheels/
 # Experiment artifacts and local datasets
 checkpoints/
 outputs/
+output/
+tmp/
+.pytest_cache/
 results/
 data/datasets/
 *.pt

@@ -1,0 +1,161 @@
+{
+  "rows": [
+    {
+      "seed": 789,
+      "arm": "alignment_gated",
+      "canonical_avg_r1_percent": 1.7172938212752342,
+      "species_top1_percent": 45.512598752975464,
+      "active_updates": 400,
+      "probe_seconds": 3.0049271090003913,
+      "wall_seconds": 956.019733307
+    },
+    {
+      "seed": 789,
+      "arm": "random_matched_1",
+      "canonical_avg_r1_percent": 1.7086640931665897,
+      "species_top1_percent": 45.49534022808075,
+      "active_updates": 400,
+      "probe_seconds": 0,
+      "wall_seconds": 862.9782422259998
+    },
+    {
+      "seed": 789,
+      "arm": "random_matched_2",
+      "canonical_avg_r1_percent": 1.7086641862988472,
+      "species_top1_percent": 45.42630314826965,
+      "active_updates": 400,
+      "probe_seconds": 0,
+      "wall_seconds": 867.716447836
+    },
+    {
+      "seed": 789,
+      "arm": "random_matched_3",
+      "canonical_avg_r1_percent": 1.7172937281429768,
+      "species_top1_percent": 45.46082019805908,
+      "active_updates": 400,
+      "probe_seconds": 0,
+      "wall_seconds": 868.279467845
+    },
+    {
+      "seed": 2026,
+      "arm": "alignment_gated",
+      "canonical_avg_r1_percent": 1.7345529980957508,
+      "species_top1_percent": 45.012080669403076,
+      "active_updates": 400,
+      "probe_seconds": 2.890502462000768,
+      "wall_seconds": 926.7836709130006
+    },
+    {
+      "seed": 2026,
+      "arm": "random_matched_1",
+      "canonical_avg_r1_percent": 1.7086640931665897,
+      "species_top1_percent": 45.219191908836365,
+      "active_updates": 400,
+      "probe_seconds": 0,
+      "wall_seconds": 870.9737218190003
+    },
+    {
+      "seed": 2026,
+      "arm": "random_matched_2",
+      "canonical_avg_r1_percent": 1.7086640931665897,
+      "species_top1_percent": 45.28822898864746,
+      "active_updates": 400,
+      "probe_seconds": 0,
+      "wall_seconds": 878.1064365379998
+    },
+    {
+      "seed": 2026,
+      "arm": "random_matched_3",
+      "canonical_avg_r1_percent": 1.6914049163460732,
+      "species_top1_percent": 45.15015482902527,
+      "active_updates": 400,
+      "probe_seconds": 0,
+      "wall_seconds": 870.5759524710002
+    },
+    {
+      "seed": 31415,
+      "arm": "alignment_gated",
+      "canonical_avg_r1_percent": 1.7172937281429768,
+      "species_top1_percent": 45.63341438770294,
+      "active_updates": 401,
+      "probe_seconds": 2.929391566999584,
+      "wall_seconds": 935.8811347680003
+    },
+    {
+      "seed": 31415,
+      "arm": "random_matched_1",
+      "canonical_avg_r1_percent": 1.6827752813696861,
+      "species_top1_percent": 45.44356167316437,
+      "active_updates": 401,
+      "probe_seconds": 0,
+      "wall_seconds": 874.0753277749991
+    },
+    {
+      "seed": 31415,
+      "arm": "random_matched_2",
+      "canonical_avg_r1_percent": 1.7431826330721378,
+      "species_top1_percent": 45.52985727787018,
+      "active_updates": 401,
+      "probe_seconds": 0,
+      "wall_seconds": 883.2826855550011
+    },
+    {
+      "seed": 31415,
+      "arm": "random_matched_3",
+      "canonical_avg_r1_percent": 1.7345529980957508,
+      "species_top1_percent": 45.52985727787018,
+      "active_updates": 401,
+      "probe_seconds": 0,
+      "wall_seconds": 878.5836386859992
+    }
+  ],
+  "per_seed_primary_contrasts": [
+    {
+      "seed": 789,
+      "alignment_minus_mean_random_r1_pp": 0.005753152072429657,
+      "alignment_minus_mean_random_species_pp": 0.05177756150563795,
+      "random_r1_range_percent": [
+        1.7086640931665897,
+        1.7172937281429768
+      ],
+      "alignment_minus_each_random_r1_pp": {
+        "random_matched_1": 0.008629728108644485,
+        "random_matched_2": 0.008629634976387024,
+        "random_matched_3": 9.313225746154785e-08
+      }
+    },
+    {
+      "seed": 2026,
+      "alignment_minus_mean_random_r1_pp": 0.03164196386933327,
+      "alignment_minus_mean_random_species_pp": -0.20711123943328857,
+      "random_r1_range_percent": [
+        1.6914049163460732,
+        1.7086640931665897
+      ],
+      "alignment_minus_each_random_r1_pp": {
+        "random_matched_1": 0.025888904929161072,
+        "random_matched_2": 0.025888904929161072,
+        "random_matched_3": 0.04314808174967766
+      }
+    },
+    {
+      "seed": 31415,
+      "alignment_minus_mean_random_r1_pp": -0.0028765760362148285,
+      "alignment_minus_mean_random_species_pp": 0.1323223114013672,
+      "random_r1_range_percent": [
+        1.6827752813696861,
+        1.7431826330721378
+      ],
+      "alignment_minus_each_random_r1_pp": {
+        "random_matched_1": 0.034518446773290634,
+        "random_matched_2": -0.025888904929161072,
+        "random_matched_3": -0.017259269952774048
+      }
+    }
+  ],
+  "mean_alignment_minus_mean_random_r1_pp": 0.011506179968516031,
+  "mean_alignment_minus_mean_random_species_pp": -0.0076704555087611466,
+  "training_seed_count": 3,
+  "random_controls_per_seed": 3,
+  "interpretation": "Exploratory equal-dose timing control on reused CUB test data/seeds. Controls are nested within seeds, not nine independent training seeds. Uniform step randomization changes burst structure as well as timing; not compute matched. No significance/novelty claim."
+}

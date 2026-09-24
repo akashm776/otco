@@ -1,0 +1,23 @@
+{
+  "colabs/checkpoint_diagnostic_inputs.py": "562a0c90a6bc7d1192bdbe3b42888cc8f555a3c33b59978d8d4c7869c6bedbb3",
+  "colabs/gated_checkpoint_retention.py": "0153d34150e1e8ecf17f38ea60a0bb6eadc1a74d60034580b83fcd2c66b0e481",
+  "colabs/run_clip_checkpoint_diagnostic.py": "0a1f770f40046d3a23781263a1cc7c214991696dbeb63cbfbd48b1cf492108ce",
+  "colabs/run_clip_gated_training.py": "124b0748aa7d9893f75a35f41fe0cb3e910fbe5c186540569d4cecdfe11fd87c",
+  "colabs/transfer_drive_backup.py": "64c1fad61d6c6628c4dac374c84ada3ca0e760556adc5144580d1b4154033a0f",
+  "configs/clip_checkpoint_diagnostic.json": "79d103a5980a41f9d3a2e0acb0d8dc25b42ddd51286dadf5d4c25b08c52f1af9",
+  "configs/clip_gated_training.json": "d84c5f09e498ebb487e51b8dbfeb6168e1499ec7bccfe1f7a80f41bba7bed5ec",
+  "docs/clip-checkpoint-diagnostic.md": "4a73ff9cb6d7ab321c12ff6c471970dd2e53f6966763335e72525df7cc3c9f14",
+  "docs/clip-gated-training.md": "c9c057da2c743f8c6f848c7be73baef62224e66f354f64e878b8b9630cb3c9d0",
+  "src/clip_checkpoint_diagnostic.py": "1540d1001a2392feb39414b083516dd95ad0c241b99c1efaed8edb4571fbc2d6",
+  "src/clip_evaluation_transfer.py": "7dd45af0814c4b068c509c8441f3ceb340b7a287cbf4a74ee858b097f0e8a211",
+  "src/clip_gated_training.py": "07d3c637cf7ca29febde1a807b970fd9fd161a5aa3f7f92fb646b6d4483cee28",
+  "src/clip_paired_updates.py": "5850fdd0d2bd2a5437a7fb34c22e3957c83a0175223c12b468961bdf4f039044",
+  "src/clip_usefulness_prospective.py": "61570288eb53a0d47413e49084939516edaa42f689734c96584c2a824f92f631",
+  "tests/__init__.py": "a5a8b8909831fc907fbf9a0345e444e548bc0923bcfdc304d58eb12d1078e779",
+  "tests/test_clip_checkpoint_diagnostic.py": "282ebec9fee056c64a0b1c8d97fa060394e4294d55f8f00897fc7f72c49bcbce",
+  "tests/test_clip_checkpoint_recovery.py": "202b8f526e5410675da46a634784d2bffb2a140dd5f1f3258cdabbff0a764857",
+  "tests/test_clip_gated_retention.py": "12c5110b84922b0cb48f6ec36585311dbc55c16910913cda1eafbd7179c2a615",
+  "tests/test_clip_gated_training.py": "2144710e02daa6c35335df241099c76a732d58c983ceeecf67deaf7a2fb754d1",
+  "tests/test_clip_paired_updates.py": "73bd3cdfa68a1478f70b014fec72f4877a8a00406313421e04d6b02a2220225f",
+  "tests/test_clip_transfer_drive_backup.py": "ca3f24fdcd07a2b40edd59a46709c9d31d8aa57d55ce79691998197ba2ae49ea"
+}

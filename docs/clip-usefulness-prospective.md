@@ -53,6 +53,11 @@ No significance test, confidence interval or automatic success-to-curriculum dec
 
 ## Run — one cell, no Drive
 
+**Need checkpoints for follow-up work?** Use the new
+[replay + evaluation-pool transfer cell](clip-evaluation-transfer.md), which includes
+actual checkpoint tensors in its verified download. The historical launcher below
+exports results only; its `backup_manifest.json` is an inventory, not a checkpoint backup.
+
 Use the entire [one-cell launcher](../colabs/clip_usefulness_prospective_one_cell.py) in an **A100** Colab runtime. Run only this new cell, not “Run all”. It downloads immutable source, tests it, runs all three seeds sequentially and requests one combined ZIP download with the frozen artifact, raw records, predictions, scores, logs and graphs.
 
 No Google Drive mounts or writes. Allow **25 GiB** free local runtime disk. Checkpoints/caches remain in `/content`; large `.pt` files are omitted from the downloaded ZIP. A handled training failure produces a failed ZIP; a deleted VM loses local files and cannot be recovered from Drive. An active cell does not guarantee VM survival. A successful cell rerun re-downloads its matching local archive without retraining.

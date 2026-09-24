@@ -1,0 +1,19 @@
+{
+  "status": "complete",
+  "seeds": [
+    789,
+    2026,
+    31415
+  ],
+  "arms": [
+    "baseline",
+    "always_on",
+    "step_gated",
+    "alignment_gated"
+  ],
+  "trajectories": 12,
+  "required_state_checkpoints": 24,
+  "rolling_checkpoint_files": 1,
+  "checkpoint_retention": "hybrid_v1",
+  "rules_refitted": false
+}

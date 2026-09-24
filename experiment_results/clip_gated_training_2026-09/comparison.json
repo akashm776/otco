@@ -1,0 +1,174 @@
+{
+  "rows": [
+    {
+      "seed": 789,
+      "arm": "baseline",
+      "canonical_avg_r1_percent": 1.7086641862988472,
+      "species_top1_percent": 45.49534022808075,
+      "active_updates": 0,
+      "probe_seconds": 0,
+      "wall_seconds": 934.7566440729997
+    },
+    {
+      "seed": 789,
+      "arm": "always_on",
+      "canonical_avg_r1_percent": 1.7259233631193638,
+      "species_top1_percent": 45.42630314826965,
+      "active_updates": 901,
+      "probe_seconds": 0,
+      "wall_seconds": 862.5946387219997
+    },
+    {
+      "seed": 789,
+      "arm": "step_gated",
+      "canonical_avg_r1_percent": 1.7431826330721378,
+      "species_top1_percent": 45.42630314826965,
+      "active_updates": 76,
+      "probe_seconds": 0,
+      "wall_seconds": 868.603172139
+    },
+    {
+      "seed": 789,
+      "arm": "alignment_gated",
+      "canonical_avg_r1_percent": 1.7172938212752342,
+      "species_top1_percent": 45.512598752975464,
+      "active_updates": 400,
+      "probe_seconds": 2.830356550000033,
+      "wall_seconds": 909.9890148880004
+    },
+    {
+      "seed": 2026,
+      "arm": "baseline",
+      "canonical_avg_r1_percent": 1.6914049163460732,
+      "species_top1_percent": 45.42630314826965,
+      "active_updates": 0,
+      "probe_seconds": 0,
+      "wall_seconds": 879.0254017280004
+    },
+    {
+      "seed": 2026,
+      "arm": "always_on",
+      "canonical_avg_r1_percent": 1.7345529980957508,
+      "species_top1_percent": 45.02934217453003,
+      "active_updates": 901,
+      "probe_seconds": 0,
+      "wall_seconds": 871.6344871900001
+    },
+    {
+      "seed": 2026,
+      "arm": "step_gated",
+      "canonical_avg_r1_percent": 1.6827752813696861,
+      "species_top1_percent": 45.27097046375275,
+      "active_updates": 76,
+      "probe_seconds": 0,
+      "wall_seconds": 869.6560005860001
+    },
+    {
+      "seed": 2026,
+      "arm": "alignment_gated",
+      "canonical_avg_r1_percent": 1.7345529980957508,
+      "species_top1_percent": 45.012080669403076,
+      "active_updates": 400,
+      "probe_seconds": 2.827312825002082,
+      "wall_seconds": 919.4916381990006
+    },
+    {
+      "seed": 31415,
+      "arm": "baseline",
+      "canonical_avg_r1_percent": 1.7518122680485249,
+      "species_top1_percent": 45.99585831165314,
+      "active_updates": 0,
+      "probe_seconds": 0,
+      "wall_seconds": 888.7544807210015
+    },
+    {
+      "seed": 31415,
+      "arm": "always_on",
+      "canonical_avg_r1_percent": 1.7431826330721378,
+      "species_top1_percent": 45.27097046375275,
+      "active_updates": 901,
+      "probe_seconds": 0,
+      "wall_seconds": 872.9185404910004
+    },
+    {
+      "seed": 31415,
+      "arm": "step_gated",
+      "canonical_avg_r1_percent": 1.7172937281429768,
+      "species_top1_percent": 45.944079756736755,
+      "active_updates": 76,
+      "probe_seconds": 0,
+      "wall_seconds": 873.0415994060004
+    },
+    {
+      "seed": 31415,
+      "arm": "alignment_gated",
+      "canonical_avg_r1_percent": 1.7172937281429768,
+      "species_top1_percent": 45.63341438770294,
+      "active_updates": 401,
+      "probe_seconds": 2.7998699489999126,
+      "wall_seconds": 917.340056686
+    }
+  ],
+  "per_seed_differences": [
+    {
+      "seed": 789,
+      "comparator": "baseline",
+      "canonical_r1_difference_pp": 0.008629634976387024,
+      "species_top1_difference_pp": 0.017258524894714355
+    },
+    {
+      "seed": 789,
+      "comparator": "step_gated",
+      "canonical_r1_difference_pp": -0.02588881179690361,
+      "species_top1_difference_pp": 0.08629560470581055
+    },
+    {
+      "seed": 789,
+      "comparator": "always_on",
+      "canonical_r1_difference_pp": -0.008629541844129562,
+      "species_top1_difference_pp": 0.08629560470581055
+    },
+    {
+      "seed": 2026,
+      "comparator": "baseline",
+      "canonical_r1_difference_pp": 0.04314808174967766,
+      "species_top1_difference_pp": -0.41422247886657715
+    },
+    {
+      "seed": 2026,
+      "comparator": "step_gated",
+      "canonical_r1_difference_pp": 0.05177771672606468,
+      "species_top1_difference_pp": -0.2588897943496704
+    },
+    {
+      "seed": 2026,
+      "comparator": "always_on",
+      "canonical_r1_difference_pp": 0.0,
+      "species_top1_difference_pp": -0.017261505126953125
+    },
+    {
+      "seed": 31415,
+      "comparator": "baseline",
+      "canonical_r1_difference_pp": -0.034518539905548096,
+      "species_top1_difference_pp": -0.3624439239501953
+    },
+    {
+      "seed": 31415,
+      "comparator": "step_gated",
+      "canonical_r1_difference_pp": 0.0,
+      "species_top1_difference_pp": -0.3106653690338135
+    },
+    {
+      "seed": 31415,
+      "comparator": "always_on",
+      "canonical_r1_difference_pp": -0.025888904929161072,
+      "species_top1_difference_pp": 0.3624439239501953
+    }
+  ],
+  "mean_alignment_minus_comparator_r1_pp": {
+    "baseline": 0.0057530589401721954,
+    "step_gated": 0.008629634976387024,
+    "always_on": -0.011506148924430212
+  },
+  "interpretation": "Exploratory rollout on reused CUB test data and seeds. Not exposure/compute matched; no novelty or significance claim."
+}

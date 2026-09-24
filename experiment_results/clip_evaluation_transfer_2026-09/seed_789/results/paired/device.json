@@ -1,0 +1,5 @@
+{
+  "device": "cuda",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "total_vram_mib": 40441.375
+}

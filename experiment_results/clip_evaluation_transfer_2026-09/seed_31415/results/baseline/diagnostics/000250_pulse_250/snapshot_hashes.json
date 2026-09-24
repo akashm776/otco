@@ -1,0 +1,7 @@
+{
+  "model": "85e581cdfc86ad28d8281d05c89a02339ea0367aa8c9b993517d14fae9a80029",
+  "optimizer": "80f052692dd988be53bfba2edc6a7a07af16362c6e9ec4332dc79c467e484646",
+  "scheduler": "5e9edc298ebbc6ce0d435ad80e4bf9373a186ecfca9b5b058a966c08e6f27efe",
+  "completed_updates": "7f5c3799ba51f3e25873e71cac19f5323a183f14b7d9e13ca9f0ab88b1d3cea2",
+  "training_seed": "2b7d4a338304a62e5d519aef243df9af62fe84c864dec2ee5d344e20d9a55dbe"
+}

@@ -1,0 +1,21 @@
+{
+  "status": "complete",
+  "seeds": [
+    789,
+    2026,
+    31415
+  ],
+  "arms": [
+    "alignment_gated",
+    "random_matched_1",
+    "random_matched_2",
+    "random_matched_3"
+  ],
+  "trajectories": 12,
+  "required_state_checkpoints": 24,
+  "rolling_checkpoint_files": 1,
+  "checkpoint_retention": "exposure_hybrid_v1",
+  "rules_refitted": false,
+  "exposure_matched": true,
+  "compute_matched": false
+}

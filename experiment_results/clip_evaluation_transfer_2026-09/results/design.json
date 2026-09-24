@@ -1,0 +1,28 @@
+{
+  "training_seeds": [
+    789,
+    2026,
+    31415
+  ],
+  "checkpoint_steps": [
+    100,
+    250,
+    500,
+    750,
+    1001
+  ],
+  "selection_seed": 20260913,
+  "pool_size": 1024,
+  "batch_size": 64,
+  "pool": "CUB test split, canonical first captions",
+  "primary_partitions": [
+    "shuffle_seed_42",
+    "shuffle_seed_123",
+    "shuffle_seed_4242"
+  ],
+  "near_zero_absolute_band": 1e-06,
+  "rules_refitted": false,
+  "gate_driven_training": false,
+  "historical_loss_atol": 1e-08,
+  "interpretation": "Evaluation-pool transfer; test split previously used for retrieval monitoring."
+}

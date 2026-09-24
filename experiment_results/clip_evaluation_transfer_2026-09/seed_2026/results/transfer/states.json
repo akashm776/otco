@@ -1,0 +1,47 @@
+[
+  {
+    "training_seed": 2026,
+    "checkpoint_step": 100,
+    "full_gradient_alignment": 0.0716486617888903,
+    "effect": -3.32144623056696e-05,
+    "beneficial_trials": 16,
+    "native_heldout_change": -0.0034514507441606723,
+    "synthetic_heldout_change": -0.003484665206466342
+  },
+  {
+    "training_seed": 2026,
+    "checkpoint_step": 250,
+    "full_gradient_alignment": 0.025456626895279628,
+    "effect": 1.549852237481275e-05,
+    "beneficial_trials": 0,
+    "native_heldout_change": -0.0007780795386979067,
+    "synthetic_heldout_change": -0.0007625810163230939
+  },
+  {
+    "training_seed": 2026,
+    "checkpoint_step": 500,
+    "full_gradient_alignment": 0.055368883050828335,
+    "effect": -3.7708491820720447e-06,
+    "beneficial_trials": 16,
+    "native_heldout_change": -0.0006009427310576521,
+    "synthetic_heldout_change": -0.0006047135802397241
+  },
+  {
+    "training_seed": 2026,
+    "checkpoint_step": 750,
+    "full_gradient_alignment": 0.023401725950243295,
+    "effect": 6.55759478465634e-06,
+    "beneficial_trials": 0,
+    "native_heldout_change": -0.0006678220829541004,
+    "synthetic_heldout_change": -0.000661264488169444
+  },
+  {
+    "training_seed": 2026,
+    "checkpoint_step": 1001,
+    "full_gradient_alignment": 0.019528491398910587,
+    "effect": 6.4281976466240565e-06,
+    "beneficial_trials": 0,
+    "native_heldout_change": 3.4447564199457936e-06,
+    "synthetic_heldout_change": 9.87295406656985e-06
+  }
+]

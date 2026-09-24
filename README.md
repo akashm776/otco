@@ -2,7 +2,15 @@
 
 Research code studying **when synthetic hard negatives help contrastive learning—and when they do not**. OTCO uses optimal transport to weight nearby mismatched embeddings and mix them into synthetic negatives. Uniform mixtures and real-negative controls test which parts actually matter.
 
-The current evidence separates **hardness, gradient direction, actual optimizer updates, and downstream performance**. Staged one-step CLIP/CUB-200 studies now cover six training seeds; longer training interventions remain primarily single-seed. They do not establish a general curriculum rule.
+The current evidence separates **hardness, gradient direction, actual optimizer updates, and downstream performance**. Staged one-step CLIP/CUB-200 studies cover six training seeds; the latest gated and exposure-matched rollouts cover three reused seeds. They do not establish a general curriculum rule or an OT-weighting advantage.
+
+## Current research state — September 24, 2026
+
+The [consolidated research record](docs/research-status-2026-09-24.md) brings together the completed evaluation-transfer, gated-training, exposure-matched, and saved-checkpoint studies. Small raw results, original manifests, source snapshots, and export audits are committed; large checkpoints and caption-bearing data remain outside Git.
+
+The latest matched-branch diagnostic completed **12 states, 36 branches, and 1,824 optimizer updates**, with separate meta and reporting data. Sustained pressure improved reporting loss from all three update-100 states, but worsened it from all nine later states. The frozen gate predicted immediate effect signs in **11/12** states, versus **9/12** at the 50-update sustained endpoint. This motivates investigating horizon and starting-state dependence—not claiming a successful curriculum or a causal mechanism.
+
+[Diagnostic results](experiment_results/clip_checkpoint_diagnostic_2026-09/README.md) · [Recheck exported evidence](scripts/archive_clip_followup_evidence.py) · [Colab diagnostic and recovery](docs/clip-checkpoint-diagnostic.md)
 
 ## Research progress
 
@@ -17,8 +25,12 @@ The current evidence separates **hardness, gradient direction, actual optimizer 
 | [Intermediate checkpoints](docs/clip-paired-intermediate.md) | Completed | Five-state curves are non-monotonic and seed-dependent; no universal switch-off point |
 | [Predictor screening](docs/clip-usefulness-predictors.md) | Completed | Alignment: 11/15 correct vs step: 9/15; tied at 9/12 after excluding near-zero effects |
 | [Frozen-rule new-seed test](docs/clip-usefulness-prospective.md) | Completed | Alignment +6.94 points in mean seed balanced accuracy; ordinary and non-near-zero accuracy tied |
+| [Replay + evaluation-pool transfer](experiment_results/clip_evaluation_transfer_2026-09/README.md) | Completed | New-pool alignment 15/15 versus timing 11/15; reused test split, not untouched-test confirmation |
+| [Gated-training pilot](experiment_results/clip_gated_training_2026-09/README.md) | Completed, three seeds | Alignment minus baseline +0.00575 pp canonical R@1; unequal auxiliary exposure |
+| [Exposure-matched timing control](experiment_results/clip_exposure_matched_2026-09/README.md) | Completed, three seeds | Alignment minus mean random timing +0.01151 pp; small, mixed seed effects |
+| [Saved-checkpoint diagnostic](experiment_results/clip_checkpoint_diagnostic_2026-09/README.md) | Completed, 12 states | Immediate signs do not guarantee sustained benefit; no fresh-test or mechanism claim |
 
-## Latest completed study: frozen rules on new seeds
+## Earlier milestone: frozen rules on new seeds
 
 After mapping five checkpoints in development seeds 42, 123 and 456, freeze an alignment threshold and a timing comparator, then test **new seeds 789, 2026 and 31415** without refitting. The prospective run completed **720 paired branches / 15 seed-checkpoint states**.
 
@@ -45,7 +57,7 @@ The [original CLIP study](docs/clip-experiments.md) compares eight 50-epoch arms
 
 ## Run and reproduce
 
-Requires Python 3.12+; GPU experiments use A100 Colab runtimes. See [setup and commands](docs/running-experiments.md), [Colab runners](colabs/), and each study's protocol. The [frozen-rule new-seed cell](colabs/clip_usefulness_prospective_one_cell.py) reproduces the completed study with one combined ZIP download and **no Drive writes**. Earlier runners may use Drive backups. Check the experiment's completion marker, not just the launcher's status.
+Requires Python 3.12+; GPU experiments use A100 Colab runtimes. See [setup and commands](docs/running-experiments.md), [Colab runners](colabs/), and each study's protocol. The [frozen-rule new-seed cell](colabs/clip_usefulness_prospective_one_cell.py) uses **no Drive writes**; newer transfer, gated, exposure-matched, and checkpoint-diagnostic launchers use verified Drive backups. Check the experiment's completion marker and final Drive flush, not just the launcher's status. Packaged protocols retain their preparation-time status; the dated consolidated record and evidence READMEs report completed outcomes.
 
 ```bash
 uv sync

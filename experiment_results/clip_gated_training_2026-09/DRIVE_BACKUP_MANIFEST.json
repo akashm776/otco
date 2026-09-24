@@ -1,0 +1,627 @@
+{
+  "run_id": "clip_gated_training_20260922T114312_608272Z",
+  "status": "verified_tree",
+  "verification": "Mounted Drive read-back SHA256; final Drive flush is separate",
+  "files": {
+    "run_manifest.json": {
+      "bytes": 766,
+      "sha256": "5b5f1ff364ccf8991643051a3dd29e2567ad8bcbf2a6ded7fe3076734a8f1e70"
+    },
+    "source_manifest.json": {
+      "bytes": 1380,
+      "sha256": "8f30a3fcd3d3d692e27b6b45d72ac50517b368b51ade1055a2737622704edff6"
+    },
+    "source_overlay/colabs/gated_checkpoint_retention.py": {
+      "bytes": 2499,
+      "sha256": "0153d34150e1e8ecf17f38ea60a0bb6eadc1a74d60034580b83fcd2c66b0e481"
+    },
+    "source_overlay/colabs/run_clip_gated_training.py": {
+      "bytes": 5642,
+      "sha256": "124b0748aa7d9893f75a35f41fe0cb3e910fbe5c186540569d4cecdfe11fd87c"
+    },
+    "source_overlay/colabs/transfer_drive_backup.py": {
+      "bytes": 2911,
+      "sha256": "64c1fad61d6c6628c4dac374c84ada3ca0e760556adc5144580d1b4154033a0f"
+    },
+    "source_overlay/configs/clip_gated_training.json": {
+      "bytes": 1063,
+      "sha256": "d84c5f09e498ebb487e51b8dbfeb6168e1499ec7bccfe1f7a80f41bba7bed5ec"
+    },
+    "source_overlay/docs/clip-gated-training.md": {
+      "bytes": 6747,
+      "sha256": "c9c057da2c743f8c6f848c7be73baef62224e66f354f64e878b8b9630cb3c9d0"
+    },
+    "source_overlay/src/clip_evaluation_transfer.py": {
+      "bytes": 14438,
+      "sha256": "7dd45af0814c4b068c509c8441f3ceb340b7a287cbf4a74ee858b097f0e8a211"
+    },
+    "source_overlay/src/clip_gated_training.py": {
+      "bytes": 17275,
+      "sha256": "07d3c637cf7ca29febde1a807b970fd9fd161a5aa3f7f92fb646b6d4483cee28"
+    },
+    "source_overlay/src/clip_paired_updates.py": {
+      "bytes": 24746,
+      "sha256": "5850fdd0d2bd2a5437a7fb34c22e3957c83a0175223c12b468961bdf4f039044"
+    },
+    "source_overlay/src/clip_usefulness_prospective.py": {
+      "bytes": 14502,
+      "sha256": "61570288eb53a0d47413e49084939516edaa42f689734c96584c2a824f92f631"
+    },
+    "source_overlay/tests/test_clip_gated_retention.py": {
+      "bytes": 6535,
+      "sha256": "12c5110b84922b0cb48f6ec36585311dbc55c16910913cda1eafbd7179c2a615"
+    },
+    "source_overlay/tests/test_clip_gated_training.py": {
+      "bytes": 13131,
+      "sha256": "2144710e02daa6c35335df241099c76a732d58c983ceeecf67deaf7a2fb754d1"
+    },
+    "source_overlay/tests/test_clip_paired_updates.py": {
+      "bytes": 8192,
+      "sha256": "73bd3cdfa68a1478f70b014fec72f4877a8a00406313421e04d6b02a2220225f"
+    },
+    "source_overlay/tests/test_clip_transfer_drive_backup.py": {
+      "bytes": 3451,
+      "sha256": "ca3f24fdcd07a2b40edd59a46709c9d31d8aa57d55ce79691998197ba2ae49ea"
+    },
+    "checkpoint_retention.json": {
+      "bytes": 1708,
+      "sha256": "fd61cb5c1e2378a851f6a907eb34e12621637a4191026dc4e31156a6c9a8122c"
+    },
+    "protocol.json": {
+      "bytes": 1154,
+      "sha256": "25457560ff2edad9116b95be4b0b66826f78fcc0185c811b3a1fd4b0849df180"
+    },
+    "rolling_checkpoint.pt": {
+      "bytes": 692513675,
+      "sha256": "1579377b8cbc407aca759001d4ed915311f028a889d5deed9d47971f543723b9"
+    },
+    "seed_789/baseline/gate_audit.json": {
+      "bytes": 64038,
+      "sha256": "9fc007a54f60c4df53a4c91318c2f2ff8aafbb15f91524e1b5174ea00d39a652"
+    },
+    "seed_789/baseline/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "8076ee4cbc553127003d552cc9fb32567825a2caf1bd71cc9f5a2daffbe1830b"
+    },
+    "seed_789/baseline/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_789/baseline/training/metrics.jsonl": {
+      "bytes": 18642,
+      "sha256": "810dfa3118d7834031b2fcf662b4e8e5ebac8bfadd5ddc459f137990d45f3b7c"
+    },
+    "seed_789/baseline/training/resolved_config.yaml": {
+      "bytes": 1568,
+      "sha256": "e978badabc6e9edf4a36223668982443abc1f82bbf11b99428cc1b5db3251f3c"
+    },
+    "seed_789/baseline/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_789/baseline/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_789/common_prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "8076ee4cbc553127003d552cc9fb32567825a2caf1bd71cc9f5a2daffbe1830b"
+    },
+    "seed_789/shared/checkpoints/step_000100.pt": {
+      "bytes": 692493131,
+      "sha256": "3e328bf426e53ba85badbf181e5baea4b1e7fa4d357d68e01470494fcdf27857"
+    },
+    "seed_789/baseline/checkpoints/step_001001.pt": {
+      "bytes": 692512779,
+      "sha256": "00c5b1e326f49a54fe67a88bcba6129fdea81d920120aa7cda0882ce2f9d7e35"
+    },
+    "seed_789/baseline/timing.json": {
+      "bytes": 93,
+      "sha256": "b69612543faad2cfc0d1a9dfa5aa56f89790125625633894dfd0d2f12961b252"
+    },
+    "seed_789/baseline/training/summary.json": {
+      "bytes": 8433,
+      "sha256": "1f86ce9098fc30056bdd2dd31e0e9bba7c37bacd7224fa85ed3961c58a50557d"
+    },
+    "seed_789/always_on/gate_audit.json": {
+      "bytes": 63140,
+      "sha256": "38265e0769db38f623cda40d564b8ef8a8508bebd74535bc3b1f1adc9fc6b9f4"
+    },
+    "seed_789/always_on/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "8076ee4cbc553127003d552cc9fb32567825a2caf1bd71cc9f5a2daffbe1830b"
+    },
+    "seed_789/always_on/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_789/always_on/training/metrics.jsonl": {
+      "bytes": 18842,
+      "sha256": "b90e584920b1f2e2f9653374abd0b82e8cb145efb31fb786a7873b49207a11e9"
+    },
+    "seed_789/always_on/training/resolved_config.yaml": {
+      "bytes": 1569,
+      "sha256": "277295c65fe253d4f35613d2a0b100b49c2688029d88c8525a0c711533073d8c"
+    },
+    "seed_789/always_on/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_789/always_on/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_789/always_on/checkpoints/step_001001.pt": {
+      "bytes": 692512779,
+      "sha256": "46a9f1bf4311c614bc70f9bb7c103d4ee1ed0027ad5a1ed1b0469e4d7a7fad38"
+    },
+    "seed_789/always_on/timing.json": {
+      "bytes": 93,
+      "sha256": "8fd2c3a08b550fe692a6e7864d501d69f220020368fe3be8f4a6000b12e5d5bb"
+    },
+    "seed_789/always_on/training/summary.json": {
+      "bytes": 8451,
+      "sha256": "ce074bb8597fe65d137dc8ae433d204236290de21d876eea310c0e15757c1401"
+    },
+    "seed_789/step_gated/gate_audit.json": {
+      "bytes": 63965,
+      "sha256": "957125f8249e82f8f906b6b6d327ad76d755b988386580d92a447bc27d53906e"
+    },
+    "seed_789/step_gated/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "8076ee4cbc553127003d552cc9fb32567825a2caf1bd71cc9f5a2daffbe1830b"
+    },
+    "seed_789/step_gated/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_789/step_gated/training/metrics.jsonl": {
+      "bytes": 18699,
+      "sha256": "a9e9acd44bb5f8c2f3b69c12feae5e6bcd9999203490c92b28f768cebe918b42"
+    },
+    "seed_789/step_gated/training/resolved_config.yaml": {
+      "bytes": 1570,
+      "sha256": "1bf7854cc489c0e3d321b22b6200a00fe842f7b3cea637a25d7907cdb29ce168"
+    },
+    "seed_789/step_gated/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_789/step_gated/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_789/step_gated/checkpoints/step_001001.pt": {
+      "bytes": 692512779,
+      "sha256": "a3aa5079216f1b0ba207f512a1375099bb96e8df688798173e9b82a4758cd1b4"
+    },
+    "seed_789/step_gated/timing.json": {
+      "bytes": 89,
+      "sha256": "e56e65e3451dc5b60b1326d8de4f7604994a1892cc6f66b45f372666a6bedc8b"
+    },
+    "seed_789/step_gated/training/summary.json": {
+      "bytes": 8437,
+      "sha256": "e3e119449c5ebbb3b36a88b503c6680a8e1f583d94d59caf13be6a8816b38f1c"
+    },
+    "seed_789/alignment_gated/gate_audit.json": {
+      "bytes": 66344,
+      "sha256": "27b4f63549f48f531e080a0e7510bc8d08cfa7dcf3b3ca94bebedfa1665cf46a"
+    },
+    "seed_789/alignment_gated/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "8076ee4cbc553127003d552cc9fb32567825a2caf1bd71cc9f5a2daffbe1830b"
+    },
+    "seed_789/alignment_gated/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_789/alignment_gated/training/metrics.jsonl": {
+      "bytes": 18810,
+      "sha256": "784113d8088a93087fcb9e4e0dfe6bb6d50098050b23aec213f3a010b1cc775c"
+    },
+    "seed_789/alignment_gated/training/resolved_config.yaml": {
+      "bytes": 1575,
+      "sha256": "8a75fa1149a9ca6231921df9f191266d62bf3e14888062406909e9516eed66a2"
+    },
+    "seed_789/alignment_gated/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_789/alignment_gated/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_789/alignment_gated/checkpoints/step_000250.pt": {
+      "bytes": 692496779,
+      "sha256": "94abbd4747047e2bcf9843237553bc0c1e4c7611401131c5622a289e2a403c6f"
+    },
+    "seed_789/alignment_gated/checkpoints/step_000500.pt": {
+      "bytes": 692502475,
+      "sha256": "13ade5c1f9443508d3ef11989063e0eedb97a18cfad0d3196ef7d439f9b75f94"
+    },
+    "seed_789/alignment_gated/checkpoints/step_000750.pt": {
+      "bytes": 692508171,
+      "sha256": "8f690de28ade6391d2bb6fa34d4939048f85b6aabb4f2dc6c0452be2114e8ee0"
+    },
+    "seed_789/alignment_gated/checkpoints/step_001001.pt": {
+      "bytes": 692513675,
+      "sha256": "c4f58454f6c0e3ccb550bb8d1094dfd251b26bbc2d6d6171fed870d317da6198"
+    },
+    "seed_789/alignment_gated/timing.json": {
+      "bytes": 93,
+      "sha256": "9bea453437cea288390582f38af6eaeeeb6829d13da3e4e25b4540e002aa4a18"
+    },
+    "seed_789/alignment_gated/training/summary.json": {
+      "bytes": 8441,
+      "sha256": "c06e49391ead26916a3a4a362986640dee40dd5e2b42ecbe6023973cc0b4a093"
+    },
+    "seed_2026/baseline/gate_audit.json": {
+      "bytes": 64038,
+      "sha256": "9fc007a54f60c4df53a4c91318c2f2ff8aafbb15f91524e1b5174ea00d39a652"
+    },
+    "seed_2026/baseline/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "091abd21886b195b5eccd707796f4cfc27397079424c54efea317c2467c7f340"
+    },
+    "seed_2026/baseline/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_2026/baseline/training/metrics.jsonl": {
+      "bytes": 18638,
+      "sha256": "beb6f14ff321f8dd6d717eabb507caec39766f4dcfb837d99a5dba1af1e93e07"
+    },
+    "seed_2026/baseline/training/resolved_config.yaml": {
+      "bytes": 1571,
+      "sha256": "23e3010001e93b90b231239834ca609293d9e2d1e8a327e6a9ed91d9d0e06b9d"
+    },
+    "seed_2026/baseline/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_2026/baseline/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_2026/common_prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "091abd21886b195b5eccd707796f4cfc27397079424c54efea317c2467c7f340"
+    },
+    "seed_2026/shared/checkpoints/step_000100.pt": {
+      "bytes": 692493067,
+      "sha256": "8128ffa9d488c097d65ba781f493b0710d807b19aec74a4ce05cafe25cf43e60"
+    },
+    "seed_2026/baseline/checkpoints/step_001001.pt": {
+      "bytes": 692512715,
+      "sha256": "172cf74ab219e8dea05483b2119ced52eb27e48d1d9bdc6e31f2aaac0c2ee741"
+    },
+    "seed_2026/baseline/timing.json": {
+      "bytes": 93,
+      "sha256": "32eb0fd3e99d5757f29c56f5acdd612761dd07864c4c8e113f46ea9df55dcdac"
+    },
+    "seed_2026/baseline/training/summary.json": {
+      "bytes": 8436,
+      "sha256": "574963ea5845b0e27339b783e90f03b9ac7fa830edeea48fe7da2d55a6cd9c95"
+    },
+    "seed_2026/always_on/gate_audit.json": {
+      "bytes": 63140,
+      "sha256": "38265e0769db38f623cda40d564b8ef8a8508bebd74535bc3b1f1adc9fc6b9f4"
+    },
+    "seed_2026/always_on/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "091abd21886b195b5eccd707796f4cfc27397079424c54efea317c2467c7f340"
+    },
+    "seed_2026/always_on/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_2026/always_on/training/metrics.jsonl": {
+      "bytes": 18853,
+      "sha256": "d694cccbbebd477bae06edf7ecc4eea7338a618bf12d39f662458243f14840b4"
+    },
+    "seed_2026/always_on/training/resolved_config.yaml": {
+      "bytes": 1572,
+      "sha256": "ab06eadbce7c3a8f2fe21d5e3f15f9dbcfb46ea48f5e8a783a6acf09aece15b5"
+    },
+    "seed_2026/always_on/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_2026/always_on/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_2026/always_on/checkpoints/step_001001.pt": {
+      "bytes": 692512715,
+      "sha256": "56695827792527865c931673df1774d235725990640818adbb222b398a55e68e"
+    },
+    "seed_2026/always_on/timing.json": {
+      "bytes": 93,
+      "sha256": "42adae0ff8dc0e66286c3b0f345e524c9df1fb81bb1d3cdba6f7510dd4020b0f"
+    },
+    "seed_2026/always_on/training/summary.json": {
+      "bytes": 8449,
+      "sha256": "551bcf97022206f1730047458a3b6a8448dca353e4cea4b3849b48f099cbf7dd"
+    },
+    "seed_2026/step_gated/gate_audit.json": {
+      "bytes": 63965,
+      "sha256": "957125f8249e82f8f906b6b6d327ad76d755b988386580d92a447bc27d53906e"
+    },
+    "seed_2026/step_gated/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "091abd21886b195b5eccd707796f4cfc27397079424c54efea317c2467c7f340"
+    },
+    "seed_2026/step_gated/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_2026/step_gated/training/metrics.jsonl": {
+      "bytes": 18703,
+      "sha256": "b39c5280fda6caf5d9afa2641bbd56a9beb2f39f53f351dbbafef24e2235de47"
+    },
+    "seed_2026/step_gated/training/resolved_config.yaml": {
+      "bytes": 1573,
+      "sha256": "adaa0615d188ca65d337738cecfdb5de1a0ea90711b7c8f4649a1a50de59a0a9"
+    },
+    "seed_2026/step_gated/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_2026/step_gated/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_2026/step_gated/checkpoints/step_001001.pt": {
+      "bytes": 692512715,
+      "sha256": "94dd1278c56a109d2f7366593cd906ebca48e475f3e216dac50347cf8eb16b7d"
+    },
+    "seed_2026/step_gated/timing.json": {
+      "bytes": 93,
+      "sha256": "330fb281c59fbc98584231b5b8ceac6d3f0a7de064856795a6f5bba5f9848624"
+    },
+    "seed_2026/step_gated/training/summary.json": {
+      "bytes": 8437,
+      "sha256": "fbaf41b9e640655b3febf2cc6fb8a7ca8da509ab2c231d6bc5d03881287aa258"
+    },
+    "seed_2026/alignment_gated/gate_audit.json": {
+      "bytes": 66328,
+      "sha256": "c96fae415e74435534975053ef021b9aea72f97299fa33d98ef304b28b788f02"
+    },
+    "seed_2026/alignment_gated/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "091abd21886b195b5eccd707796f4cfc27397079424c54efea317c2467c7f340"
+    },
+    "seed_2026/alignment_gated/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_2026/alignment_gated/training/metrics.jsonl": {
+      "bytes": 18809,
+      "sha256": "ce6c87abe3fb4e206bf953a3eaf04a3c7f4879e950533c2316759a3b9f67b8bf"
+    },
+    "seed_2026/alignment_gated/training/resolved_config.yaml": {
+      "bytes": 1578,
+      "sha256": "55f3224a991500ae58c98dcca98c98674c588a7a092a726e1742f398705656a1"
+    },
+    "seed_2026/alignment_gated/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_2026/alignment_gated/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_2026/alignment_gated/checkpoints/step_000250.pt": {
+      "bytes": 692496715,
+      "sha256": "9b32412bdc2c44a9c35f9095efdec083f444f09f1a345ecb63c7e6072c6dba52"
+    },
+    "seed_2026/alignment_gated/checkpoints/step_000500.pt": {
+      "bytes": 692502411,
+      "sha256": "c58f4b7e60f0bf71eb591dd190611aba3259c01fa5cadac07c434b1ad311c8e9"
+    },
+    "seed_2026/alignment_gated/checkpoints/step_000750.pt": {
+      "bytes": 692508107,
+      "sha256": "2718245ce8de13f44a447c3442d3fca30d50e7db0ef801d6640a381f96d0d778"
+    },
+    "seed_2026/alignment_gated/checkpoints/step_001001.pt": {
+      "bytes": 692513675,
+      "sha256": "a2c8f08a95a5b14cf3e33ec24308a3fe588ebfc28d22697c3a6d5ad9cf1350ef"
+    },
+    "seed_2026/alignment_gated/timing.json": {
+      "bytes": 93,
+      "sha256": "94c2133fb8c0b9cb494df8ae39bac8405e8373f2ad12b3e60d460ed74db6d090"
+    },
+    "seed_2026/alignment_gated/training/summary.json": {
+      "bytes": 8438,
+      "sha256": "693c3b8af5e053722492a4b47af65bf23ee1f3883aa52d19735e3720c153a8ad"
+    },
+    "seed_31415/baseline/gate_audit.json": {
+      "bytes": 64038,
+      "sha256": "9fc007a54f60c4df53a4c91318c2f2ff8aafbb15f91524e1b5174ea00d39a652"
+    },
+    "seed_31415/baseline/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "a77a4e14a937ee67a6c0713303bf5421ced28513b3fb917a2b25cdaef3384ed4"
+    },
+    "seed_31415/baseline/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_31415/baseline/training/metrics.jsonl": {
+      "bytes": 18639,
+      "sha256": "47816cde4ce5c0c809a87726ce2737e6165e74ec647e1e61a26fd787fee5b10f"
+    },
+    "seed_31415/baseline/training/resolved_config.yaml": {
+      "bytes": 1574,
+      "sha256": "6deea2665a2be8464aa60c536780a0e70c47d68ec1b94b301cd1d6c64966f244"
+    },
+    "seed_31415/baseline/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_31415/baseline/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_31415/common_prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "a77a4e14a937ee67a6c0713303bf5421ced28513b3fb917a2b25cdaef3384ed4"
+    },
+    "seed_31415/shared/checkpoints/step_000100.pt": {
+      "bytes": 692493067,
+      "sha256": "e7156d08c3d3de1b23d804d8f0a0cf11c445d02638e576220e449390d6477be3"
+    },
+    "seed_31415/baseline/checkpoints/step_001001.pt": {
+      "bytes": 692512779,
+      "sha256": "a83fdea8950a4fcc20f0438be2e2e0fa56b0f9c32ff0caba1e23b22cf9fb4515"
+    },
+    "seed_31415/baseline/timing.json": {
+      "bytes": 93,
+      "sha256": "63d0f66f7cf1960081683fb395dba43ab8e230fde0b38f219db529c6865a7c5a"
+    },
+    "seed_31415/baseline/training/summary.json": {
+      "bytes": 8433,
+      "sha256": "6cb02ebd9c1ff9753ff8630aad6fe621d703e0f86efa4ebaed663e2845692fea"
+    },
+    "seed_31415/always_on/gate_audit.json": {
+      "bytes": 63140,
+      "sha256": "38265e0769db38f623cda40d564b8ef8a8508bebd74535bc3b1f1adc9fc6b9f4"
+    },
+    "seed_31415/always_on/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "a77a4e14a937ee67a6c0713303bf5421ced28513b3fb917a2b25cdaef3384ed4"
+    },
+    "seed_31415/always_on/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_31415/always_on/training/metrics.jsonl": {
+      "bytes": 18864,
+      "sha256": "8142d5e4f2ef14b90c5d2a3374400207a44299c401f33f1bee4a6717a3dfb935"
+    },
+    "seed_31415/always_on/training/resolved_config.yaml": {
+      "bytes": 1575,
+      "sha256": "807d6f2b0c07ec3c6310c8331d3763d65a90b1fb566450392c01ee8ed0b13784"
+    },
+    "seed_31415/always_on/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_31415/always_on/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_31415/always_on/checkpoints/step_001001.pt": {
+      "bytes": 692512779,
+      "sha256": "9720e893806c40ba4fa548abb6379f4036f542fb124264a0024766b88c0f7576"
+    },
+    "seed_31415/always_on/timing.json": {
+      "bytes": 93,
+      "sha256": "54520f8e613d10f6802f205b9a3304bbadf5632230988f0c2c272f287228008a"
+    },
+    "seed_31415/always_on/training/summary.json": {
+      "bytes": 8454,
+      "sha256": "66b9031cf1ee111803cd1d908c459386734dab539d86208a5834a8883c8ff1c7"
+    },
+    "seed_31415/step_gated/gate_audit.json": {
+      "bytes": 63965,
+      "sha256": "957125f8249e82f8f906b6b6d327ad76d755b988386580d92a447bc27d53906e"
+    },
+    "seed_31415/step_gated/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "a77a4e14a937ee67a6c0713303bf5421ced28513b3fb917a2b25cdaef3384ed4"
+    },
+    "seed_31415/step_gated/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_31415/step_gated/training/metrics.jsonl": {
+      "bytes": 18702,
+      "sha256": "d8fd159ca6d5a4cbd46023c517ec57051ccd8605ebe6aca99968d026d23889fc"
+    },
+    "seed_31415/step_gated/training/resolved_config.yaml": {
+      "bytes": 1576,
+      "sha256": "77bba0509954985f296960ec0c059eb238e269a7539c53f7bccf0c1900d90b8d"
+    },
+    "seed_31415/step_gated/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_31415/step_gated/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_31415/step_gated/checkpoints/step_001001.pt": {
+      "bytes": 692512779,
+      "sha256": "47bc60cf1c24efe5e2d93c0da5348e8145157ad1647d85b356723f1d94ac407b"
+    },
+    "seed_31415/step_gated/timing.json": {
+      "bytes": 93,
+      "sha256": "9bfec6698c87e517b7e60cb796413e2105fd4c274e9eb75dd77238b352c69675"
+    },
+    "seed_31415/step_gated/training/summary.json": {
+      "bytes": 8438,
+      "sha256": "1c343fe2aa4f9a2184f0170e2eea78e1b78873b74a8a3d48b9a6271956c1c84d"
+    },
+    "seed_31415/alignment_gated/gate_audit.json": {
+      "bytes": 66331,
+      "sha256": "7536a51788f6805ad8d2efd4fd473987426da0305f0c21a93b7fdb9c33f1c029"
+    },
+    "seed_31415/alignment_gated/prefix_hashes.json": {
+      "bytes": 1025,
+      "sha256": "a77a4e14a937ee67a6c0713303bf5421ced28513b3fb917a2b25cdaef3384ed4"
+    },
+    "seed_31415/alignment_gated/training/data_exclusion_report.json": {
+      "bytes": 248,
+      "sha256": "87439d2d6f79c3972ebf49fbaae7ac69c05238014a773321790d1342b6a60b61"
+    },
+    "seed_31415/alignment_gated/training/metrics.jsonl": {
+      "bytes": 18802,
+      "sha256": "089c864ef38e33c63e6e628fc5c6e9190ee5149bf7b859663cf73c4e5a0b67b6"
+    },
+    "seed_31415/alignment_gated/training/resolved_config.yaml": {
+      "bytes": 1581,
+      "sha256": "4eda84ef8eaf60d4a64a88554afa32c15c793b4f67d0ed1a6057adc06742e552"
+    },
+    "seed_31415/alignment_gated/training/trainable_parameters.json": {
+      "bytes": 3984,
+      "sha256": "94c5b0ebb5e3953d8f9a0e51629116d84945346ebf4b8d7e36db58f112b03105"
+    },
+    "seed_31415/alignment_gated/training_batches.json": {
+      "bytes": 102120,
+      "sha256": "42cb8a79216b583184d73febcf0b5d7ade2415e7617ad6415b2f4948db5d681b"
+    },
+    "seed_31415/alignment_gated/checkpoints/step_000250.pt": {
+      "bytes": 692496715,
+      "sha256": "2a98db87c8dbc81ac7fc1f594b2f170fc4ba5fbd6f0b61485c1d51ea79897863"
+    },
+    "seed_31415/alignment_gated/checkpoints/step_000500.pt": {
+      "bytes": 692502411,
+      "sha256": "3d53d1d39997652383b6f2b1db80883c37636626cdb25112ed16769304ebb319"
+    },
+    "seed_31415/alignment_gated/checkpoints/step_000750.pt": {
+      "bytes": 692508171,
+      "sha256": "d704b9196cd0bfd86d3c41174ec9915680881ec6e9b6d897af8468869d84b195"
+    },
+    "seed_31415/alignment_gated/checkpoints/step_001001.pt": {
+      "bytes": 692513675,
+      "sha256": "1579377b8cbc407aca759001d4ed915311f028a889d5deed9d47971f543723b9"
+    },
+    "seed_31415/alignment_gated/timing.json": {
+      "bytes": 89,
+      "sha256": "5a16eeaa7cf6aa0ed374f32679b5facc0256bbb2e4f19777a43736779c30649b"
+    },
+    "seed_31415/alignment_gated/training/summary.json": {
+      "bytes": 8455,
+      "sha256": "df3f9a0f4a769918f6b99452d7ea9e3a14a038f032676475cbb8257ada21e3ae"
+    },
+    "comparison.json": {
+      "bytes": 5087,
+      "sha256": "d7618e3a53a8b294077ce5298931d505617a113e9c9227b0529122af4df229f9"
+    },
+    "completion.json": {
+      "bytes": 320,
+      "sha256": "755e0da8135b48b0232fe65e717d838aa62d14924bad036db7cd28f07709555b"
+    }
+  }
+}

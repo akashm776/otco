@@ -12,3 +12,7 @@ dependencies = [
     "torchvision>=0.24.1",
     "transformers>=4.57.3",
 ]
+
+[tool.pytest.ini_options]
+# Historical source snapshots are evidence, not a second live test suite.
+testpaths = ["tests"]

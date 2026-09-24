@@ -213,10 +213,11 @@ def encode_image_pool(model, image_paths, processor, device, batch_size=64, num_
 # RETRIEVAL / RANKING
 # =============================================================================
 def compute_similarity_scores(z_text, image_embs):
-    """
-    z_text: [1, d]
-    image_embs: [N, d] on CPU
-    returns: sims [N], costs [N]
+    """Score one caption against every image in the retrieval pool.
+
+    Inputs are L2-normalized, so the dot products are cosine similarities.
+    ``costs`` reverses that ordering for the OT construction: a more similar
+    image has a lower transport cost.
     """
     sims = (z_text.cpu() @ image_embs.T).squeeze(0)
     costs = 1.0 - sims
@@ -224,8 +225,10 @@ def compute_similarity_scores(z_text, image_embs):
 
 
 def compute_gt_rank_and_metrics(sims, image_paths, gt_image_path):
-    """
-    Rank is 1-based.
+    """Locate the matched image in a descending-similarity retrieval ranking.
+
+    Rank is 1-based: rank 1 is the highest-scoring pool image.  The Boolean
+    fields are per-caption contributions to Recall@1, Recall@5, and Recall@10.
     """
     if gt_image_path not in image_paths:
         return {
@@ -237,6 +240,7 @@ def compute_gt_rank_and_metrics(sims, image_paths, gt_image_path):
             "gt_in_top10": False,
         }
 
+    # This is a full-pool ranking; no negatives are removed for this metric.
     sorted_indices = torch.argsort(sims, descending=True)
     gt_idx = image_paths.index(gt_image_path)
 
@@ -266,8 +270,11 @@ def compute_gt_rank_and_metrics(sims, image_paths, gt_image_path):
 
 
 def retrieve_nearest_negative_images(sims, image_paths, gt_image_path, top_k=5):
-    """
-    Return top-k nearest negatives, excluding the GT image.
+    """Return the highest-scoring non-matching images for one caption.
+
+    The matched image is excluded before sorting.  These real negative vectors
+    are the inputs to the OT barycenter, rather than extra examples in a batch.
+    Returned lists/tensors share the same rank order.
     """
     rows = []
     costs = 1.0 - sims
@@ -277,6 +284,7 @@ def retrieve_nearest_negative_images(sims, image_paths, gt_image_path, top_k=5):
             continue
         rows.append((idx, path, sim, cost))
 
+    # Larger cosine similarity means a harder real negative.
     rows.sort(key=lambda x: x[2], reverse=True)
     rows = rows[:top_k]
 

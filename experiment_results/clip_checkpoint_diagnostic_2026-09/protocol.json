@@ -1,0 +1,52 @@
+{
+  "experiment": "clip_checkpoint_diagnostic_v1",
+  "source_run": "clip_gated_training_20260922T114312_608272Z",
+  "source_bundle": "1ff1d2784338ac1dc332b0b8203f0d8918f7ffbbe5b4ecc200d9a3339e64200b",
+  "training_seeds": [
+    789,
+    2026,
+    31415
+  ],
+  "checkpoint_steps": [
+    100,
+    250,
+    500,
+    750
+  ],
+  "arms": [
+    "native",
+    "pulse",
+    "sustained"
+  ],
+  "horizon": 50,
+  "batch_size": 64,
+  "coefficient": 0.06005351588542947,
+  "scheduler_horizon": 3850,
+  "split_seed": 2026092401,
+  "branch_data_seed": 2026092402,
+  "report_partition_seeds": [
+    2026092403,
+    2026092404
+  ],
+  "meta_size": 512,
+  "report_size": 512,
+  "primary": "report_native_loss_sustained_minus_native_at_50",
+  "sensitivity_absolute_band": 1e-06,
+  "rules_refitted": false,
+  "independent_test_set": false,
+  "literal_training_loader_resume": false,
+  "checkpoints": {
+    "seed_789/shared/checkpoints/step_000100.pt": "3e328bf426e53ba85badbf181e5baea4b1e7fa4d357d68e01470494fcdf27857",
+    "seed_789/alignment_gated/checkpoints/step_000250.pt": "94abbd4747047e2bcf9843237553bc0c1e4c7611401131c5622a289e2a403c6f",
+    "seed_789/alignment_gated/checkpoints/step_000500.pt": "13ade5c1f9443508d3ef11989063e0eedb97a18cfad0d3196ef7d439f9b75f94",
+    "seed_789/alignment_gated/checkpoints/step_000750.pt": "8f690de28ade6391d2bb6fa34d4939048f85b6aabb4f2dc6c0452be2114e8ee0",
+    "seed_2026/shared/checkpoints/step_000100.pt": "8128ffa9d488c097d65ba781f493b0710d807b19aec74a4ce05cafe25cf43e60",
+    "seed_2026/alignment_gated/checkpoints/step_000250.pt": "9b32412bdc2c44a9c35f9095efdec083f444f09f1a345ecb63c7e6072c6dba52",
+    "seed_2026/alignment_gated/checkpoints/step_000500.pt": "c58f4b7e60f0bf71eb591dd190611aba3259c01fa5cadac07c434b1ad311c8e9",
+    "seed_2026/alignment_gated/checkpoints/step_000750.pt": "2718245ce8de13f44a447c3442d3fca30d50e7db0ef801d6640a381f96d0d778",
+    "seed_31415/shared/checkpoints/step_000100.pt": "e7156d08c3d3de1b23d804d8f0a0cf11c445d02638e576220e449390d6477be3",
+    "seed_31415/alignment_gated/checkpoints/step_000250.pt": "2a98db87c8dbc81ac7fc1f594b2f170fc4ba5fbd6f0b61485c1d51ea79897863",
+    "seed_31415/alignment_gated/checkpoints/step_000500.pt": "3d53d1d39997652383b6f2b1db80883c37636626cdb25112ed16769304ebb319",
+    "seed_31415/alignment_gated/checkpoints/step_000750.pt": "d704b9196cd0bfd86d3c41174ec9915680881ec6e9b6d897af8468869d84b195"
+  }
+}

@@ -1,0 +1,162 @@
+[
+  {
+    "checkpoint_step": 100,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": -2.475104026969377e-05,
+    "median_incremental_heldout_loss": -2.41457427236913e-05,
+    "beneficial_trials": 16,
+    "range": [
+      -3.4239600164465145e-05,
+      -1.60653086092033e-05
+    ],
+    "mean_incremental_train_loss": 0.00010130345375258809,
+    "mean_full_gradient_alignment": 0.0625746439906025,
+    "mean_projection_gradient_alignment": 0.069299433789685,
+    "mean_actual_update_difference_ratio": 0.026490268095671052,
+    "mean_actual_update_cosine_to_native": 0.9996491309452409
+  },
+  {
+    "checkpoint_step": 100,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 6.8624418247675845e-06,
+    "median_incremental_heldout_loss": 5.265106590712776e-06,
+    "beneficial_trials": 5,
+    "range": [
+      -1.5937901064244642e-05,
+      3.6562841081888564e-05
+    ],
+    "mean_incremental_train_loss": 9.822867575065564e-05,
+    "mean_full_gradient_alignment": 0.2789505668447943,
+    "mean_projection_gradient_alignment": 0.31244007083120356,
+    "mean_actual_update_difference_ratio": 0.02891074841615999,
+    "mean_actual_update_cosine_to_native": 0.999580394394147
+  },
+  {
+    "checkpoint_step": 250,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": 8.022641933280727e-07,
+    "median_incremental_heldout_loss": 5.067685056037163e-07,
+    "beneficial_trials": 7,
+    "range": [
+      -3.837267013917511e-06,
+      7.328037860965253e-06
+    ],
+    "mean_incremental_train_loss": 4.906132411111597e-05,
+    "mean_full_gradient_alignment": 0.041645707150595374,
+    "mean_projection_gradient_alignment": 0.047312409874779575,
+    "mean_actual_update_difference_ratio": 0.024434491163112956,
+    "mean_actual_update_cosine_to_native": 0.9996997237866732
+  },
+  {
+    "checkpoint_step": 250,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 4.64219910653596e-06,
+    "median_incremental_heldout_loss": 4.930912480993754e-06,
+    "beneficial_trials": 3,
+    "range": [
+      -2.1850880955298635e-05,
+      2.2372105165313627e-05
+    ],
+    "mean_incremental_train_loss": 7.732536843405025e-05,
+    "mean_full_gradient_alignment": 0.2495768410198795,
+    "mean_projection_gradient_alignment": 0.2790948894526245,
+    "mean_actual_update_difference_ratio": 0.03328392034143371,
+    "mean_actual_update_cosine_to_native": 0.999442297156528
+  },
+  {
+    "checkpoint_step": 500,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": 9.24720425884984e-06,
+    "median_incremental_heldout_loss": 9.130046569660877e-06,
+    "beneficial_trials": 0,
+    "range": [
+      5.892270664276111e-06,
+      1.2908196590721843e-05
+    ],
+    "mean_incremental_train_loss": 3.011230716012947e-05,
+    "mean_full_gradient_alignment": 0.021206272849838115,
+    "mean_projection_gradient_alignment": 0.016967290848049564,
+    "mean_actual_update_difference_ratio": 0.022628148308165195,
+    "mean_actual_update_cosine_to_native": 0.9997419831222631
+  },
+  {
+    "checkpoint_step": 500,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 1.77030912007492e-06,
+    "median_incremental_heldout_loss": -3.7335195735010984e-07,
+    "beneficial_trials": 8,
+    "range": [
+      -2.1910577210348947e-05,
+      2.7495476274896902e-05
+    ],
+    "mean_incremental_train_loss": 7.511077169608527e-05,
+    "mean_full_gradient_alignment": 0.2526563249690823,
+    "mean_projection_gradient_alignment": 0.2676740446110991,
+    "mean_actual_update_difference_ratio": 0.03709317581519177,
+    "mean_actual_update_cosine_to_native": 0.9993072958487962
+  },
+  {
+    "checkpoint_step": 750,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": 4.519237480876681e-06,
+    "median_incremental_heldout_loss": 4.649113800159199e-06,
+    "beneficial_trials": 0,
+    "range": [
+      6.105910856923913e-07,
+      8.051606409154033e-06
+    ],
+    "mean_incremental_train_loss": 2.2780095158519975e-05,
+    "mean_full_gradient_alignment": 0.028968431494759694,
+    "mean_projection_gradient_alignment": 0.03559729453947906,
+    "mean_actual_update_difference_ratio": 0.021111143590156943,
+    "mean_actual_update_cosine_to_native": 0.9997756623750156
+  },
+  {
+    "checkpoint_step": 750,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 1.0716707733005038e-05,
+    "median_incremental_heldout_loss": 1.3981876796798076e-05,
+    "beneficial_trials": 6,
+    "range": [
+      -1.0660581720056683e-05,
+      3.5909450734727955e-05
+    ],
+    "mean_incremental_train_loss": 6.369369766620614e-05,
+    "mean_full_gradient_alignment": 0.24099894197357155,
+    "mean_projection_gradient_alignment": 0.25566831545869406,
+    "mean_actual_update_difference_ratio": 0.03806962610735882,
+    "mean_actual_update_cosine_to_native": 0.9992715657598653
+  },
+  {
+    "checkpoint_step": 1001,
+    "arm": "uniform_top8",
+    "mean_incremental_heldout_loss": 7.3476055735544055e-06,
+    "median_incremental_heldout_loss": 6.9972028633458194e-06,
+    "beneficial_trials": 0,
+    "range": [
+      1.0897299715928455e-06,
+      1.6036084245829585e-05
+    ],
+    "mean_incremental_train_loss": 1.9650157929956835e-05,
+    "mean_full_gradient_alignment": 0.023784748912619384,
+    "mean_projection_gradient_alignment": 0.026755213406548954,
+    "mean_actual_update_difference_ratio": 0.021455673725599193,
+    "mean_actual_update_cosine_to_native": 0.9997688890878303
+  },
+  {
+    "checkpoint_step": 1001,
+    "arm": "hardest_real",
+    "mean_incremental_heldout_loss": 1.6580792991105486e-06,
+    "median_incremental_heldout_loss": 5.494322303345456e-06,
+    "beneficial_trials": 7,
+    "range": [
+      -2.1605808022240325e-05,
+      1.8453903015025475e-05
+    ],
+    "mean_incremental_train_loss": 5.745810075086233e-05,
+    "mean_full_gradient_alignment": 0.2520718977411427,
+    "mean_projection_gradient_alignment": 0.2625684054174585,
+    "mean_actual_update_difference_ratio": 0.03883847580878578,
+    "mean_actual_update_cosine_to_native": 0.9992422197301868
+  }
+]

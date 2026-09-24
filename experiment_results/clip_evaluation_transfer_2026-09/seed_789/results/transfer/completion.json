@@ -1,0 +1,12 @@
+{
+  "status": "complete",
+  "rows": 240,
+  "checkpoint_steps": [
+    100,
+    250,
+    500,
+    750,
+    1001
+  ],
+  "native_transfer_replay_exact": true
+}

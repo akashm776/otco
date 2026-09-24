@@ -1,0 +1,182 @@
+{
+  "per_seed": [
+    {
+      "training_seed": 789,
+      "differences": {
+        "pulse": {
+          "step1_loss": -8.008932946945713e-06,
+          "step50_loss": 3.913303094593701e-05,
+          "step50_pool_r1_pp": 0.0
+        },
+        "sustained": {
+          "step1_loss": -8.008932946945713e-06,
+          "step50_loss": 0.00091984299341763,
+          "step50_pool_r1_pp": -0.0732421875
+        }
+      }
+    },
+    {
+      "training_seed": 2026,
+      "differences": {
+        "pulse": {
+          "step1_loss": -1.8172627200829794e-06,
+          "step50_loss": 4.369590698061199e-05,
+          "step50_pool_r1_pp": -0.048828125
+        },
+        "sustained": {
+          "step1_loss": -1.8172627200829794e-06,
+          "step50_loss": 0.0002588660068987281,
+          "step50_pool_r1_pp": -0.2197265625
+        }
+      }
+    },
+    {
+      "training_seed": 31415,
+      "differences": {
+        "pulse": {
+          "step1_loss": -2.1937860601450865e-06,
+          "step50_loss": -6.459924241253301e-05,
+          "step50_pool_r1_pp": 0.0
+        },
+        "sustained": {
+          "step1_loss": -2.1937860601450865e-06,
+          "step50_loss": 0.0003011890578935583,
+          "step50_pool_r1_pp": -0.0732421875
+        }
+      }
+    }
+  ],
+  "seed_mean": {
+    "pulse": {
+      "step1_loss": -4.0066605757245926e-06,
+      "step50_loss": 6.076565171338662e-06,
+      "step50_pool_r1_pp": -0.016276041666666668
+    },
+    "sustained": {
+      "step1_loss": -4.0066605757245926e-06,
+      "step50_loss": 0.0004932993527366388,
+      "step50_pool_r1_pp": -0.1220703125
+    }
+  },
+  "predictor_descriptives": {
+    "raw_cosine": {
+      "immediate": {
+        "states": 12,
+        "correct_sign": 9,
+        "outside_sensitivity_band": 10,
+        "correct_outside_band": 8,
+        "mean_decision_regret": 1.5389673655811602e-06
+      },
+      "pulse50": {
+        "states": 12,
+        "correct_sign": 5,
+        "outside_sensitivity_band": 12,
+        "correct_outside_band": 5,
+        "mean_decision_regret": 4.104707067198454e-05
+      },
+      "sustained50": {
+        "states": 12,
+        "correct_sign": 7,
+        "outside_sensitivity_band": 12,
+        "correct_outside_band": 7,
+        "mean_decision_regret": 0.0003563873144325491
+      }
+    },
+    "meta_cosine": {
+      "immediate": {
+        "states": 12,
+        "correct_sign": 11,
+        "outside_sensitivity_band": 10,
+        "correct_outside_band": 10,
+        "mean_decision_regret": 7.512631576093536e-08
+      },
+      "pulse50": {
+        "states": 12,
+        "correct_sign": 7,
+        "outside_sensitivity_band": 12,
+        "correct_outside_band": 7,
+        "mean_decision_regret": 3.140477878797269e-05
+      },
+      "sustained50": {
+        "states": 12,
+        "correct_sign": 9,
+        "outside_sensitivity_band": 12,
+        "correct_outside_band": 9,
+        "mean_decision_regret": 0.00019554859518459514
+      }
+    },
+    "adamw_s0": {
+      "immediate": {
+        "states": 12,
+        "correct_sign": 10,
+        "outside_sensitivity_band": 10,
+        "correct_outside_band": 10,
+        "mean_decision_regret": 1.4255737494176893e-07
+      },
+      "pulse50": {
+        "states": 12,
+        "correct_sign": 6,
+        "outside_sensitivity_band": 12,
+        "correct_outside_band": 6,
+        "mean_decision_regret": 3.3331545746214296e-05
+      },
+      "sustained50": {
+        "states": 12,
+        "correct_sign": 10,
+        "outside_sensitivity_band": 12,
+        "correct_outside_band": 10,
+        "mean_decision_regret": 0.000117266602175925
+      }
+    },
+    "adamw_sn": {
+      "immediate": {
+        "states": 12,
+        "correct_sign": 10,
+        "outside_sensitivity_band": 10,
+        "correct_outside_band": 10,
+        "mean_decision_regret": 1.4255737494176893e-07
+      },
+      "pulse50": {
+        "states": 12,
+        "correct_sign": 6,
+        "outside_sensitivity_band": 12,
+        "correct_outside_band": 6,
+        "mean_decision_regret": 3.3331545746214296e-05
+      },
+      "sustained50": {
+        "states": 12,
+        "correct_sign": 10,
+        "outside_sensitivity_band": 12,
+        "correct_outside_band": 10,
+        "mean_decision_regret": 0.000117266602175925
+      }
+    },
+    "frozen_alignment": {
+      "immediate": {
+        "states": 12,
+        "correct_sign": 11,
+        "outside_sensitivity_band": 10,
+        "correct_outside_band": 10,
+        "mean_decision_regret": 7.512631576093536e-08
+      },
+      "pulse50": {
+        "states": 12,
+        "correct_sign": 7,
+        "outside_sensitivity_band": 12,
+        "correct_outside_band": 7,
+        "mean_decision_regret": 3.140477878797269e-05
+      },
+      "sustained50": {
+        "states": 12,
+        "correct_sign": 9,
+        "outside_sensitivity_band": 12,
+        "correct_outside_band": 9,
+        "mean_decision_regret": 0.00019554859518459514
+      }
+    }
+  },
+  "states": 12,
+  "training_seed_count": 3,
+  "optimizer_steps": 1824,
+  "interpretation": "Exploratory reused data; 3 training seeds, correlated checkpoints, one branch stream/state. No threshold fitting, significance, fresh-test, or guaranteed-benefit claim. Loss differences negative = helpful; pool retrieval is 512-image canonical only."
+}

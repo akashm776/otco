@@ -1,0 +1,4 @@
+# Preserve checksummed research evidence byte-for-byte on every platform.
+experiment_results/** -text
+# Matplotlib SVG path lines contain intentional trailing spaces.
+experiment_results/**/*.svg -whitespace

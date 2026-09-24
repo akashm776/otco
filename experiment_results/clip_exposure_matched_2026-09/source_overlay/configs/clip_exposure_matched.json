@@ -1,0 +1,19 @@
+{
+  "experiment": "clip_exposure_matched_v1",
+  "parent_protocol": "configs/clip_gated_training.json",
+  "training_seeds": [789, 2026, 31415],
+  "arms": ["alignment_gated", "random_matched_1", "random_matched_2", "random_matched_3"],
+  "randomization_seed": 202609230,
+  "schedule_algorithm": "sha256_rank_without_replacement_v1",
+  "eligible_objective_steps": [100, 1000],
+  "primary_metric": "final_canonical_mean_direction_r_at_1_percent",
+  "primary_contrast": "alignment_minus_mean_of_all_three_random_controls_within_seed",
+  "secondary_metric": "species_top1_percent",
+  "checkpoint_retention": "exposure_hybrid_v1",
+  "rules_refitted": false,
+  "exposure_matched": true,
+  "compute_matched": false,
+  "independent_test_set": false,
+  "novelty_claim": false,
+  "historical_run": "clip_gated_training_20260922T114312_608272Z"
+}

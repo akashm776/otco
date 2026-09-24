@@ -1,0 +1,62 @@
+{
+  "experiment": "clip_exposure_matched_v1",
+  "training_seeds": [
+    789,
+    2026,
+    31415
+  ],
+  "arms": [
+    "alignment_gated",
+    "random_matched_1",
+    "random_matched_2",
+    "random_matched_3"
+  ],
+  "baseline_config": "configs/hf_cub200_clip_vit_b32_baseline.yaml",
+  "stop_after_epochs": 13,
+  "expected_batches_per_epoch": 77,
+  "scheduler_horizon_updates": 3850,
+  "completed_updates": 1001,
+  "common_native_prefix_updates": 100,
+  "alignment_refresh_steps": [
+    100,
+    250,
+    500,
+    750
+  ],
+  "checkpoint_steps": [
+    100,
+    250,
+    500,
+    750,
+    1001
+  ],
+  "checkpoint_retention": "exposure_hybrid_v1",
+  "alignment_threshold": 0.030847286945687016,
+  "step_threshold": 175,
+  "uniform_top8_coefficient": 0.06005351588542947,
+  "probe_batch_count": 16,
+  "probe_batch_size": 64,
+  "probe_caption_seed": 42,
+  "probe_caption_epoch": 2,
+  "probe_branch_seed": 202609120,
+  "primary_metric": "final_canonical_mean_direction_r_at_1_percent",
+  "primary_comparators": [
+    "baseline",
+    "step_gated"
+  ],
+  "rules_refitted": false,
+  "novelty_claim": false,
+  "independent_test_set": false,
+  "compute_matched": false,
+  "exposure_matched": true,
+  "parent_protocol": "configs/clip_gated_training.json",
+  "randomization_seed": 202609230,
+  "schedule_algorithm": "sha256_rank_without_replacement_v1",
+  "eligible_objective_steps": [
+    100,
+    1000
+  ],
+  "primary_contrast": "alignment_minus_mean_of_all_three_random_controls_within_seed",
+  "secondary_metric": "species_top1_percent",
+  "historical_run": "clip_gated_training_20260922T114312_608272Z"
+}

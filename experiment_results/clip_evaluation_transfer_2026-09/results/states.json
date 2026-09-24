@@ -1,0 +1,137 @@
+[
+  {
+    "training_seed": 789,
+    "checkpoint_step": 100,
+    "full_gradient_alignment": 0.06920972205767081,
+    "effect": -3.4182628828177686e-05,
+    "beneficial_trials": 16,
+    "native_heldout_change": -0.0027585751183831497,
+    "synthetic_heldout_change": -0.0027927577472113274
+  },
+  {
+    "training_seed": 789,
+    "checkpoint_step": 250,
+    "full_gradient_alignment": 0.02939495479391908,
+    "effect": 7.5103710311941185e-06,
+    "beneficial_trials": 1,
+    "native_heldout_change": -0.0015794707962827892,
+    "synthetic_heldout_change": -0.001571960425251595
+  },
+  {
+    "training_seed": 789,
+    "checkpoint_step": 500,
+    "full_gradient_alignment": 0.02938620769684114,
+    "effect": 3.690257109167927e-06,
+    "beneficial_trials": 3,
+    "native_heldout_change": -0.0006317607359393462,
+    "synthetic_heldout_change": -0.0006280704788301783
+  },
+  {
+    "training_seed": 789,
+    "checkpoint_step": 750,
+    "full_gradient_alignment": 0.03877053698164292,
+    "effect": -5.223585502478478e-07,
+    "beneficial_trials": 10,
+    "native_heldout_change": -0.00024048509590665623,
+    "synthetic_heldout_change": -0.00024100745445690408
+  },
+  {
+    "training_seed": 789,
+    "checkpoint_step": 1001,
+    "full_gradient_alignment": 0.04124255511899913,
+    "effect": -9.545858225545878e-07,
+    "beneficial_trials": 12,
+    "native_heldout_change": -0.0002335126744238969,
+    "synthetic_heldout_change": -0.00023446726024645148
+  },
+  {
+    "training_seed": 2026,
+    "checkpoint_step": 100,
+    "full_gradient_alignment": 0.0716486617888903,
+    "effect": -3.32144623056696e-05,
+    "beneficial_trials": 16,
+    "native_heldout_change": -0.0034514507441606723,
+    "synthetic_heldout_change": -0.003484665206466342
+  },
+  {
+    "training_seed": 2026,
+    "checkpoint_step": 250,
+    "full_gradient_alignment": 0.025456626895279628,
+    "effect": 1.549852237481275e-05,
+    "beneficial_trials": 0,
+    "native_heldout_change": -0.0007780795386979067,
+    "synthetic_heldout_change": -0.0007625810163230939
+  },
+  {
+    "training_seed": 2026,
+    "checkpoint_step": 500,
+    "full_gradient_alignment": 0.055368883050828335,
+    "effect": -3.7708491820720447e-06,
+    "beneficial_trials": 16,
+    "native_heldout_change": -0.0006009427310576521,
+    "synthetic_heldout_change": -0.0006047135802397241
+  },
+  {
+    "training_seed": 2026,
+    "checkpoint_step": 750,
+    "full_gradient_alignment": 0.023401725950243295,
+    "effect": 6.55759478465634e-06,
+    "beneficial_trials": 0,
+    "native_heldout_change": -0.0006678220829541004,
+    "synthetic_heldout_change": -0.000661264488169444
+  },
+  {
+    "training_seed": 2026,
+    "checkpoint_step": 1001,
+    "full_gradient_alignment": 0.019528491398910587,
+    "effect": 6.4281976466240565e-06,
+    "beneficial_trials": 0,
+    "native_heldout_change": 3.4447564199457936e-06,
+    "synthetic_heldout_change": 9.87295406656985e-06
+  },
+  {
+    "training_seed": 31415,
+    "checkpoint_step": 100,
+    "full_gradient_alignment": 0.0625746439906025,
+    "effect": -2.0859665801897798e-05,
+    "beneficial_trials": 16,
+    "native_heldout_change": -0.0036839884028296854,
+    "synthetic_heldout_change": -0.0037048480686315832
+  },
+  {
+    "training_seed": 31415,
+    "checkpoint_step": 250,
+    "full_gradient_alignment": 0.041645707150595374,
+    "effect": -1.945640055456277e-06,
+    "beneficial_trials": 10,
+    "native_heldout_change": -0.0011371410116388647,
+    "synthetic_heldout_change": -0.001139086651694321
+  },
+  {
+    "training_seed": 31415,
+    "checkpoint_step": 500,
+    "full_gradient_alignment": 0.021206272849838118,
+    "effect": 7.965394052206198e-06,
+    "beneficial_trials": 0,
+    "native_heldout_change": -0.00041988201131842873,
+    "synthetic_heldout_change": -0.00041191661726622253
+  },
+  {
+    "training_seed": 31415,
+    "checkpoint_step": 750,
+    "full_gradient_alignment": 0.02896843149475969,
+    "effect": 4.910686276143883e-06,
+    "beneficial_trials": 0,
+    "native_heldout_change": -0.0005459562952767616,
+    "synthetic_heldout_change": -0.0005410456090006177
+  },
+  {
+    "training_seed": 31415,
+    "checkpoint_step": 1001,
+    "full_gradient_alignment": 0.02378474891261938,
+    "effect": 7.415540855620906e-06,
+    "beneficial_trials": 1,
+    "native_heldout_change": -1.3811462484192294e-05,
+    "synthetic_heldout_change": -6.395921628571388e-06
+  }
+]
