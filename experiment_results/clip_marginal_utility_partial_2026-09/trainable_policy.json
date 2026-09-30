@@ -1,0 +1,148 @@
+{
+  "policy": "projections_last_blocks_logit_scale",
+  "trainable_parameter_count": 10895617,
+  "trainable_tensor_count": 35,
+  "total_parameter_count": 151277313,
+  "parameters": [
+    {
+      "name": "clip_model.logit_scale",
+      "numel": 1
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.self_attn.k_proj.weight",
+      "numel": 262144
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.self_attn.k_proj.bias",
+      "numel": 512
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.self_attn.v_proj.weight",
+      "numel": 262144
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.self_attn.v_proj.bias",
+      "numel": 512
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.self_attn.q_proj.weight",
+      "numel": 262144
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.self_attn.q_proj.bias",
+      "numel": 512
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.self_attn.out_proj.weight",
+      "numel": 262144
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.self_attn.out_proj.bias",
+      "numel": 512
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.layer_norm1.weight",
+      "numel": 512
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.layer_norm1.bias",
+      "numel": 512
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.mlp.fc1.weight",
+      "numel": 1048576
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.mlp.fc1.bias",
+      "numel": 2048
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.mlp.fc2.weight",
+      "numel": 1048576
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.mlp.fc2.bias",
+      "numel": 512
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.layer_norm2.weight",
+      "numel": 512
+    },
+    {
+      "name": "clip_model.text_model.encoder.layers.11.layer_norm2.bias",
+      "numel": 512
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.self_attn.k_proj.weight",
+      "numel": 589824
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.self_attn.k_proj.bias",
+      "numel": 768
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.self_attn.v_proj.weight",
+      "numel": 589824
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.self_attn.v_proj.bias",
+      "numel": 768
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.self_attn.q_proj.weight",
+      "numel": 589824
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.self_attn.q_proj.bias",
+      "numel": 768
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.self_attn.out_proj.weight",
+      "numel": 589824
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.self_attn.out_proj.bias",
+      "numel": 768
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.layer_norm1.weight",
+      "numel": 768
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.layer_norm1.bias",
+      "numel": 768
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.mlp.fc1.weight",
+      "numel": 2359296
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.mlp.fc1.bias",
+      "numel": 3072
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.mlp.fc2.weight",
+      "numel": 2359296
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.mlp.fc2.bias",
+      "numel": 768
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.layer_norm2.weight",
+      "numel": 768
+    },
+    {
+      "name": "clip_model.vision_model.encoder.layers.11.layer_norm2.bias",
+      "numel": 768
+    },
+    {
+      "name": "clip_model.visual_projection.weight",
+      "numel": 393216
+    },
+    {
+      "name": "clip_model.text_projection.weight",
+      "numel": 262144
+    }
+  ]
+}

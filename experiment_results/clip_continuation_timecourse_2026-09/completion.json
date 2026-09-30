@@ -1,0 +1,17 @@
+{
+  "status": "complete",
+  "pairs": 24,
+  "branches": 48,
+  "optimizer_steps": 2400,
+  "trial_updates": 0,
+  "observation_steps": [
+    0,
+    1,
+    5,
+    10,
+    25,
+    50
+  ],
+  "diagnostic_only_reprobes": true,
+  "streams_committed_before_updates": true
+}

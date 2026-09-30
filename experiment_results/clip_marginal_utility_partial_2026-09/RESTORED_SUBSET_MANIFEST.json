@@ -1,0 +1,65 @@
+{
+  "source_run": "clip_gated_training_20260922T114312_608272Z",
+  "archive": "/content/drive/MyDrive/OTCO/evaluation_transfer/clip_checkpoint_diagnostic_inputs.zip",
+  "restored_subset_only": true,
+  "original_manifests_preserved": true,
+  "files": {
+    "seed_789/shared/checkpoints/step_000100.pt": {
+      "bytes": 692493131,
+      "sha256": "3e328bf426e53ba85badbf181e5baea4b1e7fa4d357d68e01470494fcdf27857"
+    },
+    "seed_789/alignment_gated/checkpoints/step_000250.pt": {
+      "bytes": 692496779,
+      "sha256": "94abbd4747047e2bcf9843237553bc0c1e4c7611401131c5622a289e2a403c6f"
+    },
+    "seed_789/alignment_gated/checkpoints/step_000500.pt": {
+      "bytes": 692502475,
+      "sha256": "13ade5c1f9443508d3ef11989063e0eedb97a18cfad0d3196ef7d439f9b75f94"
+    },
+    "seed_789/alignment_gated/checkpoints/step_000750.pt": {
+      "bytes": 692508171,
+      "sha256": "8f690de28ade6391d2bb6fa34d4939048f85b6aabb4f2dc6c0452be2114e8ee0"
+    },
+    "seed_2026/shared/checkpoints/step_000100.pt": {
+      "bytes": 692493067,
+      "sha256": "8128ffa9d488c097d65ba781f493b0710d807b19aec74a4ce05cafe25cf43e60"
+    },
+    "seed_2026/alignment_gated/checkpoints/step_000250.pt": {
+      "bytes": 692496715,
+      "sha256": "9b32412bdc2c44a9c35f9095efdec083f444f09f1a345ecb63c7e6072c6dba52"
+    },
+    "seed_2026/alignment_gated/checkpoints/step_000500.pt": {
+      "bytes": 692502411,
+      "sha256": "c58f4b7e60f0bf71eb591dd190611aba3259c01fa5cadac07c434b1ad311c8e9"
+    },
+    "seed_2026/alignment_gated/checkpoints/step_000750.pt": {
+      "bytes": 692508107,
+      "sha256": "2718245ce8de13f44a447c3442d3fca30d50e7db0ef801d6640a381f96d0d778"
+    },
+    "seed_31415/shared/checkpoints/step_000100.pt": {
+      "bytes": 692493067,
+      "sha256": "e7156d08c3d3de1b23d804d8f0a0cf11c445d02638e576220e449390d6477be3"
+    },
+    "seed_31415/alignment_gated/checkpoints/step_000250.pt": {
+      "bytes": 692496715,
+      "sha256": "2a98db87c8dbc81ac7fc1f594b2f170fc4ba5fbd6f0b61485c1d51ea79897863"
+    },
+    "seed_31415/alignment_gated/checkpoints/step_000500.pt": {
+      "bytes": 692502411,
+      "sha256": "3d53d1d39997652383b6f2b1db80883c37636626cdb25112ed16769304ebb319"
+    },
+    "seed_31415/alignment_gated/checkpoints/step_000750.pt": {
+      "bytes": 692508171,
+      "sha256": "d704b9196cd0bfd86d3c41174ec9915680881ec6e9b6d897af8468869d84b195"
+    },
+    "run_manifest.json": {
+      "bytes": 766,
+      "sha256": "5b5f1ff364ccf8991643051a3dd29e2567ad8bcbf2a6ded7fe3076734a8f1e70"
+    },
+    "DRIVE_BACKUP_MANIFEST.json": {
+      "bytes": 25888,
+      "sha256": "8896c82b4ece8e2250656cdfab69fba70ad50895667bb60e50dcecd08af49fb1"
+    }
+  },
+  "verification": "SHA256 pins before any checkpoint deserialization"
+}

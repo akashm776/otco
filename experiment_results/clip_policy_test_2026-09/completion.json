@@ -1,0 +1,16 @@
+{
+  "status": "complete",
+  "pairs": 12,
+  "branches": 48,
+  "optimizer_steps": 2400,
+  "trial_updates": 0,
+  "observation_steps": [
+    0,
+    10,
+    25,
+    50
+  ],
+  "exposure_matched": true,
+  "reports_control_treatment": false,
+  "streams_committed_before_updates": true
+}

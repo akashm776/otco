@@ -1,0 +1,21 @@
+{
+  "experiment": "clip_continuation_timecourse_v1",
+  "parent_protocol": "configs/clip_checkpoint_diagnostic.json",
+  "training_seeds": [789, 2026, 31415],
+  "checkpoint_steps": [100, 250, 500, 750],
+  "stream_seeds": [2026092601, 2026092602],
+  "arms": ["native", "sustained"],
+  "horizon": 50,
+  "observation_steps": [0, 1, 5, 10, 25, 50],
+  "coefficient": 0.06005351588542947,
+  "early_step": 100,
+  "later_steps": [250, 500, 750],
+  "primary": "seed_mean_later_minus_early_sustained_minus_native_report_loss_at_50",
+  "probe_definition": "historical_16_batch_alignment_and_meta_vs_fixed_first_probe_auxiliary",
+  "probe_controls_treatment": false,
+  "report_controls_treatment": false,
+  "rules_refitted": false,
+  "independent_test_set": false,
+  "literal_training_loader_resume": false,
+  "optimizer_step_budget": 2400
+}

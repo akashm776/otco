@@ -1,0 +1,19 @@
+{
+  "experiment": "clip_policy_test_v1",
+  "training_seeds": [789, 2026, 31415],
+  "checkpoint_steps": [100, 500],
+  "stream_seeds": [2026093002, 2026093003],
+  "previous_stream_seeds": [2026092402, 2026092601, 2026092602],
+  "arms": ["gated", "native", "sustained", "random_matched"],
+  "horizon": 50,
+  "gate_refresh_offsets": [0, 10, 25],
+  "observation_steps": [0, 10, 25, 50],
+  "alignment_threshold": 0.030847286945687016,
+  "permutation_seed": 2026093004,
+  "primary": "seed_mean_gated_minus_random_matched_report_loss_at_50",
+  "optimizer_step_budget": 2400,
+  "rules_refitted": false,
+  "report_controls_treatment": false,
+  "independent_test_set": false,
+  "exploratory_followup": true
+}

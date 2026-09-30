@@ -1,0 +1,523 @@
+{
+  "primary": "seed_mean_gated_minus_random_matched_report_loss_at_50",
+  "primary_value": -3.434092384653938e-05,
+  "per_seed": [
+    {
+      "training_seed": 789,
+      "per_starting_step": {
+        "100": {
+          "0": {
+            "native": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            }
+          },
+          "10": {
+            "native": {
+              "report_loss": -0.0009399226374697811,
+              "pool_r1_pp": -0.048828125
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": -0.0004786847263371641,
+              "pool_r1_pp": -0.09765625
+            }
+          },
+          "25": {
+            "native": {
+              "report_loss": -0.0006099604900542399,
+              "pool_r1_pp": 0.1953125
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": 4.838025475462082e-05,
+              "pool_r1_pp": 0.048828125
+            }
+          },
+          "50": {
+            "native": {
+              "report_loss": -0.0005734238382326673,
+              "pool_r1_pp": 0.048828125
+            },
+            "sustained": {
+              "report_loss": -0.0001708098515620371,
+              "pool_r1_pp": 0.146484375
+            },
+            "random_matched": {
+              "report_loss": 8.813542157604104e-05,
+              "pool_r1_pp": 0.0
+            }
+          }
+        },
+        "500": {
+          "0": {
+            "native": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            }
+          },
+          "10": {
+            "native": {
+              "report_loss": 0.00030146235890526896,
+              "pool_r1_pp": 0.048828125
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": 0.00023680459593666825,
+              "pool_r1_pp": 0.048828125
+            }
+          },
+          "25": {
+            "native": {
+              "report_loss": 0.0001396233592303453,
+              "pool_r1_pp": -0.048828125
+            },
+            "sustained": {
+              "report_loss": -0.0005054519042453354,
+              "pool_r1_pp": 0.09765625
+            },
+            "random_matched": {
+              "report_loss": 0.00011180373204755512,
+              "pool_r1_pp": -0.048828125
+            }
+          },
+          "50": {
+            "native": {
+              "report_loss": 0.00016104701464203508,
+              "pool_r1_pp": 0.0
+            },
+            "sustained": {
+              "report_loss": -0.0009413254758732226,
+              "pool_r1_pp": 0.048828125
+            },
+            "random_matched": {
+              "report_loss": -0.00011354238798300109,
+              "pool_r1_pp": -0.048828125
+            }
+          }
+        }
+      },
+      "primary": -1.2703483203480026e-05
+    },
+    {
+      "training_seed": 2026,
+      "per_starting_step": {
+        "100": {
+          "0": {
+            "native": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            }
+          },
+          "10": {
+            "native": {
+              "report_loss": -0.001540784460999589,
+              "pool_r1_pp": 0.048828125
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": -0.0004227660707822878,
+              "pool_r1_pp": 0.048828125
+            }
+          },
+          "25": {
+            "native": {
+              "report_loss": -0.0023594099128194657,
+              "pool_r1_pp": -0.29296875
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": -0.00042027601295346884,
+              "pool_r1_pp": -0.048828125
+            }
+          },
+          "50": {
+            "native": {
+              "report_loss": -0.0020711318069370765,
+              "pool_r1_pp": -0.341796875
+            },
+            "sustained": {
+              "report_loss": 6.737230667841487e-05,
+              "pool_r1_pp": 0.048828125
+            },
+            "random_matched": {
+              "report_loss": -9.925631027773996e-05,
+              "pool_r1_pp": -0.048828125
+            }
+          }
+        },
+        "500": {
+          "0": {
+            "native": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            }
+          },
+          "10": {
+            "native": {
+              "report_loss": 0.0002178996903297037,
+              "pool_r1_pp": -0.048828125
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": 0.0001686787693380154,
+              "pool_r1_pp": 0.0
+            }
+          },
+          "25": {
+            "native": {
+              "report_loss": 0.001032518815760941,
+              "pool_r1_pp": -0.146484375
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": 0.0006276496163082346,
+              "pool_r1_pp": -0.09765625
+            }
+          },
+          "50": {
+            "native": {
+              "report_loss": 0.0004692357519304746,
+              "pool_r1_pp": -0.09765625
+            },
+            "sustained": {
+              "report_loss": -0.0006943284461353727,
+              "pool_r1_pp": 0.244140625
+            },
+            "random_matched": {
+              "report_loss": 4.1591025436105156e-05,
+              "pool_r1_pp": 0.1953125
+            }
+          }
+        }
+      },
+      "primary": -2.88326424208174e-05
+    },
+    {
+      "training_seed": 31415,
+      "per_starting_step": {
+        "100": {
+          "0": {
+            "native": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            }
+          },
+          "10": {
+            "native": {
+              "report_loss": -0.0010631709891064656,
+              "pool_r1_pp": -0.048828125
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": -0.0004154363366477565,
+              "pool_r1_pp": -0.048828125
+            }
+          },
+          "25": {
+            "native": {
+              "report_loss": -0.0010717121341150548,
+              "pool_r1_pp": -0.048828125
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": -9.035456820005727e-05,
+              "pool_r1_pp": -0.048828125
+            }
+          },
+          "50": {
+            "native": {
+              "report_loss": -0.0012276130945558794,
+              "pool_r1_pp": 0.09765625
+            },
+            "sustained": {
+              "report_loss": -0.0008997521502112082,
+              "pool_r1_pp": -0.048828125
+            },
+            "random_matched": {
+              "report_loss": -0.00020928422980004413,
+              "pool_r1_pp": -0.09765625
+            }
+          }
+        },
+        "500": {
+          "0": {
+            "native": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "sustained": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "random_matched": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            }
+          },
+          "10": {
+            "native": {
+              "report_loss": 0.0,
+              "pool_r1_pp": 0.0
+            },
+            "sustained": {
+              "report_loss": -0.00013421322360662735,
+              "pool_r1_pp": 0.048828125
+            },
+            "random_matched": {
+              "report_loss": -5.8423928079642806e-05,
+              "pool_r1_pp": 0.0
+            }
+          },
+          "25": {
+            "native": {
+              "report_loss": 0.00017615173569041076,
+              "pool_r1_pp": -0.09765625
+            },
+            "sustained": {
+              "report_loss": -8.598990366870396e-05,
+              "pool_r1_pp": 0.09765625
+            },
+            "random_matched": {
+              "report_loss": 0.00018090504421675035,
+              "pool_r1_pp": -0.146484375
+            }
+          },
+          "50": {
+            "native": {
+              "report_loss": 0.0003270708824711921,
+              "pool_r1_pp": -0.048828125
+            },
+            "sustained": {
+              "report_loss": -0.000555349735460231,
+              "pool_r1_pp": 0.1953125
+            },
+            "random_matched": {
+              "report_loss": 8.63109379694027e-05,
+              "pool_r1_pp": 0.09765625
+            }
+          }
+        }
+      },
+      "primary": -6.148664591532071e-05
+    }
+  ],
+  "pairs": 12,
+  "branches": 48,
+  "training_seed_count": 3,
+  "optimizer_steps": 2400,
+  "exposure": [
+    {
+      "training_seed": 789,
+      "checkpoint_step": 100,
+      "stream_seed": 2026093002,
+      "counts": {
+        "gated": 25,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 25
+      },
+      "random_schedule_equals_gate": false
+    },
+    {
+      "training_seed": 789,
+      "checkpoint_step": 100,
+      "stream_seed": 2026093003,
+      "counts": {
+        "gated": 25,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 25
+      },
+      "random_schedule_equals_gate": false
+    },
+    {
+      "training_seed": 789,
+      "checkpoint_step": 500,
+      "stream_seed": 2026093002,
+      "counts": {
+        "gated": 10,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 10
+      },
+      "random_schedule_equals_gate": false
+    },
+    {
+      "training_seed": 789,
+      "checkpoint_step": 500,
+      "stream_seed": 2026093003,
+      "counts": {
+        "gated": 10,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 10
+      },
+      "random_schedule_equals_gate": false
+    },
+    {
+      "training_seed": 2026,
+      "checkpoint_step": 100,
+      "stream_seed": 2026093002,
+      "counts": {
+        "gated": 50,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 50
+      },
+      "random_schedule_equals_gate": true
+    },
+    {
+      "training_seed": 2026,
+      "checkpoint_step": 100,
+      "stream_seed": 2026093003,
+      "counts": {
+        "gated": 25,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 25
+      },
+      "random_schedule_equals_gate": false
+    },
+    {
+      "training_seed": 2026,
+      "checkpoint_step": 500,
+      "stream_seed": 2026093002,
+      "counts": {
+        "gated": 25,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 25
+      },
+      "random_schedule_equals_gate": false
+    },
+    {
+      "training_seed": 2026,
+      "checkpoint_step": 500,
+      "stream_seed": 2026093003,
+      "counts": {
+        "gated": 25,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 25
+      },
+      "random_schedule_equals_gate": false
+    },
+    {
+      "training_seed": 31415,
+      "checkpoint_step": 100,
+      "stream_seed": 2026093002,
+      "counts": {
+        "gated": 25,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 25
+      },
+      "random_schedule_equals_gate": false
+    },
+    {
+      "training_seed": 31415,
+      "checkpoint_step": 100,
+      "stream_seed": 2026093003,
+      "counts": {
+        "gated": 25,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 25
+      },
+      "random_schedule_equals_gate": false
+    },
+    {
+      "training_seed": 31415,
+      "checkpoint_step": 500,
+      "stream_seed": 2026093002,
+      "counts": {
+        "gated": 25,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 25
+      },
+      "random_schedule_equals_gate": false
+    },
+    {
+      "training_seed": 31415,
+      "checkpoint_step": 500,
+      "stream_seed": 2026093003,
+      "counts": {
+        "gated": 15,
+        "native": 0,
+        "sustained": 50,
+        "random_matched": 15
+      },
+      "random_schedule_equals_gate": false
+    }
+  ],
+  "interpretation": "Gated minus comparator; negative loss helps, positive R1 helps. Average streams within checkpoints, checkpoints within seeds, then three seeds equally. Random timing is conditional on gate exposure; one precommitted permutation per pair. Equal total dose is guaranteed only at update 50, not intermediate reports. Reused checkpoints/report data and post-hoc policy choice: exploratory, not independent confirmation. No mediation or OT-weighting superiority claim. A timing advantage alone need not beat native training."
+}

@@ -1,0 +1,22 @@
+{
+  "experiment": "clip_marginal_utility_v1",
+  "parent_protocol": "configs/clip_continuation_timecourse.json",
+  "training_seeds": [789, 2026, 31415],
+  "checkpoint_steps": [100, 500],
+  "stream_seeds": [2026092601, 2026092602],
+  "arms": ["native", "sustained"],
+  "horizon": 50,
+  "observation_steps": [0, 10, 25, 50],
+  "trial_batch_count": 2,
+  "trial_data_seed": 2026093001,
+  "primary_time": 25,
+  "primary": "seed_mean_treated_history_minus_native_history_marginal_report_loss_at_25",
+  "continuation_updates": 1200,
+  "trial_updates": 336,
+  "optimizer_step_budget": 1536,
+  "exploratory_followup": true,
+  "reference_file": "configs/clip_marginal_utility_reference.json",
+  "rules_refitted": false,
+  "report_controls_treatment": false,
+  "independent_test_set": false
+}

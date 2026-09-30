@@ -1,0 +1,16 @@
+{
+  "partial_pairs": 6,
+  "complete_pairs": 12,
+  "identical_partial_pairs": 6,
+  "partial_run_is_additional_evidence": false,
+  "matched_pair_count_in_analysis": 12,
+  "note": "Twelve matched sets are not twelve independent training seeds; there are three seeds.",
+  "result_files": [
+    "seed_2026/step_000100/stream_2026092601/result.json",
+    "seed_2026/step_000100/stream_2026092602/result.json",
+    "seed_789/step_000100/stream_2026092601/result.json",
+    "seed_789/step_000100/stream_2026092602/result.json",
+    "seed_789/step_000500/stream_2026092601/result.json",
+    "seed_789/step_000500/stream_2026092602/result.json"
+  ]
+}

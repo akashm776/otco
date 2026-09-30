@@ -4,13 +4,25 @@ Research code studying **when synthetic hard negatives help contrastive learning
 
 The current evidence separates **hardness, gradient direction, actual optimizer updates, and downstream performance**. Staged one-step CLIP/CUB-200 studies cover six training seeds; the latest gated and exposure-matched rollouts cover three reused seeds. They do not establish a general curriculum rule or an OT-weighting advantage.
 
-## Current research state — September 24, 2026
+## Current research state — September 30, 2026
 
 The [consolidated research record](docs/research-status-2026-09-24.md) brings together the completed evaluation-transfer, gated-training, exposure-matched, and saved-checkpoint studies. Small raw results, original manifests, source snapshots, and export audits are committed; large checkpoints and caption-bearing data remain outside Git.
 
 The latest matched-branch diagnostic completed **12 states, 36 branches, and 1,824 optimizer updates**, with separate meta and reporting data. Sustained pressure improved reporting loss from all three update-100 states, but worsened it from all nine later states. The frozen gate predicted immediate effect signs in **11/12** states, versus **9/12** at the 50-update sustained endpoint. This motivates investigating horizon and starting-state dependence—not claiming a successful curriculum or a causal mechanism.
 
 [Diagnostic results](experiment_results/clip_checkpoint_diagnostic_2026-09/README.md) · [Recheck exported evidence](scripts/archive_clip_followup_evidence.py) · [Colab diagnostic and recovery](docs/clip-checkpoint-diagnostic.md)
+
+**September 29 follow-up (archived and verified):** the [continuation time course](docs/clip-continuation-timecourse.md) completed 24 pairs / 2,400 updates. All six early seed-stream pairs improved reporting loss at update 50; all 18 later pairs worsened it. Reporting-pool R@1 worsened in 22 pairs and tied in two. Alignment fell relative to native history, but this alone does not identify marginal usefulness or a readiness mechanism. [Small results and source snapshots](experiment_results/clip_continuation_timecourse_2026-09/README.md) are retained; captions and checkpoints remain outside Git.
+
+**September 30 follow-up (archived and verified):** [post-treatment marginal utility](docs/clip-marginal-utility.md) completed all 12 pairs / 1,536 updates. Sustained history reduces next-step auxiliary usefulness in all 12 pairs at offsets 10, 25 and 50; primary loss contrast is +0.00001563. The [complete second run](experiment_results/clip_marginal_utility_2026-09/README.md) reproduces the six [partial-run pairs](experiment_results/clip_marginal_utility_partial_2026-09/README.md) exactly; the first run under Drive's `failed runs` is not additional evidence. No retrieval gain or mechanism is established.
+
+**September 30 policy test (archived and verified):** the [frozen alignment-policy test](docs/clip-policy-test.md) completed 12 matched sets / 48 branches / 2,400 updates. Gate-minus-random timing loss is −0.00003434 overall, but reverses sign between reporting partitions and between continuation streams. Gating improves loss versus native in all six early pairs and worsens it in all six later pairs. No robust policy benefit is established. [Archived results](experiment_results/clip_policy_test_2026-09/README.md).
+
+**Offline robustness audit (completed; zero GPU updates):** [report and checksummed analysis](experiment_results/clip_policy_robustness_2026-09/REPORT.md) · [reproducible diagnostic](docs/clip-policy-robustness.md). The favorable timing average survives leaving out each seed, but not each stream, checkpoint, or reporting partition. One of 16 paired reporting-batch deletions reverses its sign. This is a post-hoc sensitivity analysis of three reused seeds, not independent confirmation or a fitted gate.
+
+**Next bounded test (implemented; not GPU-run):** [fixed-endpoint reporting-pool test](docs/clip-policy-pool-test.md) · [pasteable A100 Colab cell](colabs/clip_policy_pool_test_drive_one_cell.py). Replay the archived schedules with exact endpoint checks (2,400 updates), then evaluate full-512 loss and 32 fixed new B64 reporting partitions. Cache endpoint embeddings and logit scales for future CPU-only evaluation. This tests reporting-pool sensitivity, not an independent policy replication.
+
+Recheck these completed and partial exports with `python -m scripts.archive_clip_september30_evidence --verify-only`. The filtered public archives preserve original manifests and numeric results but do not replace full Colab input ZIPs.
 
 ## Research progress
 

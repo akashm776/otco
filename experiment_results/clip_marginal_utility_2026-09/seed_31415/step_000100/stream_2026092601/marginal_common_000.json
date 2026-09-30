@@ -1,0 +1,268 @@
+{
+  "predictions": {
+    "historical": {
+      "historical_mean_cosine": 0.0625746439906025,
+      "first_fixed_batch_cosine": 0.06522389583453199,
+      "meta_fixed_aux_cosine": 0.0981100552590927,
+      "meta_native_loss": 3.083306500342878,
+      "historical_batch_cosines": [
+        0.06522389583452741,
+        0.19552875782366166,
+        0.10949743063611217,
+        0.07202085836661656,
+        0.029745995939040697,
+        0.08948416324228403,
+        -0.10766613588883955,
+        0.018063023748908915,
+        0.028028597834976923,
+        0.09405921381023354,
+        0.06541865554871075,
+        0.07771358546161194,
+        0.10108674917611654,
+        0.13825568703853494,
+        0.01952642553188258,
+        0.0052073997452608415
+      ],
+      "historical_threshold": 0.030847286945687016,
+      "historical_above_threshold": true,
+      "diagnostic_only": true
+    },
+    "meta_native_loss": 3.083306500342878,
+    "batches": [
+      {
+        "raw_cosine": 0.10218080043517071,
+        "meta_cosine": 0.12638454691036663,
+        "decisions": {
+          "raw": true,
+          "meta": true,
+          "historical": true
+        }
+      },
+      {
+        "raw_cosine": 0.19233583003449212,
+        "meta_cosine": 0.14062225822684563,
+        "decisions": {
+          "raw": true,
+          "meta": true,
+          "historical": true
+        }
+      }
+    ],
+    "anchor_state_sha256": "b8064c47d3bc086ca83e1cc9ed152210116fc09465fd4ec2a76a8ef1d32f8a7a",
+    "trial_rng_sha256": "33a8625195726de83114aa884ee835af5c04ed6851d49abb0ee3e9da80fede16"
+  },
+  "trials": [
+    {
+      "batch_index": 0,
+      "reports": {
+        "native": {
+          "native_loss": 3.0176344215075437,
+          "partition_losses": {
+            "2026092403": [
+              2.9032526835820076,
+              3.155114685882128,
+              2.772896015355008,
+              3.04716630112292,
+              3.2861143113625815,
+              3.1129795842221117,
+              2.9476703170289733,
+              2.8769554689998325
+            ],
+            "2026092404": [
+              2.8183138009929003,
+              2.9289754739171507,
+              3.2377350702875263,
+              2.812134745434984,
+              3.1698188747757374,
+              3.0744485784699247,
+              3.1028831531699526,
+              3.0356916795169564
+            ]
+          },
+          "pool_retrieval": {
+            "text_to_image_r1_percent": 5.859375,
+            "image_to_text_r1_percent": 5.859375,
+            "mean_r1_percent": 5.859375
+          },
+          "features_sha256": "ef266410e56131a519e2aceb956767fc77587f340bbbe72db1c44e011f715da2"
+        },
+        "auxiliary": {
+          "native_loss": 3.017603624565559,
+          "partition_losses": {
+            "2026092403": [
+              2.903215589859659,
+              3.1550932088555745,
+              2.7729002517039194,
+              3.04713537069272,
+              3.286086203563716,
+              3.1129351065448034,
+              2.947632011239116,
+              2.8768918595891115
+            ],
+            "2026092404": [
+              2.8182659947002,
+              2.9289825135068748,
+              3.2377008506975926,
+              2.812164434031357,
+              3.1697608167965377,
+              3.0744341914663216,
+              3.102803296877369,
+              3.0356562929240694
+            ]
+          },
+          "pool_retrieval": {
+            "text_to_image_r1_percent": 5.859375,
+            "image_to_text_r1_percent": 5.859375,
+            "mean_r1_percent": 5.859375
+          },
+          "features_sha256": "2a2a814fc878f6fefe799496a5bca4768cf3bd47eb474e33606f20341ac70e63"
+        }
+      },
+      "traces": {
+        "native": {
+          "native_loss": 2.8315982818603516,
+          "total_loss": 2.8315982818603516,
+          "gradient_norm_before_clip": 16.888263702392578,
+          "learning_rates": [
+            1e-05,
+            1e-06,
+            1e-06
+          ],
+          "coefficient": 0.0,
+          "rng_after_sha256": "33a8625195726de83114aa884ee835af5c04ed6851d49abb0ee3e9da80fede16"
+        },
+        "auxiliary": {
+          "native_loss": 2.8315982818603516,
+          "total_loss": 2.8751139640808105,
+          "gradient_norm_before_clip": 17.118417739868164,
+          "learning_rates": [
+            1e-05,
+            1e-06,
+            1e-06
+          ],
+          "coefficient": 0.06005351588542947,
+          "rng_after_sha256": "33a8625195726de83114aa884ee835af5c04ed6851d49abb0ee3e9da80fede16"
+        }
+      },
+      "state_hashes": {
+        "native": "e1b3ce2c774d61eeda8dbe57593e5093b2102ebb12b23b2490082b13494a13ef",
+        "auxiliary": "83f51088723e72c03b828ef2f46f2f9acee75562b7a6851809be3f3c6955c200"
+      },
+      "report_loss": -3.0796941984601034e-05,
+      "pool_r1_pp": 0.0,
+      "partition_loss": {
+        "2026092403": -3.247068836786937e-05,
+        "2026092404": -2.9123195601332696e-05
+      }
+    },
+    {
+      "batch_index": 1,
+      "reports": {
+        "native": {
+          "native_loss": 3.0176497491590397,
+          "partition_losses": {
+            "2026092403": [
+              2.903697870740503,
+              3.155233217061494,
+              2.7732759713138293,
+              3.0470959961011888,
+              3.286040185228863,
+              3.113177109952608,
+              2.9469928006086383,
+              2.876653061068814
+            ],
+            "2026092404": [
+              2.8193081576873937,
+              2.9295893523654746,
+              3.2381457957690105,
+              2.811839170550856,
+              3.1696063617105064,
+              3.074069235584665,
+              3.1022707798804205,
+              3.035400920920373
+            ]
+          },
+          "pool_retrieval": {
+            "text_to_image_r1_percent": 5.6640625,
+            "image_to_text_r1_percent": 5.6640625,
+            "mean_r1_percent": 5.6640625
+          },
+          "features_sha256": "aad3e54c7f4f9f9ce1fcc1130167e3cc6faf524a19dfa6737b78ecb1f2db478b"
+        },
+        "auxiliary": {
+          "native_loss": 3.017614038525076,
+          "partition_losses": {
+            "2026092403": [
+              2.903649502709864,
+              3.155197629521121,
+              2.7732850271458314,
+              3.047052800090251,
+              3.2860193877575687,
+              3.1131171478931154,
+              2.9469556066179377,
+              2.8766088793990114
+            ],
+            "2026092404": [
+              2.819247626641769,
+              2.9295840297597904,
+              3.238069169564147,
+              2.811878946156639,
+              3.169553610772509,
+              3.0740458264865476,
+              3.1021953627327647,
+              3.0353640631523477
+            ]
+          },
+          "pool_retrieval": {
+            "text_to_image_r1_percent": 5.6640625,
+            "image_to_text_r1_percent": 5.6640625,
+            "mean_r1_percent": 5.6640625
+          },
+          "features_sha256": "ee166a97a2a647abe8b21d7425576454a3f2a22573c4ad76fb9399d37a27c0c6"
+        }
+      },
+      "traces": {
+        "native": {
+          "native_loss": 3.426239013671875,
+          "total_loss": 3.426239013671875,
+          "gradient_norm_before_clip": 17.433107376098633,
+          "learning_rates": [
+            1e-05,
+            1e-06,
+            1e-06
+          ],
+          "coefficient": 0.0,
+          "rng_after_sha256": "33a8625195726de83114aa884ee835af5c04ed6851d49abb0ee3e9da80fede16"
+        },
+        "auxiliary": {
+          "native_loss": 3.426239013671875,
+          "total_loss": 3.4792025089263916,
+          "gradient_norm_before_clip": 17.86357307434082,
+          "learning_rates": [
+            1e-05,
+            1e-06,
+            1e-06
+          ],
+          "coefficient": 0.06005351588542947,
+          "rng_after_sha256": "33a8625195726de83114aa884ee835af5c04ed6851d49abb0ee3e9da80fede16"
+        }
+      },
+      "state_hashes": {
+        "native": "0f92f8bf02e0540453cc7fa96f33ec0b075d407ba2f7e6d21b4308fdf64a0f11",
+        "auxiliary": "55f8f1c9918dcdb28f80e1f021fb0407464bdaa4b4e8dd5e24151ac647620cb9"
+      },
+      "report_loss": -3.571063396368146e-05,
+      "pool_r1_pp": 0.0,
+      "partition_loss": {
+        "2026092403": -3.50288676549404e-05,
+        "2026092404": -3.63924002733107e-05
+      }
+    }
+  ],
+  "mean_marginal_report_loss": -3.325378797414125e-05,
+  "mean_marginal_pool_r1_pp": 0.0,
+  "trial_updates": 4,
+  "matched_actions": true,
+  "state_restored": true,
+  "anchor_state_sha256": "b8064c47d3bc086ca83e1cc9ed152210116fc09465fd4ec2a76a8ef1d32f8a7a"
+}

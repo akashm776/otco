@@ -1,0 +1,29 @@
+{
+  "run_id": "clip_policy_test_20260930T050231_622869Z",
+  "experiment": "clip_policy_test_v1",
+  "bundle_id": "7b5253943005c684a1c730d9b2568acd0cc2c5883bdf630e49ca7271fb09cf73",
+  "status": "complete_pending_drive_flush",
+  "source_run": "/content/otco_diagnostic_inputs/clip_gated_training_20260922T114312_608272Z",
+  "source_bundle": "1ff1d2784338ac1dc332b0b8203f0d8918f7ffbbe5b4ecc200d9a3339e64200b",
+  "source_commit": "b36bcbf7c2124bbcbe0cf372df3853dadcf79bd2",
+  "gpu": "NVIDIA A100-SXM4-40GB, 40960",
+  "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "transformers": "4.57.3",
+    "datasets": "2.21.0",
+    "numpy": "2.1.3",
+    "PyYAML": "6.0.3"
+  },
+  "source_checkpoints_read_only": true,
+  "independent_test_set": false,
+  "rules_refitted": false,
+  "literal_training_loader_resume": false,
+  "optimizer_step_budget": 2400,
+  "trial_updates": 0,
+  "exploratory_followup": true,
+  "reports_control_treatment": false,
+  "subprocess_log": "/content/drive/MyDrive/OTCO/evaluation_transfer/clip_policy_test_logs/20260930T050128_650905Z.log",
+  "drive_destination": "/content/drive/MyDrive/OTCO/evaluation_transfer/clip_policy_test_20260930T050231_622869Z"
+}

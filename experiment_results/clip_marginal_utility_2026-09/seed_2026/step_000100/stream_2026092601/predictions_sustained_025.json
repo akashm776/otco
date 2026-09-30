@@ -1,0 +1,52 @@
+{
+  "historical": {
+    "historical_mean_cosine": 0.037696042589327586,
+    "first_fixed_batch_cosine": 0.0502163999670828,
+    "meta_fixed_aux_cosine": 0.029718270249826324,
+    "meta_native_loss": 3.006302788201349,
+    "historical_batch_cosines": [
+      0.05021639996707962,
+      0.1643763519742624,
+      0.06485300976892255,
+      0.0512906110621141,
+      0.012993376982128163,
+      0.05696118117034982,
+      -0.12130900958341545,
+      -0.008549071910228134,
+      -0.010580630250663,
+      0.06393889902309731,
+      0.06632723134730764,
+      0.06151647638072567,
+      0.060812075963922615,
+      0.11463540833128985,
+      -0.025573592523414942,
+      0.0012279637257631528
+    ],
+    "historical_threshold": 0.030847286945687016,
+    "historical_above_threshold": true,
+    "diagnostic_only": true
+  },
+  "meta_native_loss": 3.006302788201349,
+  "batches": [
+    {
+      "raw_cosine": 0.027423903230241804,
+      "meta_cosine": 0.05139422557037975,
+      "decisions": {
+        "raw": true,
+        "meta": true,
+        "historical": true
+      }
+    },
+    {
+      "raw_cosine": -0.0973463781082825,
+      "meta_cosine": 0.04393332314687288,
+      "decisions": {
+        "raw": false,
+        "meta": true,
+        "historical": true
+      }
+    }
+  ],
+  "anchor_state_sha256": "246860a647142b3e1b79e44fbb90b00de76a817899f1dc62f7cde02d8d5b3c3b",
+  "trial_rng_sha256": "0eb063b2f2af201f0b72f1c1c971ef0065bfcd4271113031f081c42b2bc9563b"
+}

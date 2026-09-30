@@ -1,0 +1,332 @@
+{
+  "primary": "seed_mean_treated_history_minus_native_history_marginal_report_loss_at_25",
+  "primary_value": 1.5630572524405473e-05,
+  "per_seed": [
+    {
+      "training_seed": 789,
+      "per_starting_step": {
+        "100": {
+          "0": {
+            "marginal_report_loss": {
+              "native": -4.435296901084129e-05,
+              "sustained": -4.435296901084129e-05
+            },
+            "treated_minus_native_history": 0.0,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "10": {
+            "marginal_report_loss": {
+              "native": -2.8024025003681174e-05,
+              "sustained": -1.4725819010075192e-05
+            },
+            "treated_minus_native_history": 1.3298205993605983e-05,
+            "marginal_pool_r1_pp": {
+              "native": -0.0244140625,
+              "sustained": 0.0
+            }
+          },
+          "25": {
+            "marginal_report_loss": {
+              "native": -2.0252765800199413e-05,
+              "sustained": 4.61694694564585e-06
+            },
+            "treated_minus_native_history": 2.4869712745845263e-05,
+            "marginal_pool_r1_pp": {
+              "native": 0.0244140625,
+              "sustained": 0.0
+            }
+          },
+          "50": {
+            "marginal_report_loss": {
+              "native": -1.3433347437863397e-05,
+              "sustained": 1.0622903167334385e-05
+            },
+            "treated_minus_native_history": 2.4056250605197782e-05,
+            "marginal_pool_r1_pp": {
+              "native": -0.0244140625,
+              "sustained": 0.0
+            }
+          }
+        },
+        "500": {
+          "0": {
+            "marginal_report_loss": {
+              "native": 3.5764606005628252e-06,
+              "sustained": 3.5764606005628252e-06
+            },
+            "treated_minus_native_history": 0.0,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "10": {
+            "marginal_report_loss": {
+              "native": 1.8452885425235266e-06,
+              "sustained": 4.633131673648094e-06
+            },
+            "treated_minus_native_history": 2.7878431311245677e-06,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "25": {
+            "marginal_report_loss": {
+              "native": 3.693745708410745e-06,
+              "sustained": 9.772269282559698e-06
+            },
+            "treated_minus_native_history": 6.078523574148953e-06,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "50": {
+            "marginal_report_loss": {
+              "native": -1.4747385226332455e-06,
+              "sustained": 6.2088131211890385e-06
+            },
+            "treated_minus_native_history": 7.683551643822284e-06,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          }
+        }
+      },
+      "primary": 1.5474118159997108e-05
+    },
+    {
+      "training_seed": 2026,
+      "per_starting_step": {
+        "100": {
+          "0": {
+            "marginal_report_loss": {
+              "native": -4.446097320465192e-05,
+              "sustained": -4.446097320465192e-05
+            },
+            "treated_minus_native_history": 0.0,
+            "marginal_pool_r1_pp": {
+              "native": 0.048828125,
+              "sustained": 0.048828125
+            }
+          },
+          "10": {
+            "marginal_report_loss": {
+              "native": -3.8568518052617407e-05,
+              "sustained": -2.6015675842483432e-05
+            },
+            "treated_minus_native_history": 1.2552842210133974e-05,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "25": {
+            "marginal_report_loss": {
+              "native": -3.0585627243118196e-05,
+              "sustained": -5.278089335258862e-06
+            },
+            "treated_minus_native_history": 2.5307537907859334e-05,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "50": {
+            "marginal_report_loss": {
+              "native": -4.355860978710879e-05,
+              "sustained": -1.1960234866714714e-05
+            },
+            "treated_minus_native_history": 3.159837492039408e-05,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          }
+        },
+        "500": {
+          "0": {
+            "marginal_report_loss": {
+              "native": -3.6811418535620533e-06,
+              "sustained": -3.6811418535620533e-06
+            },
+            "treated_minus_native_history": 0.0,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "10": {
+            "marginal_report_loss": {
+              "native": -1.2175786482382378e-06,
+              "sustained": 1.9881254541553872e-06
+            },
+            "treated_minus_native_history": 3.205704102393625e-06,
+            "marginal_pool_r1_pp": {
+              "native": 0.048828125,
+              "sustained": 0.0
+            }
+          },
+          "25": {
+            "marginal_report_loss": {
+              "native": 6.341209835114547e-06,
+              "sustained": 1.3292604216341708e-05
+            },
+            "treated_minus_native_history": 6.951394381227161e-06,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "50": {
+            "marginal_report_loss": {
+              "native": 6.950965476537618e-07,
+              "sustained": 8.002122515504695e-06
+            },
+            "treated_minus_native_history": 7.307025967850933e-06,
+            "marginal_pool_r1_pp": {
+              "native": -0.0244140625,
+              "sustained": 0.0
+            }
+          }
+        }
+      },
+      "primary": 1.6129466144543247e-05
+    },
+    {
+      "training_seed": 31415,
+      "per_starting_step": {
+        "100": {
+          "0": {
+            "marginal_report_loss": {
+              "native": -3.335983187857661e-05,
+              "sustained": -3.335983187857661e-05
+            },
+            "treated_minus_native_history": 0.0,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "10": {
+            "marginal_report_loss": {
+              "native": -2.6731437276272807e-05,
+              "sustained": -1.279358637973349e-05
+            },
+            "treated_minus_native_history": 1.3937850896539317e-05,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "25": {
+            "marginal_report_loss": {
+              "native": -3.225806401707665e-05,
+              "sustained": -7.047484879230126e-06
+            },
+            "treated_minus_native_history": 2.5210579137846523e-05,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "50": {
+            "marginal_report_loss": {
+              "native": -1.9959309464745445e-05,
+              "sustained": 8.446894740110622e-06
+            },
+            "treated_minus_native_history": 2.8406204204856067e-05,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          }
+        },
+        "500": {
+          "0": {
+            "marginal_report_loss": {
+              "native": 6.0742054274198765e-06,
+              "sustained": 6.0742054274198765e-06
+            },
+            "treated_minus_native_history": 0.0,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "10": {
+            "marginal_report_loss": {
+              "native": 3.3949575981573332e-06,
+              "sustained": 6.158472838690976e-06
+            },
+            "treated_minus_native_history": 2.7635152405336427e-06,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          },
+          "25": {
+            "marginal_report_loss": {
+              "native": 2.3085802572930803e-06,
+              "sustained": 7.674267656798683e-06
+            },
+            "treated_minus_native_history": 5.365687399505603e-06,
+            "marginal_pool_r1_pp": {
+              "native": -0.0244140625,
+              "sustained": 0.0
+            }
+          },
+          "50": {
+            "marginal_report_loss": {
+              "native": 7.545276176079696e-07,
+              "sustained": 6.477027495788157e-06
+            },
+            "treated_minus_native_history": 5.722499878180187e-06,
+            "marginal_pool_r1_pp": {
+              "native": 0.0,
+              "sustained": 0.0
+            }
+          }
+        }
+      },
+      "primary": 1.5288133268676063e-05
+    }
+  ],
+  "predictor_descriptives": {
+    "historical": {
+      "trials": 168,
+      "correct": 136,
+      "outside_band": 158,
+      "correct_outside_band": 131,
+      "mean_decision_regret": 7.537288980862308e-07,
+      "warning": "Pooled correlated descriptive trials, NOT independent replications or a fitted gate"
+    },
+    "raw": {
+      "trials": 168,
+      "correct": 103,
+      "outside_band": 158,
+      "correct_outside_band": 98,
+      "mean_decision_regret": 3.6011065860242998e-06,
+      "warning": "Pooled correlated descriptive trials, NOT independent replications or a fitted gate"
+    },
+    "meta": {
+      "trials": 168,
+      "correct": 130,
+      "outside_band": 158,
+      "correct_outside_band": 125,
+      "mean_decision_regret": 8.826755897491564e-07,
+      "warning": "Pooled correlated descriptive trials, NOT independent replications or a fitted gate"
+    }
+  },
+  "pairs": 12,
+  "training_seed_count": 3,
+  "continuation_updates": 1200,
+  "trial_updates": 336,
+  "optimizer_steps": 1536,
+  "interpretation": "Negative marginal loss means the NEXT auxiliary step helps versus a native step. Positive primary means auxiliary marginal utility is worse after sustained history at update 25. All trial branches roll back; batch identities are matched across histories/times. Exploratory reused histories/data; three seed units; no mediation, optimal policy, independent-test or OT-superiority claim."
+}

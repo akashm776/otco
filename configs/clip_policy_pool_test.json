@@ -1,0 +1,22 @@
+{
+  "experiment": "clip_policy_pool_test_v1",
+  "policy_source_run": "clip_policy_test_20260930T050231_622869Z",
+  "policy_backup_manifest_sha256": "0d974b89ec799cc3a90ec384b13e8382f9864884ac9a33ff4d30740213c5e67e",
+  "training_seeds": [789, 2026, 31415],
+  "checkpoint_steps": [100, 500],
+  "stream_seeds": [2026093002, 2026093003],
+  "arms": ["gated", "native", "sustained", "random_matched"],
+  "horizon": 50,
+  "replay_check_offsets": [0, 10, 25, 50],
+  "report_size": 512,
+  "new_partition_seed_start": 2026093010,
+  "new_partition_count": 32,
+  "partition_batch_size": 64,
+  "primary": "seed_mean_gated_minus_random_matched_full512_loss_at_50",
+  "optimizer_step_budget": 2400,
+  "gate_decisions_recomputed": false,
+  "rules_refitted": false,
+  "independent_test_set": false,
+  "exploratory_followup": true,
+  "save_endpoint_embeddings": true
+}

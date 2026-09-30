@@ -1,0 +1,20 @@
+{
+  "run_id": "clip_gated_training_20260922T114312_608272Z",
+  "bundle_id": "1ff1d2784338ac1dc332b0b8203f0d8918f7ffbbe5b4ecc200d9a3339e64200b",
+  "status": "complete_pending_drive_flush",
+  "source_commit": "7e7cfea90b60415dc9561efbe97bcd383cc1580e",
+  "gpu": "NVIDIA A100-SXM4-40GB, 40960",
+  "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "transformers": "4.57.3",
+    "datasets": "2.21.0",
+    "numpy": "2.1.3",
+    "PyYAML": "6.0.3"
+  },
+  "drive_destination": "/content/drive/MyDrive/OTCO/evaluation_transfer/clip_gated_training_20260922T114312_608272Z",
+  "rules_refitted": false,
+  "checkpoint_retention": "hybrid_v1",
+  "required_checkpoints_verified": 24
+}
